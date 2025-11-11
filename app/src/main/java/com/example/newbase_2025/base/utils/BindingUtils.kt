@@ -35,6 +35,15 @@ object BindingUtils {
             .setPopEnterAnim(R.anim.slide_in_left)
             .setPopExitAnim(R.anim.slide_out_right)
             .build()
+    @BindingAdapter("setImageFromDrawbale")
+    @JvmStatic
+    fun setImageFromDrawbale(image: ShapeableImageView, url: Int?) {
+        if (url != null) {
+            Glide.with(image.context).load(url).placeholder(R.drawable.dummy_image)
+                .error(R.drawable.user).into(image)
+        }
+    }
+
 
         navController.navigate(directions, navOptions)
     }

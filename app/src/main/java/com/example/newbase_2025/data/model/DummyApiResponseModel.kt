@@ -3,8 +3,9 @@ package com.example.newbase_2025.data.model
 class DummyApiResponseModel : ArrayList<DummyApiItem>()
 
 data class DummyApiItem(
-    val id: Int,
-    val imdbId: String,
-    val posterURL: String,
-    val title: String
+    val id: Int, val imdbId: String, val posterURL: String, val title: String
+)
+
+data class DummyHome(
+    val image: Int
 )

@@ -4,9 +4,13 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="colorPrimary">#F1AF1B</color>
-    <color name="blue">#1B4C6E</color>
     <color name="bg_color">#F6F9FF</color>
     <color name="stroke_color">#EDF1F3</color>
     <color name="grey">#6C7278</color>
+    <color name="blue">#1B4C6E</color>
+    <color name="bg_home">#F6F9FF</color>
+
+    <color name="nav_selected_icon">#17415F</color>
+    <color name="nav_selected_text">#17415F</color>
 
 </resources>

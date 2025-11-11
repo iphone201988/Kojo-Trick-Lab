@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.dashboard.DashBoardActivityVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.dashboard.DashBoardActivity">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivTopLogo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_width="0dp"
+            app:layout_constraintEnd_toEndOf="@+id/guideline"
+            android:layout_height="@dimen/_35sdp"
+            android:src="@drawable/only_logo"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivTopLogo"
+            app:layout_constraintTop_toTopOf="@+id/ivTopLogo"
+            android:src="@drawable/notification"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSearch"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            app:layout_constraintEnd_toStartOf="@+id/ivNotification"
+            android:layout_marginEnd="@dimen/_6sdp"
+            app:layout_constraintTop_toTopOf="@+id/ivTopLogo"
+            app:layout_constraintBottom_toBottomOf="@+id/ivTopLogo"
+            android:src="@drawable/search_icon"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp"
+            app:layout_constraintGuide_percent="0.5" />
+
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:layout_constraintBottom_toTopOf="@id/card"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:background="@android:color/darker_gray" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            app:layout_constraintTop_toBottomOf="@+id/ivTopLogo"
+            android:id="@+id/view"
+            android:background="#EAECF0"
+            android:layout_marginTop="@dimen/_10sdp"/>
+
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_55sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardCornerRadius="@dimen/_20ssp">
+
+
+
+        <LinearLayout
+            android:id="@+id/customBottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Home -->
+            <LinearLayout
+                android:id="@+id/nav_home"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_nav_item_selected">
+
+                <ImageView
+                    android:id="@+id/nav_icon"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/home"
+                    app:tint="@color/nav_selected_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textColor="@color/nav_selected_text"
+                    android:textSize="@dimen/_10ssp"
+                    style="@style/TextView_600_SemiBold_Quicksand" />
+            </LinearLayout>
+
+            <!-- Library -->
+            <LinearLayout
+                android:id="@+id/nav_library"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/library"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Library"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_10ssp"
+                    style="@style/TextView_600_SemiBold_Quicksand"
+                     />
+            </LinearLayout>
+
+            <!-- Tracker -->
+            <LinearLayout
+                android:id="@+id/nav_tracker"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/tracker"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tracker"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_10ssp"
+                    style="@style/TextView_600_SemiBold_Quicksand"
+                     />
+            </LinearLayout>
+
+            <!-- Community -->
+            <LinearLayout
+                android:id="@+id/nav_community"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/community"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Community"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_10ssp"
+                    style="@style/TextView_600_SemiBold_Quicksand"
+                     />
+            </LinearLayout>
+
+            <!-- Profile -->
+            <!-- Community -->
+            <LinearLayout
+                android:id="@+id/nav_profile"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/dummy_image"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_10ssp"
+                    style="@style/TextView_600_SemiBold_Quicksand"
+                     />
+            </LinearLayout>
+
+            
+        </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
