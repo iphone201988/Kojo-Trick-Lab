@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+
+        <variable
+            name="callback"
+            type="com.example.newbase_2025.base.utils.BaseCustomDialog.Listener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/_35sdp"
+        android:background="@drawable/round_corner_bg">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageCamera"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:src="@drawable/camer_image"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            app:tint="@color/blue"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_25sdp"
+            app:layout_constraintEnd_toStartOf="@+id/imageGallery"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDateTime" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCamera"
+            style="@style/TextView_700_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:text="Camera"
+            android:layout_margin="@dimen/_12sdp"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_18sdp"
+            app:layout_constraintEnd_toEndOf="@+id/imageCamera"
+            app:layout_constraintStart_toStartOf="@+id/imageCamera"
+            app:layout_constraintTop_toBottomOf="@+id/imageCamera" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDateTime"
+            style="@style/TextView_700_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:text="Choose"
+            android:layout_margin="@dimen/_18sdp"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_18sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageGallery"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:src="@drawable/gallery_picker"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            app:tint="@color/blue"
+            android:layout_marginStart="@dimen/_25sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/imageCamera"
+            app:layout_constraintStart_toEndOf="@+id/imageCamera"
+            app:layout_constraintTop_toTopOf="@+id/imageCamera" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvGallery"
+            style="@style/TextView_700_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gallery"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:layout_margin="@dimen/_12sdp"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_18sdp"
+            app:layout_constraintEnd_toEndOf="@+id/imageGallery"
+            app:layout_constraintStart_toStartOf="@+id/imageGallery"
+            app:layout_constraintTop_toBottomOf="@+id/imageGallery" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

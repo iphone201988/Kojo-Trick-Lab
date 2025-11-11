@@ -4,6 +4,16 @@
 
     <data>
 
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.onboarding.OnboardingFragmentVM" />
+
+        <variable
+            name="type"
+            type="Integer" />
+
+        <import type="android.view.View" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,32 +22,177 @@
         android:layout_height="match_parent"
         android:background="@drawable/onboarding_bg">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="@dimen/_80sdp"
-            android:layout_height="@dimen/_22sdp"
-            android:src="@drawable/only_logo"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-
-     />
-
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.60" />
+            app:layout_constraintGuide_percent="0.65" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivHeader"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:src="@drawable/only_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivProgress"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:src="@drawable/first_page"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivHeader"
+
+            />
+
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_28sdp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivProgress" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNext1"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_43sdp"
+            android:layout_marginBottom="@dimen/_38ssp"
+            android:background="@drawable/btn_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:visibility="@{type==1?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvNext1"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:gravity="center"
+                android:text="@string/next"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivNext1"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:src="@drawable/next"
+                app:layout_constraintBottom_toBottomOf="@+id/tvNext1"
+                app:layout_constraintStart_toEndOf="@+id/tvNext1"
+                app:layout_constraintTop_toTopOf="@+id/tvNext1"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNext"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_43sdp"
+            android:layout_marginEnd="@dimen/_35sdp"
+            android:layout_marginBottom="@dimen/_38ssp"
+            android:background="@drawable/btn_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:visibility="@{type==2?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ivProgress"
+            app:layout_constraintStart_toEndOf="@+id/clBack">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvNext"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:gravity="center"
+                android:text="@string/next"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivNext"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:src="@drawable/next"
+                app:layout_constraintBottom_toBottomOf="@+id/tvNext"
+                app:layout_constraintStart_toEndOf="@+id/tvNext"
+                app:layout_constraintTop_toTopOf="@+id/tvNext"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clBack"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_43sdp"
+            android:layout_marginStart="@dimen/_35sdp"
+            android:layout_marginBottom="@dimen/_38ssp"
+            android:background="@drawable/btn_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:visibility="@{type==2?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/clNext"
+            app:layout_constraintStart_toStartOf="@+id/ivProgress">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_13sdp"
+                android:rotation="-180"
+                android:src="@drawable/next"
+                app:layout_constraintBottom_toBottomOf="@+id/tvBack"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvBack"
+
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvBack"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="@string/back"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivBack"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

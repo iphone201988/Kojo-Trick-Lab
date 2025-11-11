@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/splash"
-        tools:context=".ui.auth.MySplashActivity">
+        tools:context=".ui.MySplashActivity">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
@@ -35,7 +35,8 @@
             android:layout_marginBottom="@dimen/_20sdp"
             android:background="@drawable/button_inner_shadow"
             android:gravity="center"
-            android:text="Let’s Get Started"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:text="@string/let_s_get_started"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent" />
 

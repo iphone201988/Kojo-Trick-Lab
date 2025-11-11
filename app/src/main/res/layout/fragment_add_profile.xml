@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.auth.AuthCommonVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.auth.add_profile.AddProfileFragment">
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBgProfile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_207sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:src="@drawable/profile_bg"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="@dimen/_106sdp"
+            android:layout_height="@dimen/_106sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:src="@drawable/person_holder"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="@+id/ivBgProfile"
+            app:layout_constraintStart_toStartOf="@+id/ivBgProfile"
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clUpload"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@drawable/et_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivBgProfile">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvUpload"
+                style="@style/TextView_600_SemiBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12ssp"
+                android:text="@string/upload_profile_picture"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivUpload"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivUpload" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivUpload"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:src="@drawable/upload"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvUpload"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clChoose"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@drawable/et_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clUpload">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvChoose"
+                style="@style/TextView_600_SemiBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12ssp"
+                android:text="@string/choose_skin"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivChoose"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivChoose" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivChoose"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:padding="5dp"
+                android:src="@drawable/outline_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnContinue"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginBottom="@dimen/_25sdp"
+            android:background="@drawable/et_bg"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:text="@string/continues"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toEndOf="@+id/clChoose"
+            app:layout_constraintStart_toStartOf="@+id/clChoose"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

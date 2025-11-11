@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.auth.AuthCommonVM" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fitsSystemWindows="true"
+        android:fillViewport="true"
+        android:paddingBottom="@dimen/_15sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".ui.auth.add_profile.SetupFragment">
+
+            <include
+                android:id="@+id/clCommon"
+                layout="@layout/common_header"
+                app:vm="@{vm}" />
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etTricking"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/tricking_nickname"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusForward="@+id/etSignature"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etCountry"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:focusable="false"
+                android:gravity="start"
+                android:hint="@string/select_country"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etTricking" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCountry"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/outline_down"
+                app:layout_constraintBottom_toBottomOf="@+id/etCountry"
+                app:layout_constraintEnd_toEndOf="@+id/etCountry"
+                app:layout_constraintTop_toTopOf="@+id/etCountry" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etTime"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:focusable="false"
+                android:gravity="start"
+                android:hint="@string/time_tricking"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etCountry" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivTime"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/outline_down"
+                app:layout_constraintBottom_toBottomOf="@+id/etTime"
+                app:layout_constraintEnd_toEndOf="@+id/etTime"
+                app:layout_constraintTop_toTopOf="@+id/etTime" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etSignature"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/signature_trick"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusForward="@id/etDream"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etTime" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etDream"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/dream_trick"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusForward="@id/etInstagram"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etSignature" />
+
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etInstagram"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/instagram"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusForward="@id/etTikTok"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etDream" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etTikTok"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/tiktok"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusForward="@id/etYouTube"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etInstagram" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etYouTube"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/youtube"
+                android:imeOptions="actionDone"
+                android:inputType="textPersonName"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etTricking"
+                app:layout_constraintStart_toStartOf="@+id/etTricking"
+                app:layout_constraintTop_toBottomOf="@+id/etTikTok" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btnConfirm"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_marginTop="@dimen/_95sdp"
+                android:background="@drawable/et_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:text="@string/confirm"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etYouTube"
+                app:layout_constraintStart_toStartOf="@+id/etYouTube"
+                app:layout_constraintTop_toBottomOf="@+id/etYouTube" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>
