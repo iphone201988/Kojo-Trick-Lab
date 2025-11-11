@@ -20,6 +20,15 @@ object BindingUtils {
         }
     }
 
+    @BindingAdapter("setImageFromDrawbale")
+    @JvmStatic
+    fun setImageFromDrawbale(image: ShapeableImageView, url: Int?) {
+        if (url != null) {
+            Glide.with(image.context).load(url).placeholder(R.drawable.dummy_image)
+                .error(R.drawable.user).into(image)
+        }
+    }
+
 
     fun styleSystemBars(activity: Activity, color: Int) {
         activity.window.navigationBarColor = color
