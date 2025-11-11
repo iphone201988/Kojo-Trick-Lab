@@ -5,9 +5,9 @@ import androidx.activity.viewModels
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.base.utils.Status
-import com.example.newbase_2025.base.utils.showErrorToast
-import com.example.newbase_2025.base.utils.showSuccessToast
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
+import com.example.newbase_2025.utils.showSuccessToast
 import com.example.newbase_2025.data.model.DummyApiItem
 import com.example.newbase_2025.databinding.ActivityMainBinding
 import com.example.newbase_2025.databinding.HolderDummyBinding

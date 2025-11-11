@@ -8,7 +8,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.utils.BindingUtils
 import com.example.newbase_2025.databinding.ActivityMySplashBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
 import com.example.newbase_2025.ui.onboarding.OnBoardingActivity

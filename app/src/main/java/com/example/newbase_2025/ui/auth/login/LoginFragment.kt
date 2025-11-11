@@ -1,5 +1,6 @@
 package com.example.newbase_2025.ui.auth.login
 
+import android.content.Intent
 import android.text.InputType
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -7,9 +8,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.utils.BindingUtils
+import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.FragmentLoginBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
+import com.example.newbase_2025.ui.dashboard.DashBoardActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,7 +50,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
 
                 R.id.ivBack -> {
-                  requireActivity().finish()
+                    requireActivity().finish()
                 }
 
                 R.id.ivHidePassword -> {
@@ -56,6 +58,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                         showOrHidePassword()
                     }
 
+                }
+
+                R.id.btnLogin -> {
+                    val intent = Intent(requireContext(), DashBoardActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish()
                 }
 
                 R.id.tvSignup -> {

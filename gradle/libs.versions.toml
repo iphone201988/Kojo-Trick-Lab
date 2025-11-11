@@ -22,6 +22,7 @@ okhttp = "5.0.0-alpha.3"
 playServicesLocation = "21.3.0"
 sdpAndroid = "1.1.0"
 navigationFragmentKtx = "2.7.7"
+imagepicker = "2.1"
 navigationUiKtx = "2.7.7"
 sspAndroid = "1.1.0"
 
@@ -50,6 +51,7 @@ dagger_compiler = { group = "com.google.dagger", name = "dagger-compiler", versi
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterMoshi" }
+imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 

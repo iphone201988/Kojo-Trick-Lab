@@ -10,6 +10,7 @@ import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.FragmentPasswordChangeSuccessfullyBinding
 import com.example.newbase_2025.ui.auth.AuthActivity
 import com.example.newbase_2025.ui.auth.AuthCommonVM
+import com.example.newbase_2025.ui.dashboard.DashBoardActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -32,11 +33,11 @@ class PasswordChangeSuccessfullyFragment :
         initOnClick()
         successfulType = args.successfulType
         if (successfulType.equals("passwordChange")){
-            binding.tvChange.text = "Your account\npassword changed\nsuccessfully"
-            binding.btnLogin.text = "Login"
+            binding.tvChange.text = getString(R.string.your_account_npassword_changed_nsuccessfully)
+            binding.btnLogin.text = getString(R.string.login)
         }else{
-            binding.tvChange.text = "Your account was\nsuccessfully created!"
-            binding.btnLogin.text = "Done"
+            binding.tvChange.text = getString(R.string.your_account_was_successfully_created)
+            binding.btnLogin.text = getString(R.string.done)
         }
 
     }
@@ -54,7 +55,9 @@ class PasswordChangeSuccessfullyFragment :
                         startActivity(intent)
                         requireActivity().finishAffinity()
                     }else{
-
+                        val intent = Intent(requireContext(), DashBoardActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
                     }
 
                 }

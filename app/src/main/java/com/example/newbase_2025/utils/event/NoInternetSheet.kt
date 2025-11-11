@@ -1,4 +1,4 @@
-package com.example.newbase_2025.base.utils.event
+package com.example.newbase_2025.utils.event
 
 import android.app.Dialog
 import android.os.Bundle

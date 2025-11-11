@@ -1,6 +1,5 @@
 package com.example.newbase_2025.ui.dashboard
 
-import android.graphics.PorterDuff
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -12,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.utils.BindingUtils
+import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.ActivityDashBoardBinding
 import com.example.newbase_2025.ui.dashboard.home.HomeFragment
 import com.example.newbase_2025.ui.dashboard.library.LibraryFragment

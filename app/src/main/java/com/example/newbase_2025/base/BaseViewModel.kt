@@ -2,7 +2,7 @@ package com.example.newbase_2025.base
 
 import android.view.View
 import androidx.lifecycle.ViewModel
-import com.example.newbase_2025.base.utils.event.SingleActionEvent
+import com.example.newbase_2025.utils.event.SingleActionEvent
 import okhttp3.ResponseBody
 import org.json.JSONObject
 

@@ -1,6 +1,7 @@
-package com.example.newbase_2025.base.utils
+package com.example.newbase_2025.utils
 
 import com.google.gson.Gson
+import okhttp3.ResponseBody
 
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
 
@@ -13,7 +14,7 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
         fun <T> error(msg: String?, data: T?): Resource<T> {
             return Resource(Status.ERROR, data, msg)
         }
-        inline fun <reified T> errorBody(msg: okhttp3.ResponseBody?, data: T?): Resource<T> {
+        inline fun <reified T> errorBody(msg: ResponseBody?, data: T?): Resource<T> {
             val gson = Gson()
             val rawJson = msg?.string()
             if (isHtmlContent(rawJson)) {

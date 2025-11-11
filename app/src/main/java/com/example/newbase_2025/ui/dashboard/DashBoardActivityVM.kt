@@ -1,17 +1,13 @@
 package com.example.newbase_2025.ui.dashboard
 
-import androidx.lifecycle.viewModelScope
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.utils.Resource
-import com.example.newbase_2025.base.utils.event.SingleRequestEvent
+import com.example.newbase_2025.utils.Resource
+import com.example.newbase_2025.utils.event.SingleRequestEvent
 import com.example.newbase_2025.data.api.ApiHelper
-import com.example.newbase_2025.data.api.Constants
-import com.example.newbase_2025.data.model.DummyApiResponseModel
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

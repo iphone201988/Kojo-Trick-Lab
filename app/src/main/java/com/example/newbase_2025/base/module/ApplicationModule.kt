@@ -3,7 +3,7 @@ package com.example.newbase_2025.base.module
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.newbase_2025.base.utils.event.NetworkErrorHandler
+import com.example.newbase_2025.utils.event.NetworkErrorHandler
 import com.example.newbase_2025.data.api.ApiHelper
 import com.example.newbase_2025.data.api.ApiHelperImpl
 import com.example.newbase_2025.data.api.ApiService

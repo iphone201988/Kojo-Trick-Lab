@@ -1,5 +1,6 @@
-package com.example.newbase_2025.base.utils
+package com.example.newbase_2025.utils
 
+import android.R
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 
@@ -31,7 +32,7 @@ object AlertManager {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(title)
         message?.let { builder.setMessage(message) }
-        builder.setIcon(android.R.drawable.ic_dialog_alert)
+        builder.setIcon(R.drawable.ic_dialog_alert)
         builder.setNegativeButton("Ok") { dialogInterface, which ->
             dialogInterface.dismiss()
             action?.invoke()

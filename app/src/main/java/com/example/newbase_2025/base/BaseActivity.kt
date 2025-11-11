@@ -18,10 +18,10 @@ import com.example.newbase_2025.base.local.SharedPrefManager
 import com.example.newbase_2025.base.connectivity.ConnectivityProvider
 import com.example.newbase_2025.base.network.ErrorCodes
 import com.example.newbase_2025.base.network.NetworkError
-import com.example.newbase_2025.base.utils.AlertManager
-import com.example.newbase_2025.base.utils.event.NoInternetSheet
+import com.example.newbase_2025.utils.AlertManager
+import com.example.newbase_2025.utils.event.NoInternetSheet
 import com.example.newbase_2025.databinding.ViewProgressSheetBinding
-import com.example.newbase_2025.base.utils.hideKeyboard
+import com.example.newbase_2025.utils.hideKeyboard
 import javax.inject.Inject
 
 abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),

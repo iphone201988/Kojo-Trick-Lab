@@ -9,7 +9,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.example.newbase_2025.BR
 import com.example.newbase_2025.base.local.SharedPrefManager
-import com.example.newbase_2025.base.utils.hideKeyboard
+import com.example.newbase_2025.utils.hideKeyboard
 import javax.inject.Inject
 
 

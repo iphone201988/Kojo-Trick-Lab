@@ -69,6 +69,7 @@ dependencies {
     kapt(libs.dagger.compiler)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.imagepicker)
     implementation (libs.lottie)
     implementation (libs.converter.gson)
 }

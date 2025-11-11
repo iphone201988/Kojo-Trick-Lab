@@ -1,5 +1,4 @@
-
-package com.example.newbase_2025.base.utils.event
+package com.example.newbase_2025.utils.event
 import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner

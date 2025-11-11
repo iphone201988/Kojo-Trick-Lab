@@ -38,6 +38,7 @@
             android:layout_height="@dimen/_106sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:src="@drawable/person_holder"
+            android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
             app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
             app:layout_constraintEnd_toEndOf="@+id/ivBgProfile"

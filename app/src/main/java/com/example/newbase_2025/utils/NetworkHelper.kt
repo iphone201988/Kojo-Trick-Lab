@@ -1,4 +1,4 @@
-package com.example.newbase_2025.base.utils
+package com.example.newbase_2025.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

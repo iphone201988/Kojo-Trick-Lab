@@ -7,10 +7,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.utils.BindingUtils
+import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.FragmentResetPasswordBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
-import com.example.newbase_2025.ui.auth.login.LoginFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 

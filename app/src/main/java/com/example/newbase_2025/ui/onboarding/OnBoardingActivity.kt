@@ -9,7 +9,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.utils.BindingUtils
 import com.example.newbase_2025.databinding.ActivityOnBoardingBinding
 import com.example.newbase_2025.ui.auth.AuthActivity
 import dagger.hilt.android.AndroidEntryPoint
