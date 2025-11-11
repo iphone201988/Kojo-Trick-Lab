@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">KojoTrickLab</string>
+
+    <string name="session_expired">session_expired</string>
+    <string name="alert">Alert</string>
+    <string name="post_detail">Post Detail</string>
+    <string name="please_try_again">Please try again</string>
+    <string name="plz_wait">Plz wait</string>
+    <string name="error_found">Error Found</string>
+    <string name="click_me">Click Me</string>
+    <string name="android_base_2025">Android Base 2025</string>
+    <string name="todo">TODO</string>
+</resources>

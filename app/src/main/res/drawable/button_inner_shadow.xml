@@ -1,0 +1,26 @@
+<!-- res/drawable/button_inner_shadow.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Base button background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimary" />
+            <corners android:radius="@dimen/_10sdp" />
+        </shape>
+    </item>
+
+  <!--  &lt;!&ndash; Inner shadow overlay &ndash;&gt;
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="@dimen/_12sdp" />
+            <stroke android:width="@dimen/_8sdp" android:color="#26000000" />
+            <padding
+                android:left="0dp"
+                android:top="@dimen/_4sdp"
+                android:right="@dimen/_4sdp"
+                android:bottom="0dp" />
+        </shape>
+    </item>-->
+
+</layer-list>
