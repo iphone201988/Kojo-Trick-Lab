@@ -11,11 +11,12 @@ import androidx.fragment.app.Fragment
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.ActivityDashBoardBinding
 import com.example.newbase_2025.ui.dashboard.home.HomeFragment
 import com.example.newbase_2025.ui.dashboard.library.LibraryFragment
+import com.example.newbase_2025.ui.dashboard.profile.ProfileFragment
 import com.example.newbase_2025.ui.dashboard.tracker.TrackerFragment
+import com.example.newbase_2025.utils.BindingUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,11 +45,27 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
     private fun setupBottomNav() {
         val tabs = listOf(
-            Triple(binding.navHome, binding.navHome.getChildAt(0) as ImageView, binding.navHome.getChildAt(1) as TextView),
-            Triple(binding.navLibrary, binding.navLibrary.getChildAt(0) as ImageView, binding.navLibrary.getChildAt(1) as TextView),
-            Triple(binding.navTracker, binding.navTracker.getChildAt(0) as ImageView, binding.navTracker.getChildAt(1) as TextView),
-            Triple(binding.navCommunity, binding.navCommunity.getChildAt(0) as ImageView, binding.navCommunity.getChildAt(1) as TextView),
-            Triple(binding.navProfile, binding.navProfile.getChildAt(0) as ImageView, binding.navProfile.getChildAt(1) as TextView)
+            Triple(
+                binding.navHome,
+                binding.navHome.getChildAt(0) as ImageView,
+                binding.navHome.getChildAt(1) as TextView
+            ), Triple(
+                binding.navLibrary,
+                binding.navLibrary.getChildAt(0) as ImageView,
+                binding.navLibrary.getChildAt(1) as TextView
+            ), Triple(
+                binding.navTracker,
+                binding.navTracker.getChildAt(0) as ImageView,
+                binding.navTracker.getChildAt(1) as TextView
+            ), Triple(
+                binding.navCommunity,
+                binding.navCommunity.getChildAt(0) as ImageView,
+                binding.navCommunity.getChildAt(1) as TextView
+            ), Triple(
+                binding.navProfile,
+                binding.navProfile.getChildAt(0) as ImageView,
+                binding.navProfile.getChildAt(1) as TextView
+            )
         )
 
         tabs.forEach { (tab, icon, text) ->
@@ -60,7 +77,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     if (t.id != R.id.nav_profile) {
                         i.setColorFilter(ContextCompat.getColor(this, android.R.color.white))
                         txt.setTextColor(ContextCompat.getColor(this, android.R.color.white))
-                    }else{
+                    } else {
                         txt.setTextColor(ContextCompat.getColor(this, android.R.color.white))
                     }
                 }
@@ -72,7 +89,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                 if (tab.id != R.id.nav_profile) {
                     icon.setColorFilter(ContextCompat.getColor(this, R.color.nav_selected_icon))
                     text.setTextColor(ContextCompat.getColor(this, R.color.nav_selected_text))
-                }else{
+                } else {
                     text.setTextColor(ContextCompat.getColor(this, R.color.nav_selected_text))
                 }
 
@@ -82,21 +99,25 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                         binding.type = 1
                         showFragment(HomeFragment())
                     }
+
                     R.id.nav_library -> {
                         binding.type = 1
                         showFragment(LibraryFragment())
                     }
+
                     R.id.nav_tracker -> {
                         binding.type = 2
                         showFragment(TrackerFragment())
                     }
+
                     R.id.nav_community -> {
                         binding.type = 1
                         showFragment(HomeFragment())
                     }
+
                     R.id.nav_profile -> {
                         binding.type = 1
-                        showFragment(HomeFragment())
+                        showFragment(ProfileFragment())
                     }
                 }
             }
@@ -104,11 +125,8 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     }
 
 
-
-
     private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
             .commit()
     }
 

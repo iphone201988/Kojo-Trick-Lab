@@ -44,6 +44,7 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
     private var photoFile2: File? = null
     private var photoURI: Uri? = null
     private var multipartPart: MultipartBody.Part? = null
+
     override fun getLayoutResource(): Int {
         return R.layout.fragment_add_profile
     }
@@ -81,16 +82,14 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
         }
     }
 
-
     /**** image pick dialog  handel ***/
     private fun imageDialog() {
         imageDialog = BaseCustomDialog(requireActivity(), R.layout.video_image_picker_dialog_box) {
             when (it.id) {
                 R.id.tvCamera, R.id.imageCamera -> {
                     if (!BindingUtils.hasPermissions(
-                            requireActivity(), BindingUtils.permissions
-                        )
-                    ) {
+                            requireActivity(), BindingUtils.permissions))
+                    {
                         permissionResultLauncher1.launch(BindingUtils.permissions)
                     } else {
                         // camera

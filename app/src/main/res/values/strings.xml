@@ -52,4 +52,7 @@
     <string name="track_your_tricks_amp_milestones"><![CDATA[Track your tricks & milestones]]></string>
     <string name="my_tricks">My Tricks</string>
     <string name="see_all_the_tricks_that_you_started_and_is_still_in_nprogressions">See all the tricks that you started and is still in\nprogressions.</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="country">Country</string>
+    <string name="social_media_links">Social Media Links</string>
 </resources>
