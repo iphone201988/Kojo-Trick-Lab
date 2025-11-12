@@ -20,11 +20,13 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
     private val viewModel: TrackerFragmentVM by viewModels()
     private lateinit var trickAdapter: SimpleRecyclerViewAdapter<TrickData, TrickRvLayoutItemBinding>
     override fun getLayoutResource(): Int {
+
         return R.layout.fragment_tracker
     }
 
 
     override fun getViewModel(): BaseViewModel {
+
         return viewModel
     }
 
