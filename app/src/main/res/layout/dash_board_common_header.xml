@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.base.BaseViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/_20sdp"
+        android:background="@color/white">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:src="@drawable/left_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/_18sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/widget"
+            app:layout_constraintTop_toTopOf="@+id/widget"
+            android:src="@drawable/notification"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivSearch"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            app:layout_constraintEnd_toStartOf="@+id/ivNotification"
+            android:layout_marginEnd="@dimen/_6sdp"
+            app:layout_constraintTop_toTopOf="@+id/ivNotification"
+            app:layout_constraintBottom_toBottomOf="@+id/ivNotification"
+            android:src="@drawable/search_icon"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

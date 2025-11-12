@@ -1,0 +1,13 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/common_navigation"
+    tools:ignore="InvalidNavigation">
+
+
+    <fragment
+        android:id="@+id/fragmentMyTrick"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.my_trick.MyTrickFragment"
+        tools:layout="@layout/fragment_my_trick" />
+
+
+</navigation>
