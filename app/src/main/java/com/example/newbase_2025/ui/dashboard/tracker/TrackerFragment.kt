@@ -1,5 +1,6 @@
 package com.example.newbase_2025.ui.dashboard.tracker
 
+import android.content.Intent
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.newbase_2025.BR
@@ -7,18 +8,17 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.DummyHome
-import com.example.newbase_2025.data.model.TrickData
+import com.example.newbase_2025.data.model.TrackerData
 import com.example.newbase_2025.databinding.FragmentTrackerBinding
-import com.example.newbase_2025.databinding.HolderDummyBinding
 import com.example.newbase_2025.databinding.TrickRvLayoutItemBinding
+import com.example.newbase_2025.ui.common.CommonActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
     private val viewModel: TrackerFragmentVM by viewModels()
-    private lateinit var trickAdapter: SimpleRecyclerViewAdapter<TrickData, TrickRvLayoutItemBinding>
+    private lateinit var trickAdapter: SimpleRecyclerViewAdapter<TrackerData, TrickRvLayoutItemBinding>
     override fun getLayoutResource(): Int {
 
         return R.layout.fragment_tracker
@@ -26,36 +26,44 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
 
 
     override fun getViewModel(): BaseViewModel {
-
         return viewModel
     }
 
     override fun onCreateView(view: View) {
         // adapter
-        initAdapter()
+        initTrickAdapter()
     }
 
 
-    private fun initAdapter() {
-        trickAdapter = SimpleRecyclerViewAdapter(R.layout.trick_rv_layout_item, BR.bean) { v, m, _ ->
-            when(v?.id){
-                R.id.cardView->{
-
+    /**
+     * Initialize adapter
+     */
+    private fun initTrickAdapter() {
+        trickAdapter =
+            SimpleRecyclerViewAdapter(R.layout.trick_rv_layout_item, BR.bean) { v, m, _ ->
+                when (v?.id) {
+                    R.id.cardView -> {
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "myTrick")
+                        startActivity(intent)
+                    }
                 }
-            }
 
-        }
+            }
         binding.rvTrick.adapter = trickAdapter
         trickAdapter.list = getDummyTrickList()
     }
 
-    private fun getDummyTrickList(): ArrayList<TrickData> {
+    /**
+     * Get dummy trick list
+     */
+    private fun getDummyTrickList(): ArrayList<TrackerData> {
         val dummyList = arrayListOf(
-            TrickData(R.drawable.home_list_dummy,"My Tricks"),
-            TrickData(R.drawable.home_list_dummy,"Combo Goals"),
-            TrickData(R.drawable.home_list_dummy,"Session Planner"),
-            TrickData(R.drawable.home_list_dummy,"Tricking Milestones"),
-            TrickData(R.drawable.home_list_dummy,"My Stats"),
+            TrackerData(R.drawable.home_list_dummy, "My Tricks"),
+            TrackerData(R.drawable.home_list_dummy, "Combo Goals"),
+            TrackerData(R.drawable.home_list_dummy, "Session Planner"),
+            TrackerData(R.drawable.home_list_dummy, "Tricking Milestones"),
+            TrackerData(R.drawable.home_list_dummy, "My Stats"),
         )
         return dummyList
     }

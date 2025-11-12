@@ -10,7 +10,14 @@ data class DummyHome(
     val image: Int
 )
 
-data class TrickData(
-    val image: Int,
-    val title : String
+data class TrackerData(
+    val image: Int, val title: String
+)
+
+data class MyTrickData(
+    val image: Int, val title: String, var check: Boolean = false, var subTitle: ArrayList<SubTitle>
+)
+
+data class SubTitle(
+    val title: String
 )

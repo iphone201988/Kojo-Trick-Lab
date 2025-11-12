@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.TrickData" />
+            type="com.example.newbase_2025.data.model.TrackerData" />
 
         <variable
             name="pos"
@@ -52,17 +50,18 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv1"
                 style="@style/TextView_700_Bold"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:gravity="center"
-                android:text="Vertical Kicks"
+                android:text="@{bean.title}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

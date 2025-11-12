@@ -50,4 +50,6 @@
     <string name="your_account_was_successfully_created">Your account was\nsuccessfully created!</string>
     <string name="progress_tracker">Progress Tracker</string>
     <string name="track_your_tricks_amp_milestones"><![CDATA[Track your tricks & milestones]]></string>
+    <string name="my_tricks">My Tricks</string>
+    <string name="see_all_the_tricks_that_you_started_and_is_still_in_nprogressions">See all the tricks that you started and is still in\nprogressions.</string>
 </resources>
