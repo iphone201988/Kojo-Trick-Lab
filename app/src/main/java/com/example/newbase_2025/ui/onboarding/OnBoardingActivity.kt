@@ -11,6 +11,7 @@ import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.ActivityOnBoardingBinding
 import com.example.newbase_2025.ui.auth.AuthActivity
+import com.example.newbase_2025.utils.BindingUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,6 +26,14 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
     }
 
     override fun onCreateView() {
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        BindingUtils.statusBarStyleWhite(this)
         binding.type =1
         // view
         initView()
@@ -68,6 +77,7 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
                     }else{
                         val intent = Intent(this@OnBoardingActivity, AuthActivity::class.java)
                         startActivity(intent)
+                        finish()
                     }
                 }
 

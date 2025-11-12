@@ -9,3 +9,8 @@ data class DummyApiItem(
 data class DummyHome(
     val image: Int
 )
+
+data class TrickData(
+    val image: Int,
+    val title : String
+)

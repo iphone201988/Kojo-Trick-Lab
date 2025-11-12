@@ -32,18 +32,43 @@
             app:layout_constraintTop_toBottomOf="@+id/clCommon" />
 
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivProfile"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle1"
             android:layout_width="@dimen/_106sdp"
             android:layout_height="@dimen/_106sdp"
             android:onClick="@{v->vm.onClick(v)}"
-            android:src="@drawable/person_holder"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+            android:background="@drawable/holder_dummy"
             app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
-            app:layout_constraintEnd_toEndOf="@+id/ivBgProfile"
-            app:layout_constraintStart_toStartOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle"
+            android:layout_width="@dimen/_106sdp"
+            android:layout_height="@dimen/_106sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:background="@drawable/bg_circle"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="@dimen/_103sdp"
+            android:layout_height="@dimen/_103sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
+            app:layout_constraintEnd_toEndOf="@+id/ivCircle"
+            app:layout_constraintStart_toStartOf="@+id/ivCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivCircle"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
 
 

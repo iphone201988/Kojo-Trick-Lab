@@ -48,4 +48,6 @@
     <string name="explore_tricks_by_category">Explore tricks by category</string>
     <string name="done">Done</string>
     <string name="your_account_was_successfully_created">Your account was\nsuccessfully created!</string>
+    <string name="progress_tracker">Progress Tracker</string>
+    <string name="track_your_tricks_amp_milestones"><![CDATA[Track your tricks & milestones]]></string>
 </resources>

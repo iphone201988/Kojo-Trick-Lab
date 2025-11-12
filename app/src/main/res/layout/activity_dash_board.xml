@@ -7,6 +7,12 @@
         <variable
             name="vm"
             type="com.example.newbase_2025.ui.dashboard.DashBoardActivityVM" />
+
+        <variable
+            name="type"
+            type="Integer" />
+
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,18 +26,62 @@
             android:id="@+id/ivTopLogo"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:visibility="@{type==1?View.VISIBLE:View.INVISIBLE}"
             android:layout_width="0dp"
             app:layout_constraintEnd_toEndOf="@+id/guideline"
             android:layout_height="@dimen/_35sdp"
             android:src="@drawable/only_logo"/>
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle"
+            android:layout_width="@dimen/_33sdp"
+            android:layout_height="@dimen/_33sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:visibility="@{type==2?View.VISIBLE:View.GONE}"
+            android:background="@drawable/bg_circle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:scaleType="centerCrop"
+            android:src="@drawable/dummy_image"
+            android:visibility="@{type==2?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
+            app:layout_constraintEnd_toEndOf="@+id/ivCircle"
+            app:layout_constraintStart_toStartOf="@+id/ivCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivCircle"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvUpload"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:text="Jhon Doe"
+            android:visibility="@{type==2?View.VISIBLE:View.GONE}"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
+            app:layout_constraintStart_toEndOf="@+id/ivCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivCircle" />
+
+
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivNotification"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
             app:layout_constraintBottom_toBottomOf="@+id/ivTopLogo"
             app:layout_constraintTop_toTopOf="@+id/ivTopLogo"
             android:src="@drawable/notification"/>

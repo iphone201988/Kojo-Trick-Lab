@@ -15,6 +15,7 @@ import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.ActivityDashBoardBinding
 import com.example.newbase_2025.ui.dashboard.home.HomeFragment
 import com.example.newbase_2025.ui.dashboard.library.LibraryFragment
+import com.example.newbase_2025.ui.dashboard.tracker.TrackerFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,7 +36,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        binding.type = 1
         BindingUtils.statusBarStyleWhite(this)
         setupBottomNav()
         binding.navHome.performClick()
@@ -77,11 +78,26 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
                 // Handle navigation
                 when (tab.id) {
-                    R.id.nav_home -> showFragment(HomeFragment())
-                    R.id.nav_library -> showFragment(LibraryFragment())
-                    R.id.nav_tracker -> showFragment(HomeFragment())
-                    R.id.nav_community -> showFragment(HomeFragment())
-                    R.id.nav_profile -> showFragment(HomeFragment())
+                    R.id.nav_home -> {
+                        binding.type = 1
+                        showFragment(HomeFragment())
+                    }
+                    R.id.nav_library -> {
+                        binding.type = 1
+                        showFragment(LibraryFragment())
+                    }
+                    R.id.nav_tracker -> {
+                        binding.type = 2
+                        showFragment(TrackerFragment())
+                    }
+                    R.id.nav_community -> {
+                        binding.type = 1
+                        showFragment(HomeFragment())
+                    }
+                    R.id.nav_profile -> {
+                        binding.type = 1
+                        showFragment(HomeFragment())
+                    }
                 }
             }
         }

@@ -32,10 +32,6 @@
         tools:targetApi="31">
         <activity
             android:name=".ui.dashboard.DashBoardActivity"
-            android:exported="true" />
-        <activity
-            android:name=".ui.auth.AuthActivity"
-            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,17 +40,23 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
+        <activity
             android:name=".ui.onboarding.OnBoardingActivity"
             android:exported="false" />
         <activity
             android:name=".ui.MySplashActivity"
             android:exported="true"
             android:theme="@style/FullScreenTheme">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
 
 

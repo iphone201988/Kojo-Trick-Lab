@@ -158,6 +158,9 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                 val imageUri = data?.data
                 imageUri?.let { uri ->
                     try {
+                        binding.ivCircle1.visibility= View.GONE
+                        binding.ivCircle.visibility= View.VISIBLE
+                        binding.ivProfile.visibility= View.VISIBLE
                         Glide.with(requireActivity()).load(imageUri)
                             .into(binding.ivProfile)
                         multipartPart = convertMultipartPartGal(uri)
@@ -213,6 +216,9 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                     photoURI?.let { uri ->
                         lifecycleScope.launch {
                             try {
+                                binding.ivCircle1.visibility= View.GONE
+                                binding.ivCircle.visibility= View.VISIBLE
+                                binding.ivProfile.visibility= View.VISIBLE
                                 Glide.with(requireActivity())
                                     .load(uri)
                                     .into(binding.ivProfile)

@@ -1,12 +1,16 @@
 package com.example.newbase_2025.ui.auth
 
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.ActivityAuthBinding
+import com.example.newbase_2025.utils.BindingUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +31,8 @@ class AuthActivity : BaseActivity<ActivityAuthBinding>() {
     }
 
     override fun onCreateView() {
+
+        BindingUtils.statusBarStyleWhite(this)
         navController.graph =
             navController.navInflater.inflate(R.navigation.auth_section_navigation).apply {
                 setStartDestination(R.id.fragmentLogin)
