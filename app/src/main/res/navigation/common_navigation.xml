@@ -144,4 +144,14 @@
         android:name="com.example.newbase_2025.ui.dashboard.library.all_video.AllVideoFragment"
         tools:layout="@layout/fragment_all_video" />
 
+    <fragment
+        android:id="@+id/fragmentSessionPlanner"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.session_planner.SessionPlannerFragment"
+        tools:layout="@layout/fragment_session_planner" />
+
+    <fragment
+        android:id="@+id/fragmentViewAllSession"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.session_planner.view_all.ViewAllSessionFragment"
+        tools:layout="@layout/fragment_view_all_session" />
+
 </navigation>

@@ -179,6 +179,14 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentNotificationNew)
                         navController.setGraph(graph, null)
                     }
+                    "sessionPlanner" ->{
+                        graph.setStartDestination(R.id.fragmentSessionPlanner)
+                        navController.setGraph(graph, null)
+                    }
+                    "allSession" ->{
+                        graph.setStartDestination(R.id.fragmentViewAllSession)
+                        navController.setGraph(graph, null)
+                    }
 
                     else -> {
                         graph.setStartDestination(R.id.fragmentMyTrick)

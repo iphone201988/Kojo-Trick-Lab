@@ -53,6 +53,12 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
                         intent.putExtra("fromWhere", "trickingMilestones")
                         startActivity(intent)
                     }
+
+                    2 ->{
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "sessionPlanner")
+                        startActivity(intent)
+                    }
                 }
 
             }

@@ -80,4 +80,9 @@
     <string name="enter_new_password">Enter New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="buy_plan">Buy Plan</string>
+    <string name="add_sessions_to_calendar_to_get_notified">Add sessions to calendar to get notified.</string>
+    <string name="next_sessions">Next Sessions</string>
+    <string name="upcoming_sessions">Upcoming sessions</string>
+    <string name="view_all">View All</string>
+    <string name="clear_all">Clear All</string>
 </resources>

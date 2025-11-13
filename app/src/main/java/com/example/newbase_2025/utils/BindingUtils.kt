@@ -147,6 +147,27 @@ object BindingUtils {
         }
     }
 
+    @BindingAdapter("setLayoutBg")
+    @JvmStatic
+    fun setLayoutBg(image: ConstraintLayout, type: Int?) {
+        if (type != null) {
+            when(type){
+                1->{
+                    image.setBackgroundResource(R.drawable.red_card_bg)
+                }
+                2->{
+                    image.setBackgroundResource(R.drawable.green_card_bg)
+                }
+                3->{
+                    image.setBackgroundResource(R.drawable.orange_card_bg)
+                }
+                4->{
+                    image.setBackgroundResource(R.drawable.purple_card_bg)
+                }
+            }
+        }
+    }
+
 
 
     @BindingAdapter("childNotificationAdapter")

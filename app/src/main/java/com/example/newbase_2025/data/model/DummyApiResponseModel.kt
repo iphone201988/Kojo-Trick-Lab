@@ -62,3 +62,8 @@ data class SeriesData(
 data class AllVideoData(
      val title: String, var check: Boolean = false,
 )
+
+data class SessionPlannerData(
+   var type: Int,
+)
+

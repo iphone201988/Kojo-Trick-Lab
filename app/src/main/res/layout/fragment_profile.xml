@@ -84,7 +84,7 @@
                 android:paddingVertical="@dimen/_5sdp"
                 android:text="@string/edit_profile"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_9ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -102,7 +102,7 @@
                 android:paddingVertical="@dimen/_5sdp"
                 android:text="Edit Profile Pic"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_9ssp"
                 app:layout_constraintEnd_toStartOf="@+id/tvEditProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -116,7 +116,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/tricking_nickname"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ivBgProfile" />
 
@@ -130,7 +130,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:text="TrickerJohn"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTricking" />
 
@@ -143,7 +143,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/country"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTrickingNickName" />
 
@@ -156,7 +156,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:text="USA"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvCountry" />
 
@@ -170,7 +170,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/time_tricking"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvCountryName" />
 
@@ -184,7 +184,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:text="3+ years"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTimeTricking" />
 
@@ -197,7 +197,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/signature_trick"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvTimeTrickingValue" />
 
@@ -210,7 +210,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:text="Vert kick"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvSignatureTrick" />
 
@@ -224,7 +224,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/dream_trick"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvSignatureTrickValue" />
 
@@ -238,7 +238,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:text="Super Man Frount"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDreamTrick" />
 
@@ -252,7 +252,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:text="@string/social_media_links"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDreamTrickValue" />
 
