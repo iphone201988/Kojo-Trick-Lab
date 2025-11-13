@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.dashboard.stat_visibility.StatVisibilityVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.dashboard.stat_visibility.StatVisibilityFragment">
+
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etEmail"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="center|start"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show Tricking Level"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etEmail"
+                app:layout_constraintEnd_toEndOf="@+id/etEmail"
+                app:layout_constraintTop_toTopOf="@+id/etEmail" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etReminder"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show Favourite Trick"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etReminder"
+                app:layout_constraintEnd_toEndOf="@+id/etReminder"
+                app:layout_constraintTop_toTopOf="@+id/etReminder" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etNewVideoAlerts"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show Best Trick"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etReminder" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchNewVideoAlerts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etNewVideoAlerts"
+                app:layout_constraintEnd_toEndOf="@+id/etNewVideoAlerts"
+                app:layout_constraintTop_toTopOf="@+id/etNewVideoAlerts" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etShowPBs"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show PBs"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etNewVideoAlerts" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchShowPBs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etShowPBs"
+                app:layout_constraintEnd_toEndOf="@+id/etShowPBs"
+                app:layout_constraintTop_toTopOf="@+id/etShowPBs" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etShowTimeSubscribed"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show Time Subscribed"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etShowPBs" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchShowTimeSubscribed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etShowTimeSubscribed"
+                app:layout_constraintEnd_toEndOf="@+id/etShowTimeSubscribed"
+                app:layout_constraintTop_toTopOf="@+id/etShowTimeSubscribed" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etShowTimeTricking"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show Time Tricking"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etShowTimeSubscribed" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchShowTimeTricking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etShowTimeTricking"
+                app:layout_constraintEnd_toEndOf="@+id/etShowTimeTricking"
+                app:layout_constraintTop_toTopOf="@+id/etShowTimeTricking" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etShowMostTrick"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Show Most Practiced Trick"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etShowTimeTricking" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchShowMostTrick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track"
+                app:layout_constraintBottom_toBottomOf="@+id/etShowMostTrick"
+                app:layout_constraintEnd_toEndOf="@+id/etShowMostTrick"
+                app:layout_constraintTop_toTopOf="@+id/etShowMostTrick" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/btnLogin"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                android:background="@drawable/et_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:text="@string/update"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/etShowMostTrick"
+                app:layout_constraintStart_toStartOf="@+id/etShowMostTrick" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

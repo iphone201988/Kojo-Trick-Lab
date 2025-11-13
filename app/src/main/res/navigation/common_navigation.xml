@@ -101,4 +101,27 @@
         android:name="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragment"
         tools:layout="@layout/fragment_series" />
 
+
+    <fragment
+        android:id="@+id/fragmentNotification"
+        android:name="com.example.newbase_2025.ui.notification.NotificationFragment"
+        tools:layout="@layout/fragment_notification" />
+
+    <fragment
+        android:id="@+id/fragmentChangePassword"
+        android:name="com.example.newbase_2025.ui.dashboard.change_password.ChangePasswordFragment"
+        tools:layout="@layout/fragment_change_password" />
+
+
+    <fragment
+        android:id="@+id/fragmentStatVisibility"
+        android:name="com.example.newbase_2025.ui.dashboard.stat_visibility.StatVisibilityFragment"
+        tools:layout="@layout/fragment_stat_visibility" />
+
+
+    <fragment
+        android:id="@+id/fragmentSubscription"
+        android:name="com.example.newbase_2025.ui.dashboard.subscription.SubscriptionFragment"
+        tools:layout="@layout/fragment_subscription" />
+
 </navigation>
