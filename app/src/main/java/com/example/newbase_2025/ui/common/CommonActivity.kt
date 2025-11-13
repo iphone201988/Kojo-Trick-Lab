@@ -65,6 +65,14 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentMyTrick)
                         navController.setGraph(graph, null)
                     }
+                    "editProfilePic" -> {
+                        graph.setStartDestination(R.id.fragmentAddProfile)
+                        navController.setGraph(graph, null)
+                    }
+                    "editProfile" -> {
+                        graph.setStartDestination(R.id.fragmentSetup)
+                        navController.setGraph(graph, null)
+                    }
 
                     "trainedRecently" -> {
                         graph.setStartDestination(R.id.fragmentTrainedRecently)

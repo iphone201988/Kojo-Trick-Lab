@@ -1,8 +1,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/common_navigation"
     tools:ignore="InvalidNavigation">
-
 
     <fragment
         android:id="@+id/fragmentMyTrick"
@@ -58,5 +58,14 @@
         android:name="com.example.newbase_2025.ui.dashboard.tracker.tricking_milestones.TrickingMilestonesFragment"
         tools:layout="@layout/fragment_tricking_milestones" />
 
+    <fragment
+        android:id="@+id/fragmentAddProfile"
+        android:name="com.example.newbase_2025.ui.auth.add_profile.AddProfileFragment"
+        tools:layout="@layout/fragment_add_profile" />
+
+    <fragment
+        android:id="@+id/fragmentSetup"
+        android:name="com.example.newbase_2025.ui.auth.add_profile.SetupFragment"
+        tools:layout="@layout/fragment_setup" />
 
 </navigation>
