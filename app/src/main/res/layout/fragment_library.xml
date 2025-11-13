@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -9,16 +10,148 @@
             type="com.example.newbase_2025.ui.dashboard.library.LibraryVM" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.dashboard.library.LibraryFragment">
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="@dimen/_18sdp">
 
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Library page " />
+            tools:context=".ui.dashboard.library.LibraryFragment">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvRecently"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:text="Recently Added"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRecently"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvRecently"
+                tools:itemCount="3"
+                tools:listitem="@layout/library_rv_item" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvMostPopular"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Most Popular"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rvRecently" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPopular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvMostPopular"
+                tools:itemCount="3"
+                tools:listitem="@layout/library_rv_item" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSeries"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Series"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rvPopular" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSeries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvSeries"
+                tools:itemCount="3"
+                tools:listitem="@layout/library_rv_item" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvVert"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Vert Kicks"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rvSeries" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSetups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvVert"
+                tools:itemCount="3"
+                tools:listitem="@layout/library_rv_item" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvSetups"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Setups"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rvSetups" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvVert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvVert"
+                tools:itemCount="3"
+                tools:listitem="@layout/library_rv_item" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>

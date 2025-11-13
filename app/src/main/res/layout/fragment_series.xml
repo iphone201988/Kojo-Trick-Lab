@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragmentVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_color"
+        tools:context=".ui.dashboard.library.series.SeriesFragment">
+
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/dash_board_common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSeries"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:text="Series"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSeries"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSeries"
+            tools:itemCount="3"
+            tools:listitem="@layout/holder_home" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

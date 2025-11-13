@@ -115,6 +115,31 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentTrickingMilestones)
                         navController.setGraph(graph, null)
                     }
+                    "categoryChecking" -> {
+                        graph.setStartDestination(R.id.fragmentCategoryChecking)
+                        navController.setGraph(graph, null)
+                    }
+
+                    "myStar" -> {
+                        graph.setStartDestination(R.id.fragmentMyStar)
+                        navController.setGraph(graph, null)
+                    }
+                    "personalBests" -> {
+                        graph.setStartDestination(R.id.fragmentPersonalBests)
+                        navController.setGraph(graph, null)
+                    }
+                    "videoPlayer" -> {
+                        graph.setStartDestination(R.id.fragmentVideoPlayer)
+                        navController.setGraph(graph, null)
+                    }
+                    "userProfile" -> {
+                        graph.setStartDestination(R.id.fragmentUserProfile)
+                        navController.setGraph(graph, null)
+                    }
+                    "series" -> {
+                        graph.setStartDestination(R.id.fragmentSeries)
+                        navController.setGraph(graph, null)
+                    }
 
                     else -> {
                         graph.setStartDestination(R.id.fragmentMyTrick)

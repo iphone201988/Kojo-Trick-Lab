@@ -47,6 +47,7 @@ class MyTrickFragment : BaseFragment<FragmentMyTrickBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
+
             }
         }
     }

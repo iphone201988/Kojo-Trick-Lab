@@ -101,7 +101,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     }
 
                     R.id.nav_library -> {
-                        binding.type = 1
+                        binding.type = 3
                         showFragment(LibraryFragment())
                     }
 

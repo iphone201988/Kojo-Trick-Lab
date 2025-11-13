@@ -59,6 +59,21 @@
             app:layout_constraintTop_toTopOf="@+id/ivCircle"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivLeft"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/three_icon"
+            android:visibility="@{type==3?View.VISIBLE:View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/ivTopLogo"
+            app:layout_constraintTop_toTopOf="@+id/ivTopLogo"
+        />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUpload"

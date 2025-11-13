@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.dashboard.library.user_profile.UserProfileFragmentVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.dashboard.library.user_profile.UserProfileFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clCommon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingBottom="@dimen/_15sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBack"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:src="@drawable/left_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivNotification"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_marginEnd="@dimen/_18sdp"
+                android:src="@drawable/search_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/ivBack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivBack" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBgProfile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_207sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:src="@drawable/profile_bg"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle1"
+            android:layout_width="@dimen/_106sdp"
+            android:layout_height="@dimen/_106sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:background="@drawable/holder_dummy"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle"
+            android:layout_width="@dimen/_106sdp"
+            android:layout_height="@dimen/_106sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:background="@drawable/bg_circle"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="@dimen/_103sdp"
+            android:layout_height="@dimen/_103sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
+            app:layout_constraintEnd_toEndOf="@+id/ivCircle"
+            app:layout_constraintStart_toStartOf="@+id/ivCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivCircle"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTricking"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/tricking_nickname"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivBgProfile" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTrickingNickName"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="TrickerJohn"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTricking" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCountry"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/country"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTrickingNickName" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCountryName"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="USA"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCountry" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTimeTricking"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/time_tricking"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCountryName" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTimeTrickingValue"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="3+ years"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimeTricking" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSignatureTrick"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/signature_trick"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimeTrickingValue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSignatureTrickValue"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Vert kick"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSignatureTrick" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDreamTrick"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/dream_trick"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSignatureTrickValue" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDreamTrickValue"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="Super Man Frount"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDreamTrick" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSocialMediaLinks"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/social_media_links"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDreamTrickValue" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,6 +1,5 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/common_navigation"
     tools:ignore="InvalidNavigation">
 
@@ -67,5 +66,39 @@
         android:id="@+id/fragmentSetup"
         android:name="com.example.newbase_2025.ui.auth.add_profile.SetupFragment"
         tools:layout="@layout/fragment_setup" />
+
+    <fragment
+        android:id="@+id/fragmentCategoryChecking"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.category.CategoryCheckingFragment"
+        tools:layout="@layout/fragment_category_checking" />
+
+    <fragment
+        android:id="@+id/fragmentMyStar"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.my_star.MyStarFragment"
+        tools:layout="@layout/fragment_my_star" />
+
+
+    <fragment
+        android:id="@+id/fragmentPersonalBests"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.personal_bests.PersonalBestsFragment"
+        tools:layout="@layout/fragment_personal_bests" />
+
+
+    <fragment
+        android:id="@+id/fragmentVideoPlayer"
+        android:name="com.example.newbase_2025.ui.dashboard.library.video_player.VideoPlayerFragment"
+        tools:layout="@layout/fragment_video_player" />
+
+
+    <fragment
+        android:id="@+id/fragmentUserProfile"
+        android:name="com.example.newbase_2025.ui.dashboard.library.user_profile.UserProfileFragment"
+        tools:layout="@layout/fragment_user_profile" />
+
+
+    <fragment
+        android:id="@+id/fragmentSeries"
+        android:name="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragment"
+        tools:layout="@layout/fragment_series" />
 
 </navigation>
