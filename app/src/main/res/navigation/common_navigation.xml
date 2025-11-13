@@ -9,5 +9,54 @@
         android:name="com.example.newbase_2025.ui.dashboard.tracker.my_trick.MyTrickFragment"
         tools:layout="@layout/fragment_my_trick" />
 
+    <fragment
+        android:id="@+id/fragmentTrainedRecently"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragment"
+        tools:layout="@layout/fragment_trained_recently" />
+
+    <fragment
+        android:id="@+id/fragmentProgressionDetails"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.progression_details.ProgressionDetailsFragment"
+        tools:layout="@layout/fragment_progression_details" />
+
+    <fragment
+        android:id="@+id/fragmentComboGoals"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.combo_goals.ComboGoalsFragment"
+        tools:layout="@layout/fragment_combo_goals" />
+
+
+    <fragment
+        android:id="@+id/fragmentAddCombo"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.add_combo.AddComboFragment"
+        tools:layout="@layout/fragment_add_combo" />
+
+    <fragment
+        android:id="@+id/fragmentAddNotes"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.add_notes.AddNotesFragment"
+        tools:layout="@layout/fragment_add_notes" />
+
+
+    <fragment
+        android:id="@+id/fragmentForwardTrick"
+        android:name="com.example.newbase_2025.ui.dashboard.home.forword_trick.ForwardTrickFragment"
+        tools:layout="@layout/fragment_forword_trick" />
+
+
+    <fragment
+        android:id="@+id/fragmentHomeProgressDetails"
+        android:name="com.example.newbase_2025.ui.dashboard.home.progress.HomeProgressDetailsFragment"
+        tools:layout="@layout/fragment_home_progress_details" />
+
+
+    <fragment
+        android:id="@+id/fragmentFinalProgress"
+        android:name="com.example.newbase_2025.ui.dashboard.home.final_progress.FinalProgressFragment"
+        tools:layout="@layout/fragment_final_progress" />
+
+    <fragment
+        android:id="@+id/fragmentTrickingMilestones"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.tricking_milestones.TrickingMilestonesFragment"
+        tools:layout="@layout/fragment_tricking_milestones" />
+
 
 </navigation>

@@ -52,4 +52,17 @@
     <string name="track_your_tricks_amp_milestones"><![CDATA[Track your tricks & milestones]]></string>
     <string name="my_tricks">My Tricks</string>
     <string name="see_all_the_tricks_that_you_started_and_is_still_in_nprogressions">See all the tricks that you started and is still in\nprogressions.</string>
+    <string name="all_forward_tricks">All Forward Tricks</string>
+    <string name="completed_tricks">Completed Tricks</string>
+    <string name="mark_completed">Mark Completed</string>
+    <string name="combo_goals">Combo Goals</string>
+    <string name="add_new_combo_goal">Add New Combo Goal</string>
+    <string name="add_new_combo_goals">Add New Combo Goals</string>
+    <string name="save">Save</string>
+    <string name="add_combo_here">Add combo here</string>
+    <string name="add_notes_for_combo_goals">Add Notes For Combo Goals</string>
+    <string name="add_notes">Add Notes</string>
+    <string name="forward_tricks">Forward Tricks</string>
+    <string name="download">Download</string>
+    <string name="tricking_milestones">Tricking Milestones</string>
 </resources>

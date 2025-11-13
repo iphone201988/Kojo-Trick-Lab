@@ -66,6 +66,48 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         navController.setGraph(graph, null)
                     }
 
+                    "trainedRecently" -> {
+                        graph.setStartDestination(R.id.fragmentTrainedRecently)
+                        navController.setGraph(graph, null)
+                    }
+
+                    "progressionDetails" -> {
+                        graph.setStartDestination(R.id.fragmentProgressionDetails)
+                        navController.setGraph(graph, null)
+                    }
+
+                    "comboGoals" -> {
+                        graph.setStartDestination(R.id.fragmentComboGoals)
+                        navController.setGraph(graph, null)
+                    }
+
+                    "addComboGals" -> {
+                        graph.setStartDestination(R.id.fragmentAddCombo)
+                        navController.setGraph(graph, null)
+                    }
+
+                    "addNotes" -> {
+                        graph.setStartDestination(R.id.fragmentAddNotes)
+                        navController.setGraph(graph, null)
+                    }
+                    "forwardTrick" -> {
+                        graph.setStartDestination(R.id.fragmentForwardTrick)
+                        navController.setGraph(graph, null)
+                    }
+                    "homeProgress" -> {
+                        graph.setStartDestination(R.id.fragmentHomeProgressDetails)
+                        navController.setGraph(graph, null)
+                    }
+                    "finalProgress" -> {
+
+                        graph.setStartDestination(R.id.fragmentFinalProgress)
+                        navController.setGraph(graph, null)
+                    }
+                    "trickingMilestones" -> {
+                        graph.setStartDestination(R.id.fragmentTrickingMilestones)
+                        navController.setGraph(graph, null)
+                    }
+
                     else -> {
                         graph.setStartDestination(R.id.fragmentMyTrick)
                         navController.setGraph(graph, null)

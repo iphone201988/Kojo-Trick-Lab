@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.DummyHome" />
+            type="com.example.newbase_2025.data.model.MyTrickData" />
 
         <variable
             name="pos"
@@ -14,14 +16,16 @@
         <variable
             name="callback"
             type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+
+        <import type="android.view.View" />
     </data>
 
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_10sdp"
-        android:layout_marginVertical="@dimen/_5sdp"
+        android:layout_marginVertical="@dimen/_6sdp"
         android:background="@color/transparent"
         android:foreground="?selectableItemBackground"
         android:onClick="@{v -> callback.onItemClick(v,bean,pos)}"
@@ -38,7 +42,7 @@
                 android:id="@+id/iv1"
                 setImageFromDrawbale="@{bean.image}"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_120sdp"
+                android:layout_height="@dimen/_140sdp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/home_list_dummy"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -46,51 +50,54 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearance="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv1"
                 style="@style/TextView_700_Bold"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_5sdp"
                 android:gravity="center"
-                android:text="Vertical Kicks"
+                android:text="@{bean.title}"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_18ssp"
+                android:textSize="@dimen/_20ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_13ssp"
-                android:text="FEATURED"
-                android:background="@drawable/bg_stroke"
-                android:paddingVertical="@dimen/_3sdp"
-                android:layout_margin="@dimen/_8sdp"
-                android:paddingHorizontal="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
-                style="@style/TextView_600_SemiBold_Quicksand"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv3"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv2"
+                style="@style/TextView_600_SemiBold_Quicksand"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_12sdp"
                 android:layout_marginHorizontal="@dimen/_10sdp"
+                android:background="@drawable/bg_stock_yellow"
+                android:paddingHorizontal="@dimen/_9sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="FEATURED"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_8ssp"
+                android:visibility="@{bean.check?View.VISIBLE:View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvInner"
+                innerMyTrickAdapter="@{bean.subTitle}"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_30sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_14ssp"
-                android:textStyle="bold"
-                android:visibility="gone"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/_10sdp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="@+id/iv1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/iv1"
-                app:layout_constraintTop_toBottomOf="@+id/tv2" />
+                tools:itemCount="1"
+                tools:listitem="@layout/rv_my_trick_inner_item" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

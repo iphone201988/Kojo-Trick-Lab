@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.RecentData" />
+
+        <variable
+            name="pos"
+            type="Integer" />
+
+        <variable
+            name="callback"
+            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clForward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_6sdp"
+        android:background="@drawable/bg_stock_grey"
+        android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
+        android:padding="@dimen/_10sdp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv1"
+            setImageFromDrawbale="@{bean.image}"
+            android:layout_width="@dimen/_87sdp"
+            android:layout_height="@dimen/_56sdp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/home_list_dummy"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvPhill"
+            style="@style/TextView_500_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Phill Gibbs"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/iv1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvName"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:gravity="center"
+            android:text="@{bean.title}"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toEndOf="@+id/iv1"
+            app:layout_constraintTop_toTopOf="@+id/iv1" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDesc"
+            style="@style/TextView_400_Regular"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="18dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="The Dive Roll is a crucial pre-requisite to all forward flipping techniques, an..."
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_9ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvName"
+            app:layout_constraintTop_toBottomOf="@+id/tvName" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

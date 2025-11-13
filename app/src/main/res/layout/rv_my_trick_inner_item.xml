@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.SubTitle" />
+
+        <variable
+            name="pos"
+            type="Integer" />
+
+        <variable
+            name="callback"
+            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_3sdp">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv2"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_stock_white"
+            android:paddingHorizontal="@dimen/_9sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:text="@{bean.title}"
+            android:gravity="center"
+            tool:text="gdffgfgdgddfgdfggdgdfgg"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

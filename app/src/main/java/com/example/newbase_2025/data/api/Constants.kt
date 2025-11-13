@@ -2,13 +2,13 @@ package com.example.newbase_2025.data.api
 
 
 object Constants {
-    const val BASE_URL = "http://98.83.65.142:8000"
+    const val BASE_URL = "http://162.241.68.61/bro_cabs_local/public/api/v2/"
     const val BASE_URL_IMAGE = "http://69.49.232.235/job_app/api/"
     const val GOOGLE_API_KEY = "AIzaSyD5Jt2e9ocVmXovnsOsdmtdhPRkP8m9IhQ"
 
     /**************** API LIST *****************/
     const val HEADER_API = "X-API-Key:lkcMuYllSgc3jsFi1gg896mtbPxIBzYkEL"
-    const val SOCIAL_LOGIN = "/api/user/socialLogin"
+    const val SOCIAL_LOGIN = "request/history"
     const val LOGOUT = "/api/user/logoutUser"
     const val ACTIVITIES = "/api/user/getMyActivities"
     const val UPDATE_USER_DATA = "/api/user/updateUserData"

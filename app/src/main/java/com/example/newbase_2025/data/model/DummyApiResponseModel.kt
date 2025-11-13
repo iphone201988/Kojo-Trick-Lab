@@ -6,9 +6,7 @@ data class DummyApiItem(
     val id: Int, val imdbId: String, val posterURL: String, val title: String
 )
 
-data class DummyHome(
-    val image: Int
-)
+
 
 data class TrackerData(
     val image: Int, val title: String
@@ -20,4 +18,19 @@ data class MyTrickData(
 
 data class SubTitle(
     val title: String
+)
+
+data class RecentData(
+    val image: Int, val title: String, var check: Int,
+)
+
+data class ProgressionDetailsData(
+    val count: String, val title: String, var type: Int,
+)
+data class ComboGoalsData(
+     val title: String
+)
+
+data class ForwardsData(
+    val title: String, var check: Boolean = false,
 )

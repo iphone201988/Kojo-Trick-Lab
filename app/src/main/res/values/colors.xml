@@ -12,5 +12,11 @@
     <color name="yellow_20">#33F1AF1B</color>
     <color name="nav_selected_icon">#17415F</color>
     <color name="nav_selected_text">#17415F</color>
+    <color name="stock_color_EAECF0">#EAECF0</color>
+    <color name="red_color">#EB4335</color>
+    <color name="red_20">#33EB4335</color>
+    <color name="green_color">#3BA935</color>
+    <color name="green_20">#333BA935</color>
+    <color name="grey_DDDDDD">#DDDDDD</color>
 
 </resources>

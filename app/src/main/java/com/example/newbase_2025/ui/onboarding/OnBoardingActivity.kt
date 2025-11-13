@@ -45,7 +45,7 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
         binding.viewPager.adapter = adapter
         binding.viewPager.isUserInputEnabled = false
 
-        // 👇 Listen to page changes
+        //  Listen to page changes
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)

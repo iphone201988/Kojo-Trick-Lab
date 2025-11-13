@@ -72,4 +72,7 @@ dependencies {
     implementation(libs.imagepicker)
     implementation (libs.lottie)
     implementation (libs.converter.gson)
+
+    // dot indicator
+    implementation (libs.viewpagerindicator)
 }

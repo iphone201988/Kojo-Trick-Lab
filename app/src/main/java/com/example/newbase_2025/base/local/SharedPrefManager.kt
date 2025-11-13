@@ -9,6 +9,7 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
 
     object KEY {
         const val IS_FIRST = "is_first"
+        const val COMBO_LIST = "combo_list"
     }
 
     fun setLoginData(isFirst: UserLoginData) {
@@ -34,6 +35,23 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
 
     fun getToken(): String? {
         return sharedPreferences.getString(KEY.IS_FIRST, "")
+    }
+
+    internal inline fun <reified T> saveList(key: String, list: List<T>) {
+        val gson = Gson()
+        val json = gson.toJson(list)
+        sharedPreferences.edit().putString(key, json).apply()
+    }
+
+    internal inline fun <reified T> getList(key: String): List<T> {
+        val gson = Gson()
+        val json = sharedPreferences.getString(key, null) ?: return emptyList()
+        val type = object : com.google.gson.reflect.TypeToken<List<T>>() {}.type
+        return gson.fromJson(json, type)
+    }
+
+    fun clearList(key: String) {
+        sharedPreferences.edit().remove(key).apply()
     }
 
     fun clear() {

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.dashboard.home.forword_trick.ForwardTrickFragmentVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:background="@color/bg_color"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/dash_board_common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTrick"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="@string/forward_tricks"
+            android:textSize="@dimen/_16ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDescription"
+            style="@style/TextView_400_Regular"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
+            android:text="This category encompasses all tricks that flip forwards. Note that unlike Gainers."
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvTrick"
+            app:layout_constraintTop_toBottomOf="@+id/tvTrick" />
+
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@color/blue_20"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvForward"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_12sdp"
+            android:paddingEnd="@dimen/_18sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            tools:itemCount="5"
+            tools:listitem="@layout/forward_rv_item" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVerticalForward"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_12sdp"
+            android:paddingEnd="@dimen/_12sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvForward"
+            tools:itemCount="5"
+            tools:listitem="@layout/vertical_forward_rv_item" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

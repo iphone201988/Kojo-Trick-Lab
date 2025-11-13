@@ -40,11 +40,17 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
      */
     private fun initTrickAdapter() {
         trickAdapter =
-            SimpleRecyclerViewAdapter(R.layout.trick_rv_layout_item, BR.bean) { v, m, _ ->
-                when (v?.id) {
-                    R.id.cardView -> {
+            SimpleRecyclerViewAdapter(R.layout.trick_rv_layout_item, BR.bean) { v, m, pos ->
+                when (pos) {
+                    0 -> {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "myTrick")
+                        startActivity(intent)
+                    }
+
+                    3 -> {
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "trickingMilestones")
                         startActivity(intent)
                     }
                 }

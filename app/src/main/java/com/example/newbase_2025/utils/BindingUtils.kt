@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -14,9 +16,15 @@ import androidx.databinding.BindingAdapter
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.newbase_2025.BR
 import com.example.newbase_2025.R
+import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
+import com.example.newbase_2025.data.model.SubTitle
+import com.example.newbase_2025.databinding.RvMyTrickInnerItemBinding
 import com.google.android.material.imageview.ShapeableImageView
+import kotlin.reflect.typeOf
 
 object BindingUtils {
 
@@ -99,4 +107,39 @@ object BindingUtils {
         return true
     }
 
+
+
+
+    @BindingAdapter("innerMyTrickAdapter")
+    @JvmStatic
+    fun innerMyTrickAdapter(view: RecyclerView, tasks: List<SubTitle>?) {
+        val taskAdapter = SimpleRecyclerViewAdapter<SubTitle, RvMyTrickInnerItemBinding>(
+            R.layout.rv_my_trick_inner_item, BR.bean
+        ) { v, m, pos ->
+            when (v.id) {
+
+            }
+        }
+        view.adapter = taskAdapter
+        taskAdapter.list = tasks
+
+    }
+
+    @BindingAdapter("setImageType")
+    @JvmStatic
+    fun setImageType(image: AppCompatImageView, type: Int?) {
+        if (type != null) {
+           when(type){
+               1->{
+                   image.setImageResource(R.drawable.bg_progress)
+               }
+               2->{
+                   image.setImageResource(R.drawable.bg_complete)
+               }
+               3->{
+                   image.setImageResource(R.drawable.bg_play)
+               }
+           }
+        }
+    }
 }

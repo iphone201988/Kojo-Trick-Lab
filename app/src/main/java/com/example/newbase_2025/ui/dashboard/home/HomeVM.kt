@@ -16,11 +16,11 @@ class HomeVM @Inject constructor(
     private val apiHelper: ApiHelper,
 ) : BaseViewModel() {
     val observeCommon = SingleRequestEvent<JsonObject>()
-    fun socialLogin(request: HashMap<String, Any>, url: String) {
+    fun socialLogin( url: String) {
         CoroutineScope(Dispatchers.IO).launch {
             observeCommon.postValue(Resource.loading(null))
             try {
-                apiHelper.apiForRawBody(request, url).let {
+                apiHelper.apiGetOnlyAuthToken(url).let {
                     if (it.isSuccessful) {
                         observeCommon.postValue(Resource.success("SOCIAL", it.body()))
                     } else
