@@ -68,6 +68,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="country">Country</string>
     <string name="social_media_links">Social Media Links</string>
+    <string name="community">Community</string>
+
+
     <string name="category_intermediate">Category: Intermediate</string>
     <string name="see_all_personal_bests">See All Personal Bests</string>
     <string name="personal_bests">Personal Bests</string>

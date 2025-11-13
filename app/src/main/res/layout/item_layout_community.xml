@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+       <variable
+           name="bean"
+           type="String" />
+
+        <variable
+            name="pos"
+            type="Integer" />
+
+        <variable
+            name="callback"
+            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_7sdp"
+        android:background="@color/transparent"
+        android:onClick="@{v -> callback.onItemClick(v,bean,pos)}"
+        android:layout_marginHorizontal="@dimen/_3sdp"
+        android:foreground="?selectableItemBackground"
+        app:cardCornerRadius="@dimen/_14sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_10sdp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profileImage"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:src="@drawable/dummy_image"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/personName"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sam Smith"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_12ssp"
+                android:layout_marginStart="@dimen/_5sdp"
+                app:layout_constraintStart_toEndOf="@id/profileImage"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/time"
+                style="@style/TextView_300_Light_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2h ago"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_10ssp"
+                app:layout_constraintTop_toBottomOf="@id/personName"
+                app:layout_constraintStart_toStartOf="@id/personName"/>
+            
+            
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/pinIcon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/pin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_person"
+                android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileImage"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+                app:srcCompat="@drawable/image_person" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivVideo"
+                android:layout_width="@dimen/_38sdp"
+                android:layout_height="@dimen/_38sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv1"
+                app:layout_constraintEnd_toEndOf="@+id/iv1"
+                app:layout_constraintStart_toStartOf="@+id/iv1"
+                app:layout_constraintTop_toTopOf="@+id/iv1"
+                app:srcCompat="@drawable/video_play" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                style="@style/TextView_500_Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:singleLine="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="Tried New Trick Today"
+                app:layout_constraintTop_toBottomOf="@id/iv1"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDescription"
+                    style="@style/CardView.Light"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/blue"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:textSize="@dimen/_10ssp"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard Lorem Ipsum has been theda... "
+                    app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/addResponse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:backgroundTint="@color/dark_white"
+                android:background="@drawable/bg_stroke_with_solid_blue"
+                android:paddingVertical="@dimen/_5sdp"
+                android:paddingHorizontal="@dimen/_5sdp"
+                app:layout_constraintTop_toBottomOf="@id/tvDescription"
+                app:layout_constraintStart_toStartOf="parent">
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/chatIcon"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:src="@drawable/iv_chat_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvAddResponse"
+                    style="@style/TextView_500_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add response"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:textSize="@dimen/_8ssp"
+                    android:textColor="@color/blue"
+                    app:layout_constraintStart_toEndOf="@id/chatIcon"
+                    app:layout_constraintTop_toTopOf="@id/chatIcon"
+                    app:layout_constraintBottom_toBottomOf="@id/chatIcon"/>
+                
+                
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/count"
+                    style="@style/TextView_500_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:textSize="@dimen/_10ssp"
+                    android:paddingHorizontal="@dimen/_5sdp"
+                    android:textColor="@color/white"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:background="@drawable/bg_stroke_with_solid"
+                    app:layout_constraintStart_toEndOf="@id/tvAddResponse"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvLikes"
+                style="@style/TextView_400_Regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10"
+                android:textSize="@dimen/_8ssp"
+                android:textColor="@color/blue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/addResponse"
+                app:layout_constraintTop_toTopOf="@id/addResponse"/>
+            
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:src="@drawable/iv_heart"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintEnd_toStartOf="@id/tvLikes"
+                app:layout_constraintTop_toTopOf="@id/addResponse"
+                app:layout_constraintBottom_toBottomOf="@id/addResponse"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

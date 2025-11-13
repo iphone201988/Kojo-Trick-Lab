@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="callback"
+            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.Notification" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvToday"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:background="@drawable/bg_stock_yellow"
+            android:paddingHorizontal="@dimen/_9sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:text="@{bean.date}"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvInnerNotification"
+            childNotificationAdapter="@{bean.list}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
+            tools:itemCount="3"
+            android:layout_marginTop="@dimen/_10sdp"
+            tools:listitem="@layout/item_layout_inner_notification"
+            app:layout_constraintTop_toBottomOf="@id/tvToday"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

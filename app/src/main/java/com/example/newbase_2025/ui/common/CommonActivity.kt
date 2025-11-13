@@ -167,6 +167,18 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentAllVideo)
                         navController.setGraph(graph, null)
                     }
+                    "createPost" ->{
+                        graph.setStartDestination(R.id.fragmentCreatePost)
+                        navController.setGraph(graph, null)
+                    }
+                    "community_detail" ->{
+                        graph.setStartDestination(R.id.fragmentCommunityDetail)
+                        navController.setGraph(graph, null)
+                    }
+                    "notification_new" ->{
+                        graph.setStartDestination(R.id.fragmentNotificationNew)
+                        navController.setGraph(graph, null)
+                    }
 
                     else -> {
                         graph.setStartDestination(R.id.fragmentMyTrick)

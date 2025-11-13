@@ -14,8 +14,9 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.ActivityDashBoardBinding
-import com.example.newbase_2025.databinding.DialogSettingsBinding
 import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.ui.dashboard.community.CommunityFragment
+import com.example.newbase_2025.databinding.DialogSettingsBinding
 import com.example.newbase_2025.ui.dashboard.home.HomeFragment
 import com.example.newbase_2025.ui.dashboard.library.LibraryFragment
 import com.example.newbase_2025.ui.dashboard.profile.ProfileFragment
@@ -32,6 +33,9 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         return R.layout.activity_dash_board
     }
 
+
+
+
     override fun getViewModel(): BaseViewModel {
         return viewModel
     }
@@ -44,6 +48,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             insets
         }
         binding.type = 1
+
         BindingUtils.statusBarStyleWhite(this)
         setupBottomNav()
         binding.navHome.performClick()
@@ -51,12 +56,18 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         initOnClick()
     }
 
+
     private fun initOnClick() {
-        viewModel.onClick.observe(this, Observer {
-            when (it?.id) {
-                R.id.ivDrawer -> {
-                    commonDialog.show()
+        viewModel.onClick.observe(this, Observer{
+            when(it?.id){
+                R.id.ivNotification ->{
+                    val intent = Intent(this, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notification_new")
+                    startActivity(intent)
                 }
+                  R.id.ivDrawer -> {
+                commonDialog.show()
+            }
             }
         })
     }
@@ -130,7 +141,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
                     R.id.nav_community -> {
                         binding.type = 1
-                        showFragment(HomeFragment())
+                        showFragment(CommunityFragment())
                     }
 
                     R.id.nav_profile -> {
