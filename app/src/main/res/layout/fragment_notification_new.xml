@@ -22,6 +22,9 @@
             app:vm="@{vm}" />
 
 
+
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvNotification"
             android:layout_width="match_parent"
