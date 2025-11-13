@@ -57,3 +57,8 @@ data class CommentData(
 data class SeriesData(
     val title: String, val videoCount: String
 )
+
+
+data class AllVideoData(
+     val title: String, var check: Boolean = false,
+)

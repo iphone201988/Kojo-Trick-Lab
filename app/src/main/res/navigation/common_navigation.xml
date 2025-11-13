@@ -124,4 +124,9 @@
         android:name="com.example.newbase_2025.ui.dashboard.subscription.SubscriptionFragment"
         tools:layout="@layout/fragment_subscription" />
 
+    <fragment
+        android:id="@+id/fragmentAllVideo"
+        android:name="com.example.newbase_2025.ui.dashboard.library.all_video.AllVideoFragment"
+        tools:layout="@layout/fragment_all_video" />
+
 </navigation>

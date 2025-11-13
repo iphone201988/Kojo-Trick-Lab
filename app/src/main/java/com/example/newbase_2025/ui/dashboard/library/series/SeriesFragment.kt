@@ -28,7 +28,7 @@ class SeriesFragment : BaseFragment<FragmentSeriesBinding>() {
     }
 
     override fun onCreateView(view: View) {
-        binding.clCommon.ivBack.setBackgroundResource(R.drawable.three_icon)
+        binding.clCommon.ivBack.setImageResource(R.drawable.three_icon)
         // adapter
         initAdapter()
 
@@ -60,7 +60,7 @@ class SeriesFragment : BaseFragment<FragmentSeriesBinding>() {
             when (v?.id) {
                 R.id.cardView -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "forwardTrick")
+                    intent.putExtra("fromWhere", "allVideo")
                     startActivity(intent)
                 }
             }
@@ -75,10 +75,10 @@ class SeriesFragment : BaseFragment<FragmentSeriesBinding>() {
      */
     private fun getDummyTrickList(): ArrayList<SeriesData> {
         val dummyList = arrayListOf(
-            SeriesData("Loren ispam", "9"),
-            SeriesData("Vertical Kicks", "5"),
-            SeriesData("Vertical Kicks", "9"),
-            SeriesData("Loren ispam", "9"),
+            SeriesData("Loren ispam", "9 videos"),
+            SeriesData("Vertical Kicks", "9 videos"),
+            SeriesData("Vertical Kicks", "9 videos"),
+            SeriesData("Loren ispam", "9 videos"),
 
             )
 

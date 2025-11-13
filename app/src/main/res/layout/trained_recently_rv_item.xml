@@ -35,7 +35,7 @@
             android:id="@+id/iv1"
             setImageFromDrawbale="@{bean.image}"
             android:layout_width="@dimen/_87sdp"
-            android:layout_height="@dimen/_56sdp"
+            android:layout_height="@dimen/_52sdp"
             android:scaleType="centerCrop"
             android:src="@drawable/home_list_dummy"
             app:layout_constraintStart_toStartOf="parent"

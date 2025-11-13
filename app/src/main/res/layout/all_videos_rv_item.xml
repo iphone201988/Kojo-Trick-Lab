@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.RecentData" />
+            type="com.example.newbase_2025.data.model.AllVideoData" />
 
         <variable
             name="pos"
@@ -31,7 +31,6 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv1"
-            setImageFromDrawbale="@{bean.image}"
             android:layout_width="@dimen/_87sdp"
             android:layout_height="@dimen/_52sdp"
             android:scaleType="centerCrop"
@@ -73,7 +72,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="18dp"
+            android:layout_marginEnd="15dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="The Dive Roll is a crucial pre-requisite to all forward flipping techniques, an..."
@@ -82,6 +81,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tvName"
             app:layout_constraintTop_toBottomOf="@+id/tvName" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg_32"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:text="watched"
+            android:textColor="@color/white"
+            android:visibility="@{bean.check?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/iv1"
+            app:layout_constraintEnd_toEndOf="@+id/iv1"
+            app:layout_constraintStart_toStartOf="@+id/iv1"
+            app:layout_constraintTop_toTopOf="@+id/iv1" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

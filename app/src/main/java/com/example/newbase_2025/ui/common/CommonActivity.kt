@@ -163,6 +163,10 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentSubscription)
                         navController.setGraph(graph, null)
                     }
+                    "allVideo" -> {
+                        graph.setStartDestination(R.id.fragmentAllVideo)
+                        navController.setGraph(graph, null)
+                    }
 
                     else -> {
                         graph.setStartDestination(R.id.fragmentMyTrick)
