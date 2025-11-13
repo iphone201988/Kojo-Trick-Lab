@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -145,6 +146,7 @@ object BindingUtils {
            }
         }
     }
+
 
 
     @BindingAdapter("childNotificationAdapter")

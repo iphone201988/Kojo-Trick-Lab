@@ -59,6 +59,21 @@
             app:layout_constraintTop_toTopOf="@+id/ivCircle"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivDrawer"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:scaleType="centerCrop"
+            android:src="@drawable/drawer"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:visibility="@{type==3?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/ivSearch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivSearch" />
+
+
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUpload"

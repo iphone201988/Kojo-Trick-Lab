@@ -8,10 +8,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.FragmentLoginBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
 import com.example.newbase_2025.ui.dashboard.DashBoardActivity
+import com.example.newbase_2025.utils.BindingUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,6 +28,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun onCreateView(view: View) {
         binding.type = false
+        binding.clCommon.tvHeader.text = "Notification"
 
         // click
         initOnClick()
@@ -60,21 +61,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
                 }
 
-                R.id.btnLogin -> {
-                    val intent = Intent(requireContext(), DashBoardActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
-                }
-
-                R.id.tvSignup -> {
-                    val action = LoginFragmentDirections.navigateToSignUpFragment()
-                    BindingUtils.navigateWithSlide(findNavController(), action)
-                }
-
-                R.id.tvForgot -> {
-                    val action = LoginFragmentDirections.navigateToForgotEmailFragment()
-                    BindingUtils.navigateWithSlide(findNavController(), action)
-                }
             }
         }
     }

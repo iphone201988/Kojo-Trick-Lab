@@ -1,6 +1,5 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/common_navigation"
     tools:ignore="InvalidNavigation">
 
@@ -82,5 +81,67 @@
         android:id="@+id/fragmentNotificationNew"
         android:name="com.example.newbase_2025.ui.dashboard.notification.NotificationNewFragment"
         tools:layout="@layout/fragment_notification_new" />
+
+    <fragment
+        android:id="@+id/fragmentCategoryChecking"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.category.CategoryCheckingFragment"
+        tools:layout="@layout/fragment_category_checking" />
+
+    <fragment
+        android:id="@+id/fragmentMyStar"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.my_star.MyStarFragment"
+        tools:layout="@layout/fragment_my_star" />
+
+
+    <fragment
+        android:id="@+id/fragmentPersonalBests"
+        android:name="com.example.newbase_2025.ui.dashboard.tracker.personal_bests.PersonalBestsFragment"
+        tools:layout="@layout/fragment_personal_bests" />
+
+
+    <fragment
+        android:id="@+id/fragmentVideoPlayer"
+        android:name="com.example.newbase_2025.ui.dashboard.library.video_player.VideoPlayerFragment"
+        tools:layout="@layout/fragment_video_player" />
+
+
+    <fragment
+        android:id="@+id/fragmentUserProfile"
+        android:name="com.example.newbase_2025.ui.dashboard.library.user_profile.UserProfileFragment"
+        tools:layout="@layout/fragment_user_profile" />
+
+
+    <fragment
+        android:id="@+id/fragmentSeries"
+        android:name="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragment"
+        tools:layout="@layout/fragment_series" />
+
+
+    <fragment
+        android:id="@+id/fragmentNotification"
+        android:name="com.example.newbase_2025.ui.notification.NotificationFragment"
+        tools:layout="@layout/fragment_notification" />
+
+    <fragment
+        android:id="@+id/fragmentChangePassword"
+        android:name="com.example.newbase_2025.ui.dashboard.change_password.ChangePasswordFragment"
+        tools:layout="@layout/fragment_change_password" />
+
+
+    <fragment
+        android:id="@+id/fragmentStatVisibility"
+        android:name="com.example.newbase_2025.ui.dashboard.stat_visibility.StatVisibilityFragment"
+        tools:layout="@layout/fragment_stat_visibility" />
+
+
+    <fragment
+        android:id="@+id/fragmentSubscription"
+        android:name="com.example.newbase_2025.ui.dashboard.subscription.SubscriptionFragment"
+        tools:layout="@layout/fragment_subscription" />
+
+    <fragment
+        android:id="@+id/fragmentAllVideo"
+        android:name="com.example.newbase_2025.ui.dashboard.library.all_video.AllVideoFragment"
+        tools:layout="@layout/fragment_all_video" />
 
 </navigation>

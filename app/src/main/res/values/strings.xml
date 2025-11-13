@@ -71,4 +71,13 @@
     <string name="community">Community</string>
 
 
+    <string name="category_intermediate">Category: Intermediate</string>
+    <string name="see_all_personal_bests">See All Personal Bests</string>
+    <string name="personal_bests">Personal Bests</string>
+    <string name="trickerjohn">\@TrickerJohn-</string>
+    <string name="update">Update</string>
+    <string name="enter_old_password">Enter Old Password</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="buy_plan">Buy Plan</string>
 </resources>

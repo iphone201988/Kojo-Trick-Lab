@@ -16,16 +16,20 @@ import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.ActivityDashBoardBinding
 import com.example.newbase_2025.ui.common.CommonActivity
 import com.example.newbase_2025.ui.dashboard.community.CommunityFragment
+import com.example.newbase_2025.databinding.DialogSettingsBinding
+import com.example.newbase_2025.ui.common.CommonActivity
 import com.example.newbase_2025.ui.dashboard.home.HomeFragment
 import com.example.newbase_2025.ui.dashboard.library.LibraryFragment
 import com.example.newbase_2025.ui.dashboard.profile.ProfileFragment
 import com.example.newbase_2025.ui.dashboard.tracker.TrackerFragment
+import com.example.newbase_2025.utils.BaseCustomDialog
 import com.example.newbase_2025.utils.BindingUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     private val viewModel: DashBoardActivityVM by viewModels()
+    private lateinit var commonDialog: BaseCustomDialog<DialogSettingsBinding>
     override fun getLayoutResource(): Int {
         return R.layout.activity_dash_board
     }
@@ -46,6 +50,18 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         BindingUtils.statusBarStyleWhite(this)
         setupBottomNav()
         binding.navHome.performClick()
+        initDialog()
+        initOnClick()
+    }
+
+    private fun initOnClick() {
+        viewModel.onClick.observe(this, Observer {
+            when (it?.id) {
+                R.id.ivDrawer -> {
+                    commonDialog.show()
+                }
+            }
+        })
     }
 
     private fun initOnClick() {
@@ -118,7 +134,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     }
 
                     R.id.nav_library -> {
-                        binding.type = 1
+                        binding.type = 3
                         showFragment(LibraryFragment())
                     }
 
@@ -133,7 +149,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     }
 
                     R.id.nav_profile -> {
-                        binding.type = 1
+                        binding.type = 3
                         showFragment(ProfileFragment())
                     }
                 }
@@ -145,6 +161,39 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     private fun showFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    private fun initDialog() {
+        commonDialog = BaseCustomDialog(this@DashBoardActivity, R.layout.dialog_settings) {
+            when (it?.id) {
+                R.id.tvNotification -> {
+                    val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notification")
+                    startActivity(intent)
+                    commonDialog.dismiss()
+                }
+                R.id.tvChangePassword -> {
+                    val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "changePassword")
+                    startActivity(intent)
+                    commonDialog.dismiss()
+                }
+
+                R.id.tvStatVisibility -> {
+                    val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "statVisibility")
+                    startActivity(intent)
+                    commonDialog.dismiss()
+                }
+                R.id.tvSubscription -> {
+                    val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "subscription")
+                    startActivity(intent)
+                    commonDialog.dismiss()
+                }
+            }
+        }
+        commonDialog.setCancelable(true)
     }
 
 }
