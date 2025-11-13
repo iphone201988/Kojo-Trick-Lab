@@ -9,14 +9,10 @@ import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
 import com.example.newbase_2025.base.local.SharedPrefManager
-import com.example.newbase_2025.data.model.MyTrickData
 import com.example.newbase_2025.data.model.RecentData
-import com.example.newbase_2025.data.model.SubTitle
 import com.example.newbase_2025.databinding.FragmentTrainedRecentlyBinding
-import com.example.newbase_2025.databinding.MyTrickRvItemBinding
 import com.example.newbase_2025.databinding.TrainedRecentlyRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
-import com.example.newbase_2025.ui.dashboard.tracker.my_trick.MyTrickFragmentVM
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -40,7 +36,7 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
         initTrickAdapter()
         // click
         initOnClick()
-         // clear
+        // clear
         sharedPrefManager.clearList(SharedPrefManager.KEY.COMBO_LIST)
     }
 
@@ -54,16 +50,17 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-                R.id.tvProgress->{
+
+                R.id.tvProgress -> {
                     binding.check = 1
                     trainedRecentAdapter.list = getDummyRecentList()
                 }
 
-                    R.id.tvTrack->{
-                        binding.check = 2
-                        val filteredList = getDummyRecentList().filter { item -> item.check == 1 }
-                        trainedRecentAdapter.list = ArrayList(filteredList)
-                    }
+                R.id.tvTrack -> {
+                    binding.check = 2
+                    val filteredList = getDummyRecentList().filter { item -> item.check == 1 }
+                    trainedRecentAdapter.list = ArrayList(filteredList)
+                }
             }
         }
     }
@@ -72,16 +69,17 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
      * Initialize adapter
      */
     private fun initTrickAdapter() {
-        trainedRecentAdapter = SimpleRecyclerViewAdapter(R.layout.trained_recently_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.clRecent -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "progressionDetails")
-                    startActivity(intent)
+        trainedRecentAdapter =
+            SimpleRecyclerViewAdapter(R.layout.trained_recently_rv_item, BR.bean) { v, m, _ ->
+                when (v?.id) {
+                    R.id.clRecent -> {
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "progressionDetails")
+                        startActivity(intent)
+                    }
                 }
-            }
 
-        }
+            }
         binding.rvTrainedRecently.adapter = trainedRecentAdapter
         trainedRecentAdapter.list = getDummyRecentList()
     }
