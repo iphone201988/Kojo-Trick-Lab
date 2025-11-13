@@ -1,5 +1,6 @@
 package com.example.newbase_2025.ui.dashboard
 
+import android.content.Intent
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -8,10 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.ActivityDashBoardBinding
+import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.ui.dashboard.community.CommunityFragment
 import com.example.newbase_2025.ui.dashboard.home.HomeFragment
 import com.example.newbase_2025.ui.dashboard.library.LibraryFragment
 import com.example.newbase_2025.ui.dashboard.profile.ProfileFragment
@@ -38,9 +42,22 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             insets
         }
         binding.type = 1
+        initOnClick()
         BindingUtils.statusBarStyleWhite(this)
         setupBottomNav()
         binding.navHome.performClick()
+    }
+
+    private fun initOnClick() {
+        viewModel.onClick.observe(this, Observer{
+            when(it?.id){
+                R.id.ivNotification ->{
+                    val intent = Intent(this, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notification_new")
+                    startActivity(intent)
+                }
+            }
+        })
     }
 
     private fun setupBottomNav() {
@@ -112,7 +129,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
                     R.id.nav_community -> {
                         binding.type = 1
-                        showFragment(HomeFragment())
+                        showFragment(CommunityFragment())
                     }
 
                     R.id.nav_profile -> {

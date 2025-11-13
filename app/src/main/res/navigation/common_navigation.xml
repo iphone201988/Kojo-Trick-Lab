@@ -68,4 +68,19 @@
         android:name="com.example.newbase_2025.ui.auth.add_profile.SetupFragment"
         tools:layout="@layout/fragment_setup" />
 
+    <fragment
+        android:id="@+id/fragmentCreatePost"
+        android:name="com.example.newbase_2025.ui.dashboard.community.create_Post.CreatePostFragment"
+        tools:layout="@layout/fragment_create_post" />
+
+    <fragment
+        android:id="@+id/fragmentCommunityDetail"
+        android:name="com.example.newbase_2025.ui.dashboard.community.community_detail.CommunityDetailFragment"
+        tools:layout="@layout/fragment_community" />
+
+    <fragment
+        android:id="@+id/fragmentNotificationNew"
+        android:name="com.example.newbase_2025.ui.dashboard.notification.NotificationNewFragment"
+        tools:layout="@layout/fragment_notification_new" />
+
 </navigation>

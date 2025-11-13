@@ -82,6 +82,7 @@
             android:layout_height="@dimen/_32sdp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="@dimen/_18sdp"
+            android:onClick="@{v -> vm.onClick(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/ivTopLogo"
             app:layout_constraintTop_toTopOf="@+id/ivTopLogo"
             android:src="@drawable/notification"/>

@@ -16,12 +16,15 @@ import androidx.databinding.BindingAdapter
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newbase_2025.BR
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
+import com.example.newbase_2025.data.NotificationData
 import com.example.newbase_2025.data.model.SubTitle
+import com.example.newbase_2025.databinding.ItemLayoutInnerNotificationBinding
 import com.example.newbase_2025.databinding.RvMyTrickInnerItemBinding
 import com.google.android.material.imageview.ShapeableImageView
 import kotlin.reflect.typeOf
@@ -141,5 +144,25 @@ object BindingUtils {
                }
            }
         }
+    }
+
+
+    @BindingAdapter("childNotificationAdapter")
+    @JvmStatic
+    fun childNotificationAdapter(view : RecyclerView, notification : List<NotificationData>?){
+
+        // Create and set a LayoutManager for the inner RecyclerView
+        val layoutManager = LinearLayoutManager(view.context)
+        view.layoutManager = layoutManager
+        val context = view.context
+        val notificationAdapter = SimpleRecyclerViewAdapter<NotificationData, ItemLayoutInnerNotificationBinding>(R.layout.item_layout_inner_notification,BR.bean){ v, m, pos ->
+            when(v.id){
+
+            }
+        }
+        view.adapter = notificationAdapter
+        notificationAdapter.list = notification
+        notificationAdapter.notifyDataSetChanged()
+
     }
 }

@@ -18,5 +18,7 @@
     <color name="green_color">#3BA935</color>
     <color name="green_20">#333BA935</color>
     <color name="grey_DDDDDD">#DDDDDD</color>
+    <color name="view_line">#334C6E33</color>
+    <color name="dark_white">#FBFBFB</color>
 
 </resources>
