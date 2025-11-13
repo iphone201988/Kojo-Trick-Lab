@@ -68,4 +68,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="country">Country</string>
     <string name="social_media_links">Social Media Links</string>
+    <string name="update">Update</string>
+    <string name="enter_old_password">Enter Old Password</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="buy_plan">Buy Plan</string>
 </resources>

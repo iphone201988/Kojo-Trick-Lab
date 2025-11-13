@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.example.newbase_2025.ui.notification.NotificationVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.auth.login.LoginFragment">
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etEmail"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="center|start"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Turn off all notification"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:layout_constraintTop_toTopOf="@+id/etEmail"
+                app:layout_constraintBottom_toBottomOf="@+id/etEmail"
+                app:layout_constraintEnd_toEndOf="@+id/etEmail"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etReminder"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="Session Reminders"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:layout_constraintTop_toTopOf="@+id/etReminder"
+                app:layout_constraintBottom_toBottomOf="@+id/etReminder"
+                app:layout_constraintEnd_toEndOf="@+id/etReminder"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etNewVideoAlerts"
+                style="@style/TextView_500_Medium"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start|center"
+                android:imeOptions="actionDone"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="New Video Alerts"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etReminder" />
+
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchNewVideoAlerts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:layout_constraintTop_toTopOf="@+id/etNewVideoAlerts"
+                app:layout_constraintBottom_toBottomOf="@+id/etNewVideoAlerts"
+                app:layout_constraintEnd_toEndOf="@+id/etNewVideoAlerts"
+                android:checked="true"
+                android:showText="false"
+                android:thumb="@drawable/toggle_thumb"
+                android:track="@drawable/toggle_track" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

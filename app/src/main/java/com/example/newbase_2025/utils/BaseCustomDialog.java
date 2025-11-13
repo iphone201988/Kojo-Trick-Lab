@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
@@ -22,6 +23,12 @@ public class BaseCustomDialog<V extends ViewDataBinding> extends Dialog {
 
     public BaseCustomDialog(@NonNull Context context, @LayoutRes int layoutId, Listener listener) {
         super(context, R.style.Dialog);
+        this.context = context;
+        this.layoutId = layoutId;
+        this.listener = listener; }
+
+    public BaseCustomDialog(@NonNull Context context, @StyleRes int style, @LayoutRes int layoutId, Listener listener) {
+        super(context, style);
         this.context = context;
         this.layoutId = layoutId;
         this.listener = listener; }

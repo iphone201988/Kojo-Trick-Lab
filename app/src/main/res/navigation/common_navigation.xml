@@ -1,6 +1,5 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/common_navigation"
     tools:ignore="InvalidNavigation">
 
@@ -67,5 +66,28 @@
         android:id="@+id/fragmentSetup"
         android:name="com.example.newbase_2025.ui.auth.add_profile.SetupFragment"
         tools:layout="@layout/fragment_setup" />
+
+
+    <fragment
+        android:id="@+id/fragmentNotification"
+        android:name="com.example.newbase_2025.ui.notification.NotificationFragment"
+        tools:layout="@layout/fragment_notification" />
+
+    <fragment
+        android:id="@+id/fragmentChangePassword"
+        android:name="com.example.newbase_2025.ui.dashboard.change_password.ChangePasswordFragment"
+        tools:layout="@layout/fragment_change_password" />
+
+
+    <fragment
+        android:id="@+id/fragmentStatVisibility"
+        android:name="com.example.newbase_2025.ui.dashboard.stat_visibility.StatVisibilityFragment"
+        tools:layout="@layout/fragment_stat_visibility" />
+
+
+    <fragment
+        android:id="@+id/fragmentSubscription"
+        android:name="com.example.newbase_2025.ui.dashboard.subscription.SubscriptionFragment"
+        tools:layout="@layout/fragment_subscription" />
 
 </navigation>

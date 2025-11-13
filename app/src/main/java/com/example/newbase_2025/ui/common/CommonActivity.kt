@@ -65,10 +65,12 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentMyTrick)
                         navController.setGraph(graph, null)
                     }
+
                     "editProfilePic" -> {
                         graph.setStartDestination(R.id.fragmentAddProfile)
                         navController.setGraph(graph, null)
                     }
+
                     "editProfile" -> {
                         graph.setStartDestination(R.id.fragmentSetup)
                         navController.setGraph(graph, null)
@@ -98,21 +100,42 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         graph.setStartDestination(R.id.fragmentAddNotes)
                         navController.setGraph(graph, null)
                     }
+
                     "forwardTrick" -> {
                         graph.setStartDestination(R.id.fragmentForwardTrick)
                         navController.setGraph(graph, null)
                     }
+
                     "homeProgress" -> {
                         graph.setStartDestination(R.id.fragmentHomeProgressDetails)
                         navController.setGraph(graph, null)
                     }
+
                     "finalProgress" -> {
 
                         graph.setStartDestination(R.id.fragmentFinalProgress)
                         navController.setGraph(graph, null)
                     }
+
                     "trickingMilestones" -> {
                         graph.setStartDestination(R.id.fragmentTrickingMilestones)
+                        navController.setGraph(graph, null)
+                    }
+
+                    "notification" -> {
+                        graph.setStartDestination(R.id.fragmentNotification)
+                        navController.setGraph(graph, null)
+                    }
+                    "changePassword" -> {
+                        graph.setStartDestination(R.id.fragmentChangePassword)
+                        navController.setGraph(graph, null)
+                    }
+                    "statVisibility" -> {
+                        graph.setStartDestination(R.id.fragmentStatVisibility)
+                        navController.setGraph(graph, null)
+                    }
+                    "subscription" -> {
+                        graph.setStartDestination(R.id.fragmentSubscription)
                         navController.setGraph(graph, null)
                     }
 
