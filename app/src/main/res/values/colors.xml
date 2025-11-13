@@ -20,5 +20,7 @@
     <color name="grey_DDDDDD">#DDDDDD</color>
     <color name="view_line">#334C6E33</color>
     <color name="dark_white">#FBFBFB</color>
+    <color name="green">#4CC178</color>
+    <color name="yellow_FFA24A">#FFA24F</color>
 
 </resources>

@@ -80,4 +80,12 @@
     <string name="enter_new_password">Enter New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="buy_plan">Buy Plan</string>
+    <string name="session_title">Session Title</string>
+    <string name="utx_kick_session">UTX Kick session</string>
+    <string name="work_on_low_takeoff_extended_arms_safe_landing">Work on low takeoff, extended arms, safe landing</string>
+    <string name="session_colour">Session Colour</string>
+    <string name="session_date">Session Date</string>
+    <string name="post_session_review">Post Session Review</string>
+    <string name="select_any_session_to_start_from">Select any session to start from</string>
+    <string name="edit_session">Edit Session</string>
 </resources>
