@@ -8,6 +8,10 @@
             name="vm"
             type="com.example.newbase_2025.ui.dashboard.past_session_detail.PastSessionDetailVm" />
 
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.PastSessionData" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,7 +59,7 @@
             style="@style/TextView_700_Bold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/utx_kick_session"
+            android:text="@{bean.title}"
             android:textSize="@dimen/_18ssp"
             android:layout_marginTop="@dimen/_5sdp"
             app:layout_constraintTop_toBottomOf="@id/tvSessionTitle"
@@ -82,7 +86,7 @@
             android:textSize="@dimen/_12ssp"
             android:textColor="@color/blue"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="@string/work_on_low_takeoff_extended_arms_safe_landing"
+            android:text="@{bean.note}"
             app:layout_constraintTop_toBottomOf="@id/tvSessionNote"
             app:layout_constraintStart_toStartOf="parent"/>
 
@@ -104,7 +108,7 @@
             style="@style/TextView_600_SemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="11, Sep 2025"
+            setTimePast="@{bean.date}"
             android:layout_marginEnd="@dimen/_5sdp"
             android:background="@drawable/bg_blue_btn"
             android:textColor="@color/blue"
@@ -128,14 +132,14 @@
             app:layout_constraintTop_toBottomOf="@id/tvDateSession"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCircle"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
-            android:background="@drawable/bg_circle"
             android:layout_marginTop="@dimen/_5sdp"
-            android:backgroundTint="@color/red_color"
+            setBackgroundBg="@{bean.color}"
             android:onClick="@{v->vm.onClick(v)}"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvSessionColor" />
 
@@ -160,7 +164,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/_12ssp"
             android:textColor="@color/blue"
-            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy tex."
+            android:text="@{bean.review}"
             android:layout_marginTop="@dimen/_5sdp"
             app:layout_constraintTop_toBottomOf="@id/tvPostSessionReview"
             app:layout_constraintStart_toStartOf="@id/tvPostSessionReview"/>

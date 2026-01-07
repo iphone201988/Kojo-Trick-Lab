@@ -73,52 +73,72 @@
             app:layout_constraintTop_toBottomOf="@+id/tvPastUpcoming" />
 
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvDate"
-            style="@style/TextView_600_SemiBold_Quicksand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_18sdp"
-            android:layout_marginTop="@dimen/_18sdp"
-            android:background="@drawable/bg_stock_yellow"
-            android:backgroundTint="@color/blue"
-            android:paddingHorizontal="@dimen/_10sdp"
-            android:paddingVertical="@dimen/_6sdp"
-            android:text="11, Sep 2025"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_8ssp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUpcoming"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/tvDate"
-            tools:itemCount="2"
-            tools:listitem="@layout/upcoming_rv_item" />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvEmpty"
-            style="@style/TextView_600_SemiBold_Quicksand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_18sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:text="No data found!"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_13ssp"
-            android:visibility="gone"
+        <com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout
+            android:id="@+id/ssPullRefresh"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            app:indicator_overlay="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:lottie_rawRes="@raw/refresh">
+
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvViewAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="2"
+            tools:listitem="@layout/view_all_rv_item" />
+
+        </com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clEmpty"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCommonProgress"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_180sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/empty_combo"
+                android:layout_marginBottom="@dimen/_43sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCommon"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No session Added Yet"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivCommonProgress"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

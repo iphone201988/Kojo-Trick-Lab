@@ -9,10 +9,8 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.MyTrickData
 import com.example.newbase_2025.data.model.SubTitle
 import com.example.newbase_2025.databinding.FragmentSubscriptionBinding
-import com.example.newbase_2025.databinding.HolderHomeBinding
 import com.example.newbase_2025.databinding.PricingCardBinding
 import com.example.newbase_2025.ui.common.CommonActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,9 +69,7 @@ class SubscriptionFragment : BaseFragment<FragmentSubscriptionBinding>() {
      */
     private fun getDummyTrickList(): ArrayList<SubTitle> {
         val dummyList = arrayListOf(
-            SubTitle("Basic"),
-            SubTitle("Popular"),
-            SubTitle("Premium")
+            SubTitle("Basic"), SubTitle("Popular"), SubTitle("Premium")
         )
 
         return dummyList

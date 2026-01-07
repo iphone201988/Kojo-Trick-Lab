@@ -1,31 +1,32 @@
 package com.example.newbase_2025.ui.dashboard.library
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
-import com.example.newbase_2025.BR
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.LibraryData
-import com.example.newbase_2025.data.model.MyTrickData
-import com.example.newbase_2025.data.model.TrackerData
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.LibrarySery
+import com.example.newbase_2025.data.model.LibraryVideoResponse
+import com.example.newbase_2025.data.model.LibraryVideoX
 import com.example.newbase_2025.databinding.FragmentLibraryBinding
-import com.example.newbase_2025.databinding.HolderHomeBinding
-import com.example.newbase_2025.databinding.LibraryRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.ui.dashboard.library.adapter.LibrarySection
+import com.example.newbase_2025.ui.dashboard.library.adapter.SectionAdapter
+import com.example.newbase_2025.ui.dashboard.library.adapter.SectionAdapter.OnSectionClickListener
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
     private val viewModel: LibraryVM by viewModels()
-    private lateinit var recentlyAdapter: SimpleRecyclerViewAdapter<LibraryData, LibraryRvItemBinding>
-    private lateinit var mostAdapter: SimpleRecyclerViewAdapter<LibraryData, LibraryRvItemBinding>
-    private lateinit var seriesAdapter: SimpleRecyclerViewAdapter<LibraryData, LibraryRvItemBinding>
-    private lateinit var veryKicksAdapter: SimpleRecyclerViewAdapter<LibraryData, LibraryRvItemBinding>
-    private lateinit var setupsAdapter: SimpleRecyclerViewAdapter<LibraryData, LibraryRvItemBinding>
-
+    private lateinit var sectionAdapter: SectionAdapter
+    private var currentPage = 1
 
     override fun getLayoutResource(): Int {
         return R.layout.fragment_library
@@ -36,94 +37,149 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
     }
 
     override fun onCreateView(view: View) {
-      // adapter
+        // adapter
         initAdapter()
+        // api call
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        viewModel.getLibraryVideoApi(data, Constants.VIDEO_LIBRARY)
+        // observer
+        initObserver()
+    }
+
+
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getLibraryVideoApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: LibraryVideoResponse? = BindingUtils.parseJson(jsonData)
+                                val library = model?.data?.topics
+                                if (!library.isNullOrEmpty()) {
+                                    val sections = model.let { buildSections(it) }
+                                    if (sections.isNotEmpty()) {
+                                        sectionAdapter.setList(sections)
+                                        binding.clEmpty.visibility = View.GONE
+                                    } else {
+                                        binding.clEmpty.visibility = View.VISIBLE
+                                    }
+                                } else {
+                                    binding.clEmpty.visibility = View.VISIBLE
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.orEmpty())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
+
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+
+                }
+            }
+        }
     }
 
     /**
      * Initialize adapter
      */
+
     private fun initAdapter() {
-        recentlyAdapter = SimpleRecyclerViewAdapter(R.layout.library_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.cardView -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "videoPlayer")
-                    startActivity(intent)
-                }
+        sectionAdapter = SectionAdapter(object : OnSectionClickListener {
+            override fun onVideoItemClick(
+                section: LibrarySection.Topic,
+                sectionPosition: Int,
+                video: LibraryVideoX,
+                childPosition: Int
+            ) {
+                val intent = Intent(requireContext(), CommonActivity::class.java)
+                intent.putExtra("videoId", video._id)
+                intent.putExtra("topicId", video.topicId)
+                intent.putExtra("categoryId", video.categoryId)
+                intent.putExtra("fromWhere", "videoPlayer")
+                startActivity(intent)
             }
 
-        }
-        binding.rvRecently.adapter = recentlyAdapter
-        recentlyAdapter.list = getDummyLibraryList()
+            override fun onSeriesItemClick(
+                section: LibrarySection.SeriesRow,
+                sectionPosition: Int,
+                series: LibrarySery,
+                childPosition: Int
+            ) {
 
-        mostAdapter = SimpleRecyclerViewAdapter(R.layout.library_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.cardView -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "videoPlayer")
-                    startActivity(intent)
-                }
             }
 
-        }
-        binding.rvPopular.adapter = mostAdapter
-        mostAdapter.list = getDummyLibraryList()
-
-        seriesAdapter = SimpleRecyclerViewAdapter(R.layout.library_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.cardView -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "videoPlayer")
-                    startActivity(intent)
-                }
+            override fun onSeeAllTopicClick(
+                section: LibrarySection.Topic, sectionPosition: Int
+            ) {
+                val intent = Intent(requireContext(), CommonActivity::class.java)
+                intent.putExtra("fromWhere", "fragmentSeeAll")
+                intent.putExtra("topicId", section.id)
+                intent.putExtra("title", section.title)
+                startActivity(intent)
             }
 
-        }
-        binding.rvSeries.adapter = seriesAdapter
-        seriesAdapter.list = getDummyLibraryList()
-
-        veryKicksAdapter = SimpleRecyclerViewAdapter(R.layout.library_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.cardView -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "videoPlayer")
-                    startActivity(intent)
+            override fun onSeeAllSeriesClick(
+                section: LibrarySection.SeriesRow, sectionPosition: Int
+            ) {
+                val intent = Intent(requireContext(), CommonActivity::class.java)
+                section.seriesList.firstOrNull()?.let {
+                    intent.putExtra("categoryId", it.categoryId)
                 }
+                intent.putExtra("title", section.title)
+                intent.putExtra("fromWhere", "series")
+                startActivity(intent)
             }
+        })
 
+
+
+
+        binding.rvRecently.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = sectionAdapter
         }
-        binding.rvVert.adapter = veryKicksAdapter
-        veryKicksAdapter.list = getDummyLibraryList()
-
-        setupsAdapter = SimpleRecyclerViewAdapter(R.layout.library_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.cardView -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "videoPlayer")
-                    startActivity(intent)
-                }
-            }
-
-        }
-        binding.rvSetups.adapter = setupsAdapter
-        setupsAdapter.list = getDummyLibraryList()
     }
 
-    /**
-     * Get dummy library list
-     */
-    private fun getDummyLibraryList(): ArrayList<LibraryData> {
-        val dummyList = arrayListOf(
-            LibraryData(R.drawable.home_list_dummy, "Vertical Kicks"),
-            LibraryData(R.drawable.home_list_dummy, "Vertical Kicks"),
-            LibraryData(R.drawable.home_list_dummy, "Vertical Kicks"),
-            LibraryData(R.drawable.home_list_dummy, "Vertical Kicks"),
-            LibraryData(R.drawable.home_list_dummy, "Vertical Kicks"),
-            LibraryData(R.drawable.home_list_dummy, "Vertical Kicks"),
+    private fun buildSections(model: LibraryVideoResponse): List<LibrarySection> {
+        val list = mutableListOf<LibrarySection>()
+        model.data?.topics?.forEach { topic ->
+            list.add(
+                LibrarySection.Topic(
+                    id = topic._id, title = topic.title, videos = topic.videos.orEmpty()
+                )
+            )
+        }
 
-        )
-        return dummyList
+        model.data?.series?.let { series ->
+            if (series.isNotEmpty()) {
+                list.add(
+                    LibrarySection.SeriesRow(
+                        id = series[0]._id, title = series[0].title, seriesList = series
+                    )
+                )
+            }
+        }
+
+        return list
     }
 
 

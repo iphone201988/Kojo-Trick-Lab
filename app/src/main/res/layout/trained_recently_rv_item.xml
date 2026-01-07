@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.RecentData" />
+            type="com.example.newbase_2025.data.model.RecentlyData" />
 
         <variable
             name="pos"
@@ -33,11 +33,10 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv1"
-            setImageFromDrawbale="@{bean.image}"
+            setUrlPost="@{bean.image}"
             android:layout_width="@dimen/_87sdp"
             android:layout_height="@dimen/_52sdp"
             android:scaleType="centerCrop"
-            android:src="@drawable/home_list_dummy"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearance="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
@@ -48,7 +47,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Phill Gibbs"
             android:textColor="@color/blue"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +60,7 @@
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:gravity="center"
-            android:text="@{bean.title}"
+            android:text="@{bean.name}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toEndOf="@+id/iv1"
@@ -78,7 +76,7 @@
             android:layout_marginEnd="18dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="The Dive Roll is a crucial pre-requisite to all forward flipping techniques, an..."
+            android:text="@{bean.description}"
             android:textColor="@color/blue"
             android:textSize="@dimen/_9ssp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -105,7 +103,7 @@
             android:background="@drawable/bg_stock_yellow"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_5sdp"
-            android:visibility="@{bean.check==2?View.VISIBLE:View.GONE}"
+            visibleIfAttempted="@{bean.status}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view">
 
@@ -115,10 +113,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:text="2/4 progressions"
+                android:text='@{String.valueOf(bean.completedSteps)+"/"+String.valueOf(bean.totalSteps)+" progressions"}'
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_8ssp"
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ivProgress"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -144,7 +141,7 @@
             android:backgroundTint="@color/green_color"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_5sdp"
-            android:visibility="@{bean.check==1?View.VISIBLE:View.GONE}"
+            visibleIfCompleted="@{bean.status}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view">
 

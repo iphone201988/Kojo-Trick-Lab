@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.ProgressionDetailsData" />
+            type="com.example.newbase_2025.data.model.HomeProgressStep" />
 
         <variable
             name="pos"
@@ -19,9 +19,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clProgress"
         android:layout_width="match_parent"
         android:background="@drawable/bg_stock_grey"
         android:padding="@dimen/_10sdp"
+        android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
         android:layout_margin="@dimen/_5sdp"
         android:backgroundTint="@color/stroke_color"
         android:layout_height="wrap_content">
@@ -44,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
             android:gravity="center"
-            android:text="@{bean.count}"
+            android:text="@{String.valueOf(bean.progress.repsCount)}"
             tools:text="1"
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
@@ -75,7 +77,7 @@
             android:layout_height="@dimen/_33sdp"
             android:scaleType="centerCrop"
             android:src="@drawable/bg_progress"
-            setImageType="@{bean.type}"
+            setImageType="@{bean.progress.status}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

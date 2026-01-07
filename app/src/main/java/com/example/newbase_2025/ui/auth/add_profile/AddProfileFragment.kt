@@ -14,18 +14,26 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.newbase_2025.BR
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.utils.BaseCustomDialog
-import com.example.newbase_2025.utils.BindingUtils
-import com.example.newbase_2025.utils.showErrorToast
-import com.example.newbase_2025.utils.showInfoToast
+import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.GetProfileResponse
+import com.example.newbase_2025.data.model.UploadProfileApiResponse
 import com.example.newbase_2025.databinding.FragmentAddProfileBinding
+import com.example.newbase_2025.databinding.PersonalDialogItemBinding
+import com.example.newbase_2025.databinding.UnPinLayoutBinding
 import com.example.newbase_2025.databinding.VideoImagePickerDialogBoxBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
 import com.example.newbase_2025.ui.auth.forgot.ForgotEmailFragmentDirections
 import com.example.newbase_2025.utils.AppUtils
+import com.example.newbase_2025.utils.BaseCustomDialog
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
+import com.example.newbase_2025.utils.showInfoToast
 import com.github.dhaval2404.imagepicker.util.FileUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -44,7 +52,11 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
     private var photoFile2: File? = null
     private var photoURI: Uri? = null
     private var multipartPart: MultipartBody.Part? = null
+    private var profileImage: String? = null
+    private var skin: String? = null
 
+    private var commonDialog: BaseCustomDialog<PersonalDialogItemBinding>? = null
+    private lateinit var commonAdapter: SimpleRecyclerViewAdapter<String, UnPinLayoutBinding>
     override fun getLayoutResource(): Int {
         return R.layout.fragment_add_profile
     }
@@ -57,8 +69,68 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
         binding.clCommon.tvHeader.text = "Add Profile Picture"
         // click
         initOnClick()
-
+        // observer
+        initObserver()
     }
+
+
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "uploadProfile" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: UploadProfileApiResponse? =
+                                    BindingUtils.parseJson(jsonData)
+                                if (model?.success == true) {
+                                    profileImage = model.url
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
+                        "profileApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
+                                if (model != null) {
+                                    val action =
+                                        ForgotEmailFragmentDirections.navigateToSetupFragment()
+                                    BindingUtils.navigateWithSlide(findNavController(), action)
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+
+                }
+            }
+        }
+    }
+
 
     /**
      * Method to initialize click
@@ -70,14 +142,26 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                     findNavController().popBackStack()
                 }
 
-                R.id.btnContinue -> {
-                    val action = ForgotEmailFragmentDirections.navigateToSetupFragment()
-                    BindingUtils.navigateWithSlide(findNavController(), action)
-                }
 
-                R.id.clUpload->{
+                R.id.clUpload -> {
                     imageDialog()
                 }
+
+                R.id.btnContinue -> {
+                    val data = HashMap<String, Any>()
+                    if (profileImage?.isNotEmpty() == true) {
+                        data["profilePicture"] = profileImage!!
+                    }
+                    if (skin?.isNotEmpty() == true) {
+                        data["skin"] = skin!!
+                    }
+                    viewModel.profileApi(Constants.UPDATE_PROFILE, data)
+                }
+
+                R.id.clChoose -> {
+                    commonDialog()
+                }
+
             }
         }
     }
@@ -88,8 +172,9 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
             when (it.id) {
                 R.id.tvCamera, R.id.imageCamera -> {
                     if (!BindingUtils.hasPermissions(
-                            requireActivity(), BindingUtils.permissions))
-                    {
+                            requireActivity(), BindingUtils.permissions
+                        )
+                    ) {
                         permissionResultLauncher1.launch(BindingUtils.permissions)
                     } else {
                         // camera
@@ -141,11 +226,12 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
 
     /*** open gallery ***/
     private fun galleryImagePicker() {
-        val pictureActionIntent =
-            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI).apply {
-                type = "image/*"  // Restrict to images only
-            }
-        resultLauncherGallery.launch(pictureActionIntent)
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+            action = Intent.ACTION_GET_CONTENT
+        }
+        resultLauncherGallery.launch(Intent.createChooser(intent, "Select Picture"))
     }
 
 
@@ -157,12 +243,14 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                 val imageUri = data?.data
                 imageUri?.let { uri ->
                     try {
-                        binding.ivCircle1.visibility= View.GONE
-                        binding.ivCircle.visibility= View.VISIBLE
-                        binding.ivProfile.visibility= View.VISIBLE
-                        Glide.with(requireActivity()).load(imageUri)
-                            .into(binding.ivProfile)
+                        binding.ivCircle1.visibility = View.GONE
+                        binding.ivCircle.visibility = View.VISIBLE
+                        binding.ivProfile.visibility = View.VISIBLE
+                        Glide.with(requireActivity()).load(imageUri).into(binding.ivProfile)
                         multipartPart = convertMultipartPartGal(uri)
+
+
+                        viewModel.uploadProfile(Constants.UPLOAD, multipartPart)
 
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -215,14 +303,15 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                     photoURI?.let { uri ->
                         lifecycleScope.launch {
                             try {
-                                binding.ivCircle1.visibility= View.GONE
-                                binding.ivCircle.visibility= View.VISIBLE
-                                binding.ivProfile.visibility= View.VISIBLE
-                                Glide.with(requireActivity())
-                                    .load(uri)
-                                    .into(binding.ivProfile)
+                                binding.ivCircle1.visibility = View.GONE
+                                binding.ivCircle.visibility = View.VISIBLE
+                                binding.ivProfile.visibility = View.VISIBLE
+                                Glide.with(requireActivity()).load(uri).into(binding.ivProfile)
 
                                 multipartPart = convertMultipartPart(requireActivity(), uri)
+
+                                viewModel.uploadProfile(Constants.UPLOAD, multipartPart)
+
                             } catch (e: Exception) {
                                 e.printStackTrace()
                                 showErrorToast("Compression fail")
@@ -248,7 +337,7 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
 
             // Create multipart from the temp file
             val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("avatar", tempFile.name, requestFile)
+            MultipartBody.Part.createFormData("file", tempFile.name, requestFile)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -263,10 +352,46 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
         val newFile = File(file.parent, fileName)
         file.renameTo(newFile)
         return MultipartBody.Part.createFormData(
-            "avatar", newFile.name, newFile.asRequestBody("image/*".toMediaTypeOrNull())
+            "file", newFile.name, newFile.asRequestBody("image/*".toMediaTypeOrNull())
         )
     }
 
 
+    /** common dialog  handel ***/
+    private fun commonDialog() {
+        commonDialog = BaseCustomDialog(requireActivity(), R.layout.personal_dialog_item) {
 
+        }
+        commonDialog!!.create()
+        commonDialog!!.show()
+        // adapter
+        initCommonAdapter()
+    }
+
+    /** handle adapter **/
+    private fun initCommonAdapter() {
+        commonAdapter = SimpleRecyclerViewAdapter(R.layout.un_pin_layout, BR.bean) { v, m, pos ->
+            when (v?.id) {
+                R.id.consMainUnPin -> {
+                    skin = m.toString()
+                    binding.tvChoose.text = m.toString()
+                    commonDialog?.dismiss()
+                }
+            }
+        }
+        commonAdapter.list = commonList()
+
+        commonDialog?.binding?.rvCommon?.adapter = commonAdapter
+    }
+
+    private fun commonList(): ArrayList<String> {
+        return arrayListOf(
+            "Skin 1",
+            "Skin 2",
+            "Skin 3",
+            "Skin 4",
+            "Skin 5",
+            "Skin 6",
+        )
+    }
 }

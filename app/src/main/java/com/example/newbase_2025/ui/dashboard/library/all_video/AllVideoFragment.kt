@@ -3,21 +3,29 @@ package com.example.newbase_2025.ui.dashboard.library.all_video
 import android.content.Intent
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.example.newbase_2025.BR
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.AllVideoData
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.GetRelatedVideoData
+import com.example.newbase_2025.data.model.RelatedVideoData
 import com.example.newbase_2025.databinding.AllVideosRvItemBinding
 import com.example.newbase_2025.databinding.FragmentAllVideoBinding
 import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
     private val viewModel: AllVideoFragmentVM by viewModels()
-    private lateinit var allVideoAdapter: SimpleRecyclerViewAdapter<AllVideoData, AllVideosRvItemBinding>
+    private val args: AllVideoFragmentArgs by navArgs()
+
+    private lateinit var allVideoAdapter: SimpleRecyclerViewAdapter<RelatedVideoData, AllVideosRvItemBinding>
     override fun getLayoutResource(): Int {
         return R.layout.fragment_all_video
     }
@@ -29,8 +37,15 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
     override fun onCreateView(view: View) {
         // adapter
         initAdapter()
-
-
+        // api call
+        if (args.videoTopicId.isNotEmpty()) {
+            viewModel.getVideoTopic(Constants.VIDEO_RELATED + "/${args.videoTopicId}")
+        }
+        if (args.videoTitle.isNotEmpty()) {
+            binding.tvLorem.text = args.videoTitle
+        }
+        // observer
+        initObserver()
         // click
         initOnClick()
     }
@@ -50,6 +65,53 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
         }
     }
 
+
+    /**
+     * Method to initialize observer
+     */
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getVideoTopic" -> {
+                            runCatching {
+                                val model = BindingUtils.parseJson<GetRelatedVideoData>(
+                                    it.data?.toString().orEmpty()
+                                )
+                                if (model?.success == true && model.data?.isNotEmpty() == true) {
+                                    val safeList = model.data
+                                    allVideoAdapter.list = safeList
+                                    binding.tvVideoCount.text = "(${safeList.size} videos)"
+                                    binding.clEmpty.visibility = View.GONE
+
+                                } else {
+                                    binding.clEmpty.visibility = View.VISIBLE
+                                    binding.tvVideoCount.text = "(0 videos)"
+                                }
+
+                            }.onFailure { e ->
+                                showErrorToast(e.message.orEmpty())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                Status.LOADING -> showLoading()
+                else -> {
+
+                }
+            }
+        }
+    }
+
     /**
      * Initialize adapter
      */
@@ -57,38 +119,23 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
         allVideoAdapter =
             SimpleRecyclerViewAdapter(R.layout.all_videos_rv_item, BR.bean) { v, m, _ ->
                 when (v?.id) {
-                    R.id.cardView -> {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "forwardTrick")
-                        startActivity(intent)
+                    R.id.clForward -> {
+                        // api call
+                        if (m._id?.isNotEmpty() == true && m.topicId?._id?.isNotEmpty() == true && m.categoryId?._id?.isNotEmpty() == true) {
+                            val intent = Intent(requireContext(), CommonActivity::class.java)
+                            intent.putExtra("videoId", m._id)
+                            intent.putExtra("topicId", m.topicId._id)
+                            intent.putExtra("categoryId", m.categoryId._id)
+                            intent.putExtra("fromWhere", "videoPlayer")
+                            startActivity(intent)
+                        }
                     }
                 }
 
             }
         binding.rvAllVideo.adapter = allVideoAdapter
-        allVideoAdapter.list = getDummyTrickList()
+
     }
 
-    /**
-     * Get dummy trick list
-     */
-    private fun getDummyTrickList(): ArrayList<AllVideoData> {
-        val dummyList = arrayListOf(
-            AllVideoData("Dive Roll - Session 1", true),
-            AllVideoData("Dive Roll - Session 2", true),
-            AllVideoData("Dive Roll - Session 3", false),
-            AllVideoData("Dive Roll - Session 4", false),
-            AllVideoData("Dive Roll - Session 5", false),
-            AllVideoData("Dive Roll - Session 6", false),
-            AllVideoData("Dive Roll - Session 7", false),
-            AllVideoData("Dive Roll - Session 8", false),
-            AllVideoData("Dive Roll - Session 9", false),
-
-
-            )
-
-
-        return dummyList
-    }
 
 }

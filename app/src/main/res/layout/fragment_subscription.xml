@@ -19,9 +19,8 @@
 
         <include
             android:id="@+id/clCommon"
-            layout="@layout/common_header"
+            layout="@layout/profile_common_header"
             app:vm="@{vm}" />
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

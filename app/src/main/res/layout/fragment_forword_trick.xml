@@ -79,6 +79,7 @@
             android:layout_marginTop="@dimen/_18sdp"
             android:clipToPadding="false"
             android:orientation="vertical"
+            android:minHeight="@dimen/_200sdp"
             android:paddingStart="@dimen/_12sdp"
             android:paddingEnd="@dimen/_12sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -88,6 +89,47 @@
             app:layout_constraintTop_toBottomOf="@+id/rvForward"
             tools:itemCount="5"
             tools:listitem="@layout/vertical_forward_rv_item" />
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clEmpty"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCommonProgress"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_180sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/empty_combo"
+
+                android:layout_marginBottom="@dimen/_43sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCommon"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Trick Added Yet!"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivCommonProgress"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

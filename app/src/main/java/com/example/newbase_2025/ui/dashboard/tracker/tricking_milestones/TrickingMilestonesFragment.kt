@@ -1,34 +1,33 @@
 package com.example.newbase_2025.ui.dashboard.tracker.tricking_milestones
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.os.Handler
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.example.newbase_2025.BR
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.MilestonesData
-import com.example.newbase_2025.data.model.TrackerData
-import com.example.newbase_2025.databinding.FragmentTrackerBinding
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.MilestonesApiResponse
+import com.example.newbase_2025.data.model.MilestonesLevel
 import com.example.newbase_2025.databinding.FragmentTrickingMilestonesBinding
-import com.example.newbase_2025.databinding.TrickRvLayoutItemBinding
 import com.example.newbase_2025.databinding.TrickingMilestonesRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
-import com.example.newbase_2025.ui.dashboard.tracker.TrackerFragmentVM
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.getValue
 
 @AndroidEntryPoint
 class TrickingMilestonesFragment : BaseFragment<FragmentTrickingMilestonesBinding>() {
     private val viewModel: TrickingMilestonesFragmentVM by viewModels()
-    private lateinit var milestonesAdapter: SimpleRecyclerViewAdapter<MilestonesData, TrickingMilestonesRvItemBinding>
+    private lateinit var milestonesAdapter: SimpleRecyclerViewAdapter<MilestonesLevel, TrickingMilestonesRvItemBinding>
+    private var isProgress = false
     override fun getLayoutResource(): Int {
-
         return R.layout.fragment_tricking_milestones
     }
 
@@ -42,8 +41,78 @@ class TrickingMilestonesFragment : BaseFragment<FragmentTrickingMilestonesBindin
         initTrickAdapter()
         // click
         initOnClick()
+        // view
+        initView()
+
+        // observer
+        initObserver()
     }
 
+    /**
+     * Method to initialize view
+     */
+    private fun initView() {
+        // api call
+        viewModel.geMilestoneApi(Constants.TRICKING_MILESTONE)
+
+
+        // refresh
+        binding.ssPullRefresh.setColorSchemeResources(
+            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+        )
+        binding.ssPullRefresh.setOnRefreshListener {
+            Handler().postDelayed({
+                binding.ssPullRefresh.isRefreshing = false
+                isProgress = true
+                // api call
+                viewModel.geMilestoneApi(Constants.TRICKING_MILESTONE)
+            }, 2000)
+        }
+    }
+
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    if (!isProgress) {
+                        showLoading()
+                    }
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "geMilestoneApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: MilestonesApiResponse? = BindingUtils.parseJson(jsonData)
+                                if (model != null) {
+                                    var milestones = model.levels
+                                    isProgress = false
+                                    milestonesAdapter.list = milestones
+                                    binding.tvStarCount.text = model.levelData?.level.toString()
+
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
 
     /**
      * Method to initialize click
@@ -54,12 +123,7 @@ class TrickingMilestonesFragment : BaseFragment<FragmentTrickingMilestonesBindin
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-                R.id.clStar->{
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "myStar")
-                    startActivity(intent)
 
-                }
             }
         }
     }
@@ -74,28 +138,13 @@ class TrickingMilestonesFragment : BaseFragment<FragmentTrickingMilestonesBindin
                     R.id.cardView -> {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "categoryChecking")
+                        intent.putExtra("categoryId", m._id)
                         startActivity(intent)
                     }
                 }
 
             }
         binding.rvMilestones.adapter = milestonesAdapter
-        milestonesAdapter.list = getDummyTrickList()
-    }
-
-    /**
-     * Get dummy trick list
-     */
-    private fun getDummyTrickList(): ArrayList<MilestonesData> {
-        val dummyList = arrayListOf(
-            MilestonesData(R.drawable.home_list_dummy, "Beginner",1),
-            MilestonesData(R.drawable.home_list_dummy, "Intermediate",2),
-            MilestonesData(R.drawable.home_list_dummy, "Advanced",3),
-            MilestonesData(R.drawable.home_list_dummy, "Elite",3),
-            MilestonesData(R.drawable.home_list_dummy, "Pro",3),
-
-        )
-        return dummyList
     }
 
 

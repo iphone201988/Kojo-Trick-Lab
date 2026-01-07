@@ -1,6 +1,7 @@
 package com.example.newbase_2025.ui.dashboard.tracker.progression_details
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -9,10 +10,16 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.ProgressionDetailsData
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.HomeProgressApiResponse
+import com.example.newbase_2025.data.model.HomeProgressStep
+import com.example.newbase_2025.data.model.VideoLink
 import com.example.newbase_2025.databinding.FragmentProgressionDetailsBinding
 import com.example.newbase_2025.databinding.ProgressionDetailsRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +27,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBinding>() {
     private val viewModel: ProgressionDetailsFragmentVM by viewModels()
-    private lateinit var progressionDetailsAdapter: SimpleRecyclerViewAdapter<ProgressionDetailsData, ProgressionDetailsRvItemBinding>
+    private lateinit var progressionDetailsAdapter: SimpleRecyclerViewAdapter<HomeProgressStep, ProgressionDetailsRvItemBinding>
+    private var trackDetailId: String? = null
+    private var diveName: String? = null
     override fun getLayoutResource(): Int {
 
         return R.layout.fragment_progression_details
@@ -36,16 +45,32 @@ class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBindin
         initProgressionDetailsAdapter()
         // click
         initOnClick()
-        // view pager data set
-        val adapter = UserImagePagerAdapter(getDummyImageList()) { imageUrl ->
 
-
-        }
-        binding.viewpager.adapter = adapter
-        // dot indicators
-        setupViewPager()
+        // observer
+        initObserver()
     }
 
+    override fun onResume() {
+        super.onResume()
+        //view
+        initView()
+    }
+
+    /**
+     * Method to initialize view
+     */
+    private fun initView() {
+        // get argument
+        trackDetailId = arguments?.getString("trackDetailId")
+
+        //  API call
+        trackDetailId?.let { id ->
+            val data = HashMap<String, Any>()
+            viewModel.getTrickDataByIdApi(data, Constants.TRICKS_DATA + "/$id")
+        } ?: run {
+            showErrorToast("Something went wrong!")
+        }
+    }
 
     /**
      * Method to initialize click
@@ -57,12 +82,79 @@ class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBindin
                     requireActivity().finish()
                 }
 
-                R.id.btnMarkCompleted->{
+                R.id.btnMarkCompleted -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
                     intent.putExtra("fromWhere", "comboGoals")
                     startActivity(intent)
                 }
 
+            }
+        }
+    }
+
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getTrickDataByIdApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: HomeProgressApiResponse? =
+                                    BindingUtils.parseJson(jsonData)
+                                if (model != null) {
+                                    diveName = model.data?.name
+                                    val home = model.data
+                                    binding.tvTrack.text = home?.description.orEmpty()
+                                    binding.tvPhill.text = home?.name.orEmpty()
+                                    binding.tvSkip.text = home?.name.orEmpty()
+                                    // Safe list
+                                    val safeList = home?.steps ?: emptyList()
+                                    progressionDetailsAdapter.list = safeList
+
+                                    // view pager data set
+                                    val allVideos: List<VideoLink> =
+                                        home?.steps?.flatMap { it?.videoLinks ?: emptyList() }
+                                            ?.filterNotNull() ?: emptyList()
+                                    // Setup ViewPager
+                                    val adapter = UserImagePagerAdapter(allVideos) { videoItem ->
+                                        val intent =
+                                            Intent(requireContext(), CommonActivity::class.java)
+                                        intent.putExtra("fromWhere", "video")
+                                        intent.putExtra("videoUrl", videoItem.link)
+                                        startActivity(intent)
+                                    }
+
+                                    binding.viewpager.adapter = adapter
+
+                                    // dot indicators
+                                    setupViewPager()
+
+
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
             }
         }
     }
@@ -98,44 +190,19 @@ class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBindin
         progressionDetailsAdapter =
             SimpleRecyclerViewAdapter(R.layout.progression_details_rv_item, BR.bean) { v, m, _ ->
                 when (v?.id) {
-                    R.id.cardView -> {
-
+                    R.id.clProgress -> {
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "finalProgress")
+                        intent.putExtra("progressData", m)
+                        intent.putExtra("trackDetailId", trackDetailId)
+                        intent.putExtra("diveName", diveName)
+                        startActivity(intent)
                     }
                 }
 
             }
         binding.rvProgressionDetails.adapter = progressionDetailsAdapter
-        progressionDetailsAdapter.list = getDummyTrickList()
-    }
 
-    /**
-     * Get dummy trick list
-     */
-    private fun getDummyTrickList(): ArrayList<ProgressionDetailsData> {
-        val dummyList = arrayListOf(
-            ProgressionDetailsData("1", "Forward Roll Basics", 2),
-            ProgressionDetailsData("2", "Long Jump Prep", 1),
-            ProgressionDetailsData("3", "Dive Prep", 3),
-            ProgressionDetailsData("4", "Dive Prep", 3),
-
-
-            )
-
-        return dummyList
-    }
-
-    /**
-     * Get dummy image list
-     */
-    private fun getDummyImageList(): ArrayList<Int> {
-        val dummyList = arrayListOf(
-            R.drawable.home_list_dummy,
-            R.drawable.home_list_dummy,
-            R.drawable.home_list_dummy,
-            R.drawable.home_list_dummy
-        )
-
-        return dummyList
     }
 
 

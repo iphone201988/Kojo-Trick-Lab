@@ -3,20 +3,28 @@ package com.example.newbase_2025.ui.auth.verify
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.CommonApiResponse
+import com.example.newbase_2025.data.model.LoginApiResponse
 import com.example.newbase_2025.databinding.FragmentVerifyBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
+import com.example.newbase_2025.utils.showInfoToast
+import com.example.newbase_2025.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.getValue
 
 
 @AndroidEntryPoint
@@ -26,7 +34,8 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
     private val args: VerifyFragmentArgs by navArgs()
     private lateinit var otpTimer: CountDownTimer
     private var isOtpComplete = false
-    private var otpType : String?=null
+    private var otpType: String? = null
+    private var userEmail: String? = null
     override fun getLayoutResource(): Int {
         return R.layout.fragment_verify
     }
@@ -37,14 +46,17 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
 
     override fun onCreateView(view: View) {
         binding.clCommon.tvHeader.text = "Verify"
-         otpType = args.otpType
+        otpType = args.otpType
+        userEmail = args.userEmail
         // click
         initOnClick()
-
         // view
         initView()
         // start timer
         startOtpTimer()
+
+        // observer
+        initObserver()
     }
 
     /**
@@ -58,14 +70,26 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
                 }
 
                 R.id.btnVerify -> {
-                    if (otpType.equals("Forgot")){
-                        val action = VerifyFragmentDirections.navigateToResetPasswordFragment()
-                        BindingUtils.navigateWithSlide(findNavController(), action)
-                    }else{
-                        val action = VerifyFragmentDirections.navigateToAddProfileFragment()
-                        BindingUtils.navigateWithSlide(findNavController(), action)
+                    if (validate()) {
+                        verifyAccountApi()
                     }
 
+                }
+
+                R.id.tvResendCode -> {
+                    // get opt api call
+                    if (!userEmail.isNullOrEmpty()) {
+                        val data = HashMap<String, Any>()
+                        if (!userEmail.isNullOrEmpty()) {
+                            data["email"] = userEmail.toString()
+                        }
+                        if (otpType.equals("Forgot")) {
+                            data["type"] = 2
+                        } else {
+                            data["type"] = 1
+                        }
+                        viewModel.resendOtpApi(Constants.RESEND_OTP, data)
+                    }
                 }
 
 
@@ -73,6 +97,76 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
         }
     }
 
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "codeVerificationApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: LoginApiResponse? = BindingUtils.parseJson(jsonData)
+                                val loginData = model?.user
+                                if (loginData != null) {
+                                    showSuccessToast(model.message.toString())
+                                    loginData.token.let {
+                                        sharedPrefManager.setToken(it.toString())
+                                    }
+                                    if (otpType.equals("Forgot")) {
+                                        val action =
+                                            VerifyFragmentDirections.navigateToResetPasswordFragment(userEmail = userEmail.toString())
+                                        BindingUtils.navigateWithSlide(findNavController(), action)
+                                    } else {
+                                        val action = VerifyFragmentDirections.navigateToAddProfileFragment()
+                                        BindingUtils.navigateWithSlide(findNavController(), action)
+                                    }
+                                } else {
+                                    showErrorToast("Something went wrong")
+                                }
+                            }.onFailure { e ->
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
+                        "resendOtpApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
+                                if (model?.success == true) {
+                                    showSuccessToast(model.message.toString())
+                                    binding.edtOtp1.setText("")
+                                    binding.edtOtp2.setText("")
+                                    binding.edtOtp3.setText("")
+                                    binding.edtOtp4.setText("")
+                                    startOtpTimer()
+                                }
+
+                            }.onFailure { e ->
+                                Log.e("error", "verifyAccount: $e")
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+
+                }
+            }
+        }
+    }
 
     /*** view ***/
     private fun initView() {
@@ -119,6 +213,53 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
             }
         }
     }
+
+    /*** add validation ***/
+    private fun validate(): Boolean {
+        val first = binding.edtOtp1.text.toString().trim()
+        val second = binding.edtOtp2.text.toString().trim()
+        val third = binding.edtOtp3.text.toString().trim()
+        val four = binding.edtOtp4.text.toString().trim()
+
+        if (first.isEmpty()) {
+            showInfoToast("Please enter valid otp")
+            return false
+        } else if (second.isEmpty()) {
+            showInfoToast("Please enter valid otp")
+            return false
+        } else if (third.isEmpty()) {
+            showInfoToast("Please enter valid otp")
+            return false
+        } else if (four.isEmpty()) {
+            showInfoToast("Please enter valid otp")
+            return false
+        }
+        return true
+    }
+
+
+    /** verifyAccount api call **/
+    private fun verifyAccountApi() {
+        try {
+            val otpData =
+                "${binding.edtOtp1.text}" + "${binding.edtOtp2.text}" + "${binding.edtOtp3.text}" + "${binding.edtOtp4.text}"
+            val data = HashMap<String, Any>()
+            if (otpData.isNotEmpty()) {
+                data["email"] = userEmail.toString()
+                data["otp"] = otpData.toString()
+                if (otpType.equals("Forgot")) {
+                    data["type"] = 2
+                } else {
+                    data["type"] = 1
+                }
+                viewModel.codeVerificationApi(Constants.VERIFY_OTP, data)
+            }
+
+        } catch (e: Exception) {
+            Log.e("error", "verifyAccount: $e")
+        }
+    }
+
     /** start timer ***/
     private fun startOtpTimer() {
         val totalTime = 1 * 60 * 1000L
@@ -130,11 +271,18 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
                 binding.tvResendCode.isClickable = false
                 val minutes = millisUntilFinished / 1000 / 60
                 val seconds = millisUntilFinished / 1000 % 60
-                binding.tvResendCode.text = "Resend Code in " + String.format("%02d:%02d", minutes, seconds)
+                binding.tvResendCode.text =
+                    "Resend Code in " + String.format("%02d:%02d", minutes, seconds)
             }
 
             override fun onFinish() {
-                binding.tvResendCode.text = "Resend Code in 00:00"
+                binding.tvResendCode.text = "Resend Otp"
+                binding.tvResendCode.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.colorPrimary
+                    )
+                )
                 binding.tvResendCode.isEnabled = true
                 binding.tvResendCode.isFocusable = true
                 binding.tvResendCode.isClickable = true

@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.GetVideoData" />
+
+        <variable
             name="vm"
             type="com.example.newbase_2025.ui.dashboard.library.video_player.VideoPlayerFragmentVM" />
     </data>
@@ -58,17 +62,16 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivUser"
+                videoThumbNail="@{bean.videoUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_201sdp"
                 android:onClick="@{v->vm.onClick(v)}"
                 android:scaleType="centerCrop"
-                android:src="@drawable/image_person"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clCommon"
-                app:srcCompat="@drawable/image_person" />
+                app:layout_constraintTop_toBottomOf="@+id/clCommon" />
 
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -169,11 +172,35 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_18sdp"
                 android:paddingEnd="@dimen/_18sdp"
-                android:text="Dive Roll"
+                android:text="@{bean.title}"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/_12ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ivUser" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvView"
+                style="@style/TextView_600_SemiBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_18sdp"
+                android:text='@{String.valueOf(bean.views+" views")}'
+                android:textColor="@color/blue_70"
+                android:textSize="@dimen/_10ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvTrack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvTrack" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivView"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvView"
+                app:layout_constraintEnd_toStartOf="@+id/tvView"
+                app:layout_constraintTop_toTopOf="@+id/tvView"
+                app:srcCompat="@drawable/post_view" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -194,7 +221,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:text="Phill Gibbs"
+                android:text="@{bean.userId.name}"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/_11ssp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvTricker"
@@ -209,6 +236,7 @@
                 android:background="@drawable/bg_stock_yellow"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_5sdp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/tvTrack"
                 app:layout_constraintTop_toBottomOf="@+id/tvTricker">
 
@@ -252,8 +280,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_18sdp"
                 android:layout_marginTop="@dimen/_15sdp"
-                android:onClick="@{v->vm.onClick(v)}"
                 android:background="@drawable/bg_stock_grey"
+                android:onClick="@{v->vm.onClick(v)}"
                 android:padding="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -264,7 +292,7 @@
                     style="@style/TextView_600_SemiBold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="COMMENTS"
+                    android:text="@string/comments"
                     android:textSize="@dimen/_9ssp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -275,7 +303,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:text=" 21"
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_9ssp"
                     app:layout_constraintBottom_toBottomOf="@+id/tvComments"
@@ -289,7 +316,6 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:onClick="@{v->vm.onClick(v)}"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/dummy_image"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvComments"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
@@ -334,9 +360,11 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@+id/tvRelated"
                 tools:itemCount="3"
-                tools:listitem="@layout/library_rv_item" />
+                tools:listitem="@layout/item_section_rv_item" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.core.widget.NestedScrollView>
 </layout>

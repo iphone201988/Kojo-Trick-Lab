@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="vm"
             type="com.example.newbase_2025.ui.dashboard.community.create_Post.CreatePostVm" />
@@ -25,12 +26,12 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/_10sdp"
             android:layout_marginHorizontal="@dimen/_18sdp"
-            app:layout_constraintTop_toBottomOf="@id/clCommon"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintBottom_toTopOf="@id/btnPost"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/clCommon">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -42,11 +43,11 @@
                     style="@style/TextView_700_Bold_Quicksand"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Create Post"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:textSize="@dimen/_18ssp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    android:text="Create Post"
+                    android:textSize="@dimen/_15ssp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -54,12 +55,12 @@
                     style="@style/TextView_500_Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/_12ssp"
-                    android:textColor="@color/blue"
-                    android:text="Title"
                     android:layout_marginTop="@dimen/_15sdp"
-                    app:layout_constraintTop_toBottomOf="@id/tvCreatePost"
-                    app:layout_constraintStart_toStartOf="@id/tvCreatePost"/>
+                    android:text="Title"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/_11ssp"
+                    app:layout_constraintStart_toStartOf="@id/tvCreatePost"
+                    app:layout_constraintTop_toBottomOf="@id/tvCreatePost" />
 
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -69,11 +70,11 @@
                     android:layout_height="@dimen/_38sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/et_bg"
-                    android:imeOptions="actionDone"
                     android:gravity="start"
                     android:hint="Enter here..."
-                    android:onClick="@{v->vm.onClick(v)}"
+                    android:imeOptions="actionDone"
                     android:inputType="textEmailAddress"
+                    android:onClick="@{v->vm.onClick(v)}"
                     android:paddingStart="@dimen/_15sdp"
                     android:textSize="@dimen/_11ssp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -85,26 +86,27 @@
                     style="@style/TextView_500_Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/_12ssp"
-                    android:textColor="@color/blue"
-                    android:text="Description"
                     android:layout_marginTop="@dimen/_15sdp"
-                    app:layout_constraintTop_toBottomOf="@id/etTitle"
-                    app:layout_constraintStart_toStartOf="@id/etTitle"/>
+                    android:text="Description"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/_11ssp"
+                    app:layout_constraintStart_toStartOf="@id/etTitle"
+                    app:layout_constraintTop_toBottomOf="@id/etTitle" />
 
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etDescription"
                     style="@style/EditText"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_80sdp"
+                    android:layout_height="@dimen/_98sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/et_bg"
-                    android:imeOptions="actionDone"
                     android:gravity="start"
                     android:hint="Enter here..."
+                    android:singleLine="false"
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
                     android:onClick="@{v->vm.onClick(v)}"
-                    android:inputType="textEmailAddress"
                     android:paddingStart="@dimen/_15sdp"
                     android:textSize="@dimen/_11ssp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -112,53 +114,98 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
 
 
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/consVideoClip"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_150sdp"
-                    android:background="@drawable/et_bg"
                     android:layout_marginTop="@dimen/_15sdp"
-                    app:layout_constraintTop_toBottomOf="@id/etDescription"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    android:background="@drawable/et_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-
+                    app:layout_constraintTop_toBottomOf="@id/etDescription">
 
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/ivUpload"
                         android:layout_width="@dimen/_24sdp"
                         android:layout_height="@dimen/_24sdp"
-                        android:src="@drawable/upload_video"
                         android:layout_marginTop="@dimen/_40sdp"
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:src="@drawable/upload_video"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvUploadVideo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Upload Video Clip (20mb max)"
                         android:layout_marginTop="@dimen/_5sdp"
-                        app:layout_constraintTop_toBottomOf="@id/ivUpload"
+                        android:text="Upload Video Clip (20mb max)"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
-                    
+                        app:layout_constraintTop_toBottomOf="@id/ivUpload" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvTime"
                         style="@style/TextView_500_Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/_12ssp"
                         android:text="(Max 10 seconds)"
                         android:textColor="@color/view_line"
-                        app:layout_constraintTop_toBottomOf="@id/tvUploadVideo"
+                        android:textSize="@dimen/_12ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        app:layout_constraintTop_toBottomOf="@id/tvUploadVideo" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivVideo"
+                    android:layout_width="0dp"
+                    android:layout_height= "0dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    app:layout_constraintEnd_toEndOf="@+id/consVideoClip"
+                    app:layout_constraintBottom_toBottomOf="@+id/consVideoClip"
+                    app:layout_constraintStart_toStartOf="@+id/consVideoClip"
+                    app:layout_constraintTop_toTopOf="@+id/consVideoClip"
+                    app:shapeAppearance="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
+
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivVideoPlay"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height= "@dimen/_30sdp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    android:src="@drawable/video_play"
+                    app:layout_constraintEnd_toEndOf="@+id/ivVideo"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivVideo"
+                    app:layout_constraintStart_toStartOf="@+id/ivVideo"
+                    app:layout_constraintTop_toTopOf="@+id/ivVideo"
+                  />
+
+
+                <androidx.media3.ui.PlayerView
+                    android:id="@+id/playerView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:keepScreenOn="true"
+                    android:visibility="gone"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    app:layout_constraintEnd_toEndOf="@+id/ivVideo"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivVideo"
+                    app:layout_constraintStart_toStartOf="@+id/ivVideo"
+                    app:layout_constraintTop_toTopOf="@+id/ivVideo"
+                    app:show_buffering="when_playing"
+                    app:use_controller="true" />
+
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -170,18 +217,18 @@
             style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
             android:layout_marginBottom="@dimen/_25sdp"
             android:background="@drawable/et_bg"
             android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
-            android:layout_marginHorizontal="@dimen/_18sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:text="Post"
             android:textColor="@color/white"
             android:textSize="@dimen/_15ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

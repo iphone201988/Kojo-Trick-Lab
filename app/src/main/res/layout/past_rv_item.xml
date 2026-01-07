@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.SessionPlannerData" />
+            type="com.example.newbase_2025.data.model.PastSessionData" />
 
         <variable
             name="pos"
@@ -22,21 +22,23 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clSession"
+        setLayoutBg="@{bean.color}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
-        setLayoutBg="@{bean.type}"
         android:background="@drawable/red_card_bg"
+        android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
         android:padding="@dimen/_8sdp">
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvDate"
             style="@style/TextView_500_Medium"
+            setTimePast="@{bean.date}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="15, Sep 2025"
             android:textColor="@color/blue"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintBottom_toBottomOf="@+id/tvName"
@@ -51,7 +53,7 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:gravity="center|start"
-            android:text="UTX Kick session"
+            android:text="@{bean.title}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toStartOf="@+id/tvDate"
@@ -69,7 +71,7 @@
             android:layout_marginEnd="18dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text..."
+            android:text="@{bean.note}"
             android:textColor="@color/blue"
             android:textSize="@dimen/_9ssp"
             app:layout_constraintEnd_toEndOf="parent"

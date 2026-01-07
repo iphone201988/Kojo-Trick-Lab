@@ -1,4 +1,5 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/common_navigation"
     tools:ignore="InvalidNavigation">
@@ -58,16 +59,6 @@
         tools:layout="@layout/fragment_tricking_milestones" />
 
     <fragment
-        android:id="@+id/fragmentAddProfile"
-        android:name="com.example.newbase_2025.ui.auth.add_profile.AddProfileFragment"
-        tools:layout="@layout/fragment_add_profile" />
-
-    <fragment
-        android:id="@+id/fragmentSetup"
-        android:name="com.example.newbase_2025.ui.auth.add_profile.SetupFragment"
-        tools:layout="@layout/fragment_setup" />
-
-    <fragment
         android:id="@+id/fragmentCreatePost"
         android:name="com.example.newbase_2025.ui.dashboard.community.create_Post.CreatePostFragment"
         tools:layout="@layout/fragment_create_post" />
@@ -102,19 +93,57 @@
     <fragment
         android:id="@+id/fragmentVideoPlayer"
         android:name="com.example.newbase_2025.ui.dashboard.library.video_player.VideoPlayerFragment"
-        tools:layout="@layout/fragment_video_player" />
+        tools:layout="@layout/fragment_video_player">
+
+
+        <argument
+            android:name="topicId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="videoId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="categoryId"
+            android:defaultValue=""
+            app:argType="string" />
+
+
+    </fragment>
 
 
     <fragment
         android:id="@+id/fragmentUserProfile"
         android:name="com.example.newbase_2025.ui.dashboard.library.user_profile.UserProfileFragment"
-        tools:layout="@layout/fragment_user_profile" />
+        tools:layout="@layout/fragment_user_profile">
+
+
+        <argument
+            android:name="userId"
+            android:defaultValue=""
+            app:argType="string" />
+
+
+    </fragment>
 
 
     <fragment
         android:id="@+id/fragmentSeries"
         android:name="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragment"
-        tools:layout="@layout/fragment_series" />
+        tools:layout="@layout/fragment_series">
+        <argument
+            android:name="categoryId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="title"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 
 
     <fragment
@@ -142,7 +171,18 @@
     <fragment
         android:id="@+id/fragmentAllVideo"
         android:name="com.example.newbase_2025.ui.dashboard.library.all_video.AllVideoFragment"
-        tools:layout="@layout/fragment_all_video" />
+        tools:layout="@layout/fragment_all_video">
+        <argument
+            android:name="videoTopicId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="videoTitle"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/fragmentSessionPlanner"
@@ -153,5 +193,58 @@
         android:id="@+id/fragmentViewAllSession"
         android:name="com.example.newbase_2025.ui.dashboard.tracker.session_planner.view_all.ViewAllSessionFragment"
         tools:layout="@layout/fragment_view_all_session" />
+
+    <fragment
+        android:id="@+id/fragmentSessionDetails"
+        android:name="com.example.newbase_2025.ui.dashboard.session_detail.SessionDetailFragment"
+        tools:layout="@layout/fragment_session_detail" />
+
+
+    <fragment
+        android:id="@+id/fragmentPastSession"
+        android:name="com.example.newbase_2025.ui.dashboard.past_session_detail.PastSessionDetailFragment"
+        tools:layout="@layout/fragment_past_session_detail" />
+
+
+    <fragment
+        android:id="@+id/fragmentAddReviewSession"
+        android:name="com.example.newbase_2025.ui.dashboard.add_review_post_session.AddReviewPostSessionFragment"
+        tools:layout="@layout/fragment_add_review_post_session" />
+
+
+    <fragment
+        android:id="@+id/fragmentEditProfileInfo"
+        android:name="com.example.newbase_2025.ui.dashboard.profile.update.EditProfileInfoFragment"
+        tools:layout="@layout/fragment_edit_profile_info" />
+
+
+    <fragment
+        android:id="@+id/fragmentEditProfile"
+        android:name="com.example.newbase_2025.ui.dashboard.profile.edit.EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile" />
+
+    <fragment
+        android:id="@+id/fragmentVideo"
+        android:name="com.example.newbase_2025.ui.dashboard.community.video.VideoFragment"
+        tools:layout="@layout/fragment_video" />
+
+    <fragment
+        android:id="@+id/fragmentSeeAll"
+        android:name="com.example.newbase_2025.ui.dashboard.library.see_all_video.SeeAllFragment"
+        tools:layout="@layout/fragment_see_all">
+
+
+        <argument
+            android:name="topicId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="title"
+            android:defaultValue=""
+            app:argType="string" />
+
+
+    </fragment>
 
 </navigation>

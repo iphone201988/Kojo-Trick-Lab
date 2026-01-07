@@ -53,8 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@drawable/btn_bg_32"
-                android:paddingVertical="@dimen/_4sdp"
                 android:onClick="@{v->vm.onClick(v)}"
+                android:paddingVertical="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -106,30 +106,44 @@
             style="@style/TextView_400_Regular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingEnd="@dimen/_18sdp"
-            android:layout_marginEnd="@dimen/_18sdp"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/_1sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
+            android:paddingEnd="@dimen/_18sdp"
             android:text="Mark the tricks you've landed to estimate your overall Tricking level."
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tvProgress"
             app:layout_constraintTop_toBottomOf="@+id/tvProgress" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvMilestones"
-            android:layout_width="match_parent"
+
+        <com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout
+            android:id="@+id/ssPullRefresh"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:indicator_overlay="false"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTrack"
-            tools:itemCount="5"
-            tools:listitem="@layout/tricking_milestones_rv_item" />
+            app:lottie_rawRes="@raw/refresh">
 
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMilestones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTrack"
+                tools:itemCount="5"
+                tools:listitem="@layout/tricking_milestones_rv_item" />
+
+
+        </com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bean"
-            type="Integer" />
+            type="com.example.newbase_2025.data.model.VideoLink" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,7 +17,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivUser"
-            setImageFromDrawbale="@{bean}"
+            videoThumbNail="@{bean.link}"
             android:layout_width="0dp"
             android:layout_height="@dimen/_200sdp"
             android:scaleType="centerCrop"
@@ -25,6 +25,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivVideoPlay"
+            android:layout_width="@dimen/_38sdp"
+            android:layout_height="@dimen/_38sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivUser"
+            app:layout_constraintEnd_toEndOf="@+id/ivUser"
+            app:layout_constraintStart_toStartOf="@+id/ivUser"
+            app:layout_constraintTop_toTopOf="@+id/ivUser"
+            app:srcCompat="@drawable/video_play" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

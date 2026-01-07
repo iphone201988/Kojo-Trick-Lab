@@ -15,16 +15,18 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
         android:background="@drawable/radius_bg"
+        android:paddingVertical="@dimen/_5sdp"
         android:elevation="@dimen/_2sdp"
-        android:paddingVertical="@dimen/_10sdp">
+     >
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvNotification"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
             android:gravity="center"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:paddingVertical="@dimen/_5sdp"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:text="Notification"
             android:textSize="@dimen/_12ssp"
@@ -36,7 +38,7 @@
             android:id="@+id/viewNotification"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvNotification" />
 
@@ -44,9 +46,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvVideoSettings"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:gravity="center"
             android:text="Video Settings"
@@ -59,7 +62,7 @@
             android:id="@+id/viewVideoSettings"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvVideoSettings" />
 
@@ -67,9 +70,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvChangePassword"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:gravity="center"
             android:text="Change Password"
@@ -83,7 +87,7 @@
             android:id="@+id/viewChangePassword"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvChangePassword" />
 
@@ -91,9 +95,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSubscription"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:text="Subscription"
             android:onClick="@{v->callback.onViewClick(v)}"
@@ -107,16 +112,17 @@
             android:id="@+id/viewSubscription"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvSubscription" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvClipReview"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:gravity="center"
             android:text="Clip Review"
@@ -129,7 +135,7 @@
             android:id="@+id/viewClipReview"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvClipReview" />
 
@@ -137,9 +143,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvStatVisibility"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:text="Stat Visibility"
@@ -152,7 +159,7 @@
             android:id="@+id/viewStatVisibility"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvStatVisibility" />
 
@@ -160,9 +167,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvPrivacy"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:text="Privacy"
@@ -175,7 +183,7 @@
             android:id="@+id/viewPrivacy"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvPrivacy" />
 
@@ -183,9 +191,10 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvLogout"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:text="Logout"
@@ -199,16 +208,17 @@
             android:id="@+id/viewLogout"
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvLogout" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvDeleteAccount"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:text="Delete Account"

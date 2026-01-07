@@ -7,8 +7,8 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.Notification
-import com.example.newbase_2025.data.NotificationData
+import com.example.newbase_2025.data.model.Notification
+import com.example.newbase_2025.data.model.NotificationData
 import com.example.newbase_2025.databinding.FragmentNotificationNewBinding
 import com.example.newbase_2025.databinding.ItemLayoutNotificationBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +19,7 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
 
     private val viewModel: NotificationVm by viewModels()
 
-    private lateinit var notificationAdapter : SimpleRecyclerViewAdapter<Notification, ItemLayoutNotificationBinding>
+    private lateinit var notificationAdapter: SimpleRecyclerViewAdapter<Notification, ItemLayoutNotificationBinding>
     private var notificationList = ArrayList<Notification>()
 
 
@@ -35,30 +35,67 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
         binding.clCommon.tvHeader.text = "Notification"
         getNotificationList()
         initAdapter()
+        // click
+        initOnClick()
+    }
+
+
+    /**
+     * Method to initialize click
+     */
+    private fun initOnClick() {
+        viewModel.onClick.observe(viewLifecycleOwner) {
+            when (it?.id) {
+                R.id.ivBack -> {
+                    requireActivity().finish()
+                }
+
+            }
+        }
     }
 
     private fun getNotificationList() {
-      notificationList.add(Notification("Today",
-      listOf(
-          NotificationData("New videos added","See the new videos to learn new tricks", "20min ago"),
-          NotificationData("Upcoming Session","15, Sep 2025 session upcoming", "20min ago"),
-      )
-      )
-      )
-        notificationList.add(Notification("Yesterday",
-            listOf(
-                NotificationData("New videos added","See the new videos to learn new tricks","1day ago"),
-                NotificationData("Upcoming Session","15, Sep 2025 session upcoming","1day ago"),
+        notificationList.add(
+            Notification(
+                "Today", listOf(
+                    NotificationData(
+                        "New videos added",
+                        "See the new videos to learn new tricks",
+                        "20min ago"
+                    ),
+                    NotificationData(
+                        "Upcoming Session",
+                        "15, Sep 2025 session upcoming",
+                        "20min ago"
+                    ),
+                )
             )
-        ))
+        )
+        notificationList.add(
+            Notification(
+                "Yesterday", listOf(
+                    NotificationData(
+                        "New videos added",
+                        "See the new videos to learn new tricks",
+                        "1day ago"
+                    ),
+                    NotificationData(
+                        "Upcoming Session",
+                        "15, Sep 2025 session upcoming",
+                        "1day ago"
+                    ),
+                )
+            )
+        )
     }
 
 
     private fun initAdapter() {
-        notificationAdapter = SimpleRecyclerViewAdapter(R.layout.item_layout_notification, BR.bean){ v, m, pos ->
+        notificationAdapter =
+            SimpleRecyclerViewAdapter(R.layout.item_layout_notification, BR.bean) { v, m, pos ->
 
-        }
-        binding.rvNotification.adapter= notificationAdapter
+            }
+        binding.rvNotification.adapter = notificationAdapter
         notificationAdapter.list = notificationList
         notificationAdapter.notifyDataSetChanged()
 

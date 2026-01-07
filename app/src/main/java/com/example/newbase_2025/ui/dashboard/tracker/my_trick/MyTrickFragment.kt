@@ -1,6 +1,7 @@
 package com.example.newbase_2025.ui.dashboard.tracker.my_trick
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.newbase_2025.BR
@@ -8,17 +9,21 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.MyTrickData
-import com.example.newbase_2025.data.model.SubTitle
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.HomeTrickApiResponse
+import com.example.newbase_2025.data.model.HomeTrickVault
 import com.example.newbase_2025.databinding.FragmentMyTrickBinding
 import com.example.newbase_2025.databinding.MyTrickRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MyTrickFragment : BaseFragment<FragmentMyTrickBinding>() {
     private val viewModel: MyTrickFragmentVM by viewModels()
-    private lateinit var myTrickAdapter: SimpleRecyclerViewAdapter<MyTrickData, MyTrickRvItemBinding>
+    private lateinit var myTrickAdapter: SimpleRecyclerViewAdapter<HomeTrickVault, MyTrickRvItemBinding>
     override fun getLayoutResource(): Int {
 
         return R.layout.fragment_my_trick
@@ -32,11 +37,21 @@ class MyTrickFragment : BaseFragment<FragmentMyTrickBinding>() {
     override fun onCreateView(view: View) {
         // adapter
         initTrickAdapter()
-
+        // view
+        initView()
         // click
         initOnClick()
+        // observer
+        initObserver()
     }
 
+    /**
+     * Method to initialize view
+     */
+    private fun initView() {
+        // api call
+        viewModel.getHomeTrickApi(Constants.GET_TRICKS_VAULT_ALL)
+    }
 
     /**
      * Method to initialize click
@@ -52,6 +67,45 @@ class MyTrickFragment : BaseFragment<FragmentMyTrickBinding>() {
         }
     }
 
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getHomeTrickApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: HomeTrickApiResponse? = BindingUtils.parseJson(jsonData)
+                                var home = model?.trickVaults
+                                if (home != null) {
+                                    myTrickAdapter.list = home
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
+
     /**
      * Initialize adapter
      */
@@ -61,55 +115,13 @@ class MyTrickFragment : BaseFragment<FragmentMyTrickBinding>() {
                 R.id.cardView -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
                     intent.putExtra("fromWhere", "trainedRecently")
+                    intent.putExtra("userProgressId", m._id)
                     startActivity(intent)
                 }
             }
 
         }
         binding.rvMyTrick.adapter = myTrickAdapter
-        myTrickAdapter.list = getDummyTrickList()
-    }
-
-    /**
-     * Get dummy trick list
-     */
-    private fun getDummyTrickList(): ArrayList<MyTrickData> {
-        val dummyList = arrayListOf(
-            MyTrickData(
-                R.drawable.home_list_dummy, "Vertical Kicks", true, arrayListOf(
-                    SubTitle("Pop"), SubTitle("Cheat"), SubTitle("Swing Kicks")
-                )
-            ), MyTrickData(
-                R.drawable.home_list_dummy, "Forward Tricks", false, arrayListOf(
-                    SubTitle("Frontflip"), SubTitle("Webster"), SubTitle("Janitor")
-                )
-            ), MyTrickData(
-                R.drawable.home_list_dummy, "Backward Tricks", true, arrayListOf(
-                    SubTitle("Backflip"),
-                    SubTitle("Gainer"),
-                    SubTitle("Full"),
-                    SubTitle("Corkscrew ")
-                )
-            ), MyTrickData(
-                R.drawable.home_list_dummy, "Outside Tricks", false, arrayListOf(
-                    SubTitle("Raiz"),
-                    SubTitle("Doubleleg"),
-                    SubTitle("Lotus"),
-                    SubTitle("Sideflip"),
-                    SubTitle("Spyder")
-                )
-            ), MyTrickData(
-                R.drawable.home_list_dummy, "Inside Tricks", false, arrayListOf(
-                    SubTitle("Aerial"),
-                    SubTitle("Butterfly"),
-                    SubTitle("Masterswing"),
-                    SubTitle("Tak"),
-                    SubTitle("Warp")
-                )
-            )
-        )
-
-        return dummyList
     }
 
 

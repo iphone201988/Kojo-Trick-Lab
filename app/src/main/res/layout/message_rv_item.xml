@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.CommentData" />
+            type="com.example.newbase_2025.data.model.CommentsData" />
 
         <variable
             name="pos"
@@ -27,9 +27,11 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPerson"
+            setImageFromUrl="@{bean.userId.profilePicture}"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
             android:layout_marginStart="@dimen/_6sdp"
+            android:scaleType="centerCrop"
             android:onClick="@{v -> callback.onItemClick(v,bean,pos)}"
             android:src="@drawable/holder_dummy"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:text="@string/trickerjohn"
+            android:text='@{"@"+bean.userId.name}'
             android:textSize="@dimen/_8ssp"
             app:layout_constraintStart_toEndOf="@+id/ivPerson"
             app:layout_constraintTop_toTopOf="@+id/ivPerson" />
@@ -54,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_4sdp"
-            android:text="@{bean.time}"
+
             android:textColor="@color/blue"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintBottom_toBottomOf="@+id/tvComments"
@@ -70,7 +72,7 @@
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginEnd="18dp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="@{bean.message}"
+            android:text="@{bean.comment}"
             android:textColor="@color/blue"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintEnd_toEndOf="parent"

@@ -93,4 +93,23 @@
     <string name="post_session_review">Post Session Review</string>
     <string name="select_any_session_to_start_from">Select any session to start from</string>
     <string name="edit_session">Edit Session</string>
+
+    <string name="log_out">Log out</string>
+    <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout ?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_my_account">Delete My Account</string>
+    <string name="delete">Delete</string>
+    <string name="are_you_sure_you_want_to_delete_nthis_account">Are you sure you want to delete\nthis account?</string>
+    <string name="ok">Ok</string>
+    <string name="delete_this_combo_goal">Delete this Combo Goal</string>
+    <string name="delete_this_session">Delete this Session</string>
+    <string name="delete_all_session">Delete all past Session</string>
+    <string name="are_you_sure_you_want_to_delete_nthis_combo_goal">Are you sure you want to delete\nthis combo goal?</string>
+    <string name="are_you_sure_you_want_to_delete_this_session">Are you sure you want to delete\nthis session?</string>
+    <string name="are_you_sure_you_want_to_delete_all_session">Are you sure you want to delete\nall past session?</string>
+    <string name="select_session_color">Select Session color</string>
+    <string name="update_session">Update Session</string>
+    <string name="update_session_for">Update session for</string>
+    <string name="comments">COMMENTS</string>
+
 </resources>

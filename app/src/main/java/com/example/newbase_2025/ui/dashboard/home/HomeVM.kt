@@ -1,5 +1,7 @@
 package com.example.newbase_2025.ui.dashboard.home
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.utils.Resource
 import com.example.newbase_2025.utils.event.SingleRequestEvent
@@ -16,27 +18,22 @@ class HomeVM @Inject constructor(
     private val apiHelper: ApiHelper,
 ) : BaseViewModel() {
     val observeCommon = SingleRequestEvent<JsonObject>()
-    fun socialLogin( url: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+    // get home api
+    fun getHomeTrickApi(url: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             observeCommon.postValue(Resource.loading(null))
-            try {
-                apiHelper.apiGetOnlyAuthToken(url).let {
-                    if (it.isSuccessful) {
-                        observeCommon.postValue(Resource.success("SOCIAL", it.body()))
-                    } else
-                        if (it.code() == 401)
-                            observeCommon.postValue(Resource.error("Unauthorized", null))
-                        else
-                            observeCommon.postValue(Resource.error(handleErrorResponse(it.errorBody()), null))
+            runCatching {
+                val response = apiHelper.apiGetOnlyAuthToken(url)
+                if (response.isSuccessful) {
+                    observeCommon.postValue(Resource.success("getHomeTrickApi", response.body()))
+                } else {
+                    val errorMsg = handleErrorResponse(response.errorBody(), response.code())
+                    observeCommon.postValue(Resource.error(errorMsg, null))
                 }
-            } catch (e: Exception) {
-                observeCommon.postValue(
-                    Resource.error(
-                        e.message, null
-                    )
-                )
+            }.onFailure { e ->
+                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                observeCommon.postValue(Resource.error("${e.message}", null))
             }
-
         }
     }
 }

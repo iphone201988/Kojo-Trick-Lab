@@ -1,9 +1,6 @@
 package com.example.newbase_2025.ui.auth
 
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.newbase_2025.R
@@ -16,7 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AuthActivity : BaseActivity<ActivityAuthBinding>() {
     private val viewModel: AuthCommonVM by viewModels()
-
 
     private val navController: NavController by lazy {
         (supportFragmentManager.findFragmentById(R.id.onBoardingNav) as NavHostFragment).navController
@@ -31,13 +27,11 @@ class AuthActivity : BaseActivity<ActivityAuthBinding>() {
     }
 
     override fun onCreateView() {
-
         BindingUtils.statusBarStyleWhite(this)
         navController.graph =
             navController.navInflater.inflate(R.navigation.auth_section_navigation).apply {
                 setStartDestination(R.id.fragmentLogin)
             }
     }
-
 
 }

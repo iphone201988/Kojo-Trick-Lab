@@ -10,205 +10,430 @@
             type="com.example.newbase_2025.ui.dashboard.tracker.session_planner.SessionPlannerFragmentVM" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:paddingBottom="@dimen/_20sdp">
+        android:background="@color/bg_color"
+        tools:context=".ui.dashboard.tracker.session_planner.SessionPlannerFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/dash_board_common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSession"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:text="Session Planner"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTrack"
+            style="@style/TextView_400_Regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:text="@string/add_sessions_to_calendar_to_get_notified"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@+id/tvSession"
+            app:layout_constraintTop_toBottomOf="@+id/tvSession" />
+
+        <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/bg_color"
-            tools:context=".ui.dashboard.tracker.session_planner.SessionPlannerFragment">
-
-            <include
-                android:id="@+id/clCommon"
-                layout="@layout/dash_board_common_header"
-                app:vm="@{vm}" />
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@color/blue_20"
+            app:layout_constraintTop_toBottomOf="@+id/tvTrack" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSession"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:text="Session Planner"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+        <com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout
+            android:id="@+id/ssPullRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            app:indicator_overlay="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:lottie_rawRes="@raw/refresh">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvTrack"
-                style="@style/TextView_400_Regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:text="@string/add_sessions_to_calendar_to_get_notified"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11ssp"
-                app:layout_constraintStart_toStartOf="@+id/tvSession"
-                app:layout_constraintTop_toBottomOf="@+id/tvSession" />
 
-            <View
-                android:id="@+id/view"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:background="@color/blue_20"
-                app:layout_constraintTop_toBottomOf="@+id/tvTrack" />
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:fillViewport="true"
+                android:paddingBottom="@dimen/_20sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivCalender"
-                android:layout_width="match_parent"
-                android:layout_height="390dp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:onClick="@{v->vm.onClick(v)}"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/calender_desktop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/clCalender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_18sdp"
+                        android:layout_marginTop="@dimen/_18sdp"
+                        android:background="@drawable/calender_bg"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSessions"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:text="@string/next_sessions"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ivCalender" />
+                        <!-- Header -->
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/clButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_14sdp"
+                            android:layout_marginVertical="@dimen/_12sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvUpcoming"
-                style="@style/TextView_400_Regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:text="@string/upcoming_sessions"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11ssp"
-                app:layout_constraintStart_toStartOf="@+id/tvSessions"
-                app:layout_constraintTop_toBottomOf="@+id/tvSessions" />
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btnPrev"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:onClick="@{v->vm.onClick(v)}"
+                                android:src="@drawable/next_icon"
+                                app:layout_constraintBottom_toBottomOf="@+id/btnNext"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvCalenderDate"
+                                style="@style/TextView_600_SemiBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:text="September 2025"
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_12ssp"
+                                app:layout_constraintBottom_toBottomOf="@+id/btnPrev"
+                                app:layout_constraintStart_toEndOf="@+id/btnPrev"
+                                app:layout_constraintTop_toTopOf="@+id/btnPrev" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivNext"
-                android:layout_width="@dimen/_28sdp"
-                android:layout_height="@dimen/_28sdp"
-                android:layout_marginEnd="@dimen/_14sdp"
-                android:onClick="@{v->vm.onClick(v)}"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/next_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/tvUpcoming"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvUpcoming" />
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btnNext"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginStart="@dimen/_12sdp"
+                                android:onClick="@{v->vm.onClick(v)}"
+                                android:src="@drawable/next_icon"
+                                app:layout_constraintBottom_toBottomOf="@+id/btnAdd"
+                                app:layout_constraintStart_toEndOf="@+id/tvCalenderDate"
+                                app:layout_constraintTop_toTopOf="@+id/btnAdd" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDate"
-                style="@style/TextView_500_Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:text="15, Sep 2025"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11ssp"
-                app:layout_constraintBottom_toBottomOf="@+id/ivNext"
-                app:layout_constraintEnd_toStartOf="@+id/ivNext"
-                app:layout_constraintTop_toTopOf="@+id/ivNext" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivPrevius"
-                android:layout_width="@dimen/_28sdp"
-                android:layout_height="@dimen/_28sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:onClick="@{v->vm.onClick(v)}"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/previus_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/ivNext"
-                app:layout_constraintEnd_toStartOf="@+id/tvDate"
-                app:layout_constraintTop_toTopOf="@+id/ivNext" />
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/btnAdd"
+                                android:layout_width="63dp"
+                                android:layout_height="28dp"
+                                android:layout_marginTop="@dimen/_4sdp"
+                                android:onClick="@{v->vm.onClick(v)}"
+                                android:scaleType="fitXY"
+                                android:src="@drawable/add"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvUpcoming"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/ivNext"
-                tools:itemCount="2"
-                tools:listitem="@layout/upcoming_rv_item" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvPastSessions"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:text="Past Sessions"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rvUpcoming" />
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/clWeekHeader"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/clButton">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvPastUpcoming"
-                style="@style/TextView_400_Regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:text="Your past sessions with notes."
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_11ssp"
-                app:layout_constraintStart_toStartOf="@+id/tvPastSessions"
-                app:layout_constraintTop_toBottomOf="@+id/tvPastSessions" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFirst"
+                                style="@style/TextView_500_Medium"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Su."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toStartOf="@+id/tvSecond"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvSecond"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Mo."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toStartOf="@+id/tvThird"
+                                app:layout_constraintStart_toEndOf="@+id/tvFirst"
+                                app:layout_constraintTop_toTopOf="@+id/tvFirst" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvThird"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Tu."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toStartOf="@+id/tvFour"
+                                app:layout_constraintStart_toEndOf="@+id/tvSecond"
+                                app:layout_constraintTop_toTopOf="@+id/tvFirst" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFour"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="We."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toStartOf="@+id/tvFive"
+                                app:layout_constraintStart_toEndOf="@+id/tvThird"
+                                app:layout_constraintTop_toTopOf="@+id/tvFirst" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvFive"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Th."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toStartOf="@+id/tvSix"
+                                app:layout_constraintStart_toEndOf="@+id/tvFour"
+                                app:layout_constraintTop_toTopOf="@+id/tvFirst" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvViewAll"
-                style="@style/TextView_600_SemiBold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_18sdp"
-                android:text="@string/view_all"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:onClick="@{v->vm.onClick(v)}"
-                android:background="@drawable/bg_stock_yellow"
-                android:paddingHorizontal="@dimen/_10sdp"
-                android:paddingVertical="@dimen/_5sdp"
-                android:backgroundTint="@color/blue"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_8ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvPastSessions" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvSix"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+
+                                android:text="Fr."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toStartOf="@+id/tvSeven"
+                                app:layout_constraintStart_toEndOf="@+id/tvFive"
+                                app:layout_constraintTop_toTopOf="@+id/tvFirst" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tvSeven"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Sa."
+                                android:textColor="@color/blue"
+                                android:textSize="@dimen/_11ssp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/tvSix"
+                                app:layout_constraintTop_toTopOf="@+id/tvFirst" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvCalendar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/clWeekHeader" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvSessions"
+                        style="@style/TextView_700_Bold_Quicksand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_18sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:text="@string/next_sessions"
+                        android:textSize="@dimen/_15ssp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/clCalender" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvUpcoming"
+                        style="@style/TextView_400_Regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:text="@string/upcoming_sessions"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_11ssp"
+                        app:layout_constraintStart_toStartOf="@+id/tvSessions"
+                        app:layout_constraintTop_toBottomOf="@+id/tvSessions" />
 
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivNext"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:onClick="@{v->vm.onClick(v)}"
+                        android:padding="@dimen/_4sdp"
+                        android:src="@drawable/next_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/tvUpcoming"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tvUpcoming" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPast"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvPastUpcoming"
-                tools:itemCount="2"
-                tools:listitem="@layout/past_rv_item" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvDate"
+                        style="@style/TextView_500_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:text="15, Sep 2025"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_11ssp"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivNext"
+                        app:layout_constraintEnd_toStartOf="@+id/ivNext"
+                        app:layout_constraintTop_toTopOf="@+id/ivNext" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivPrevius"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:onClick="@{v->vm.onClick(v)}"
+                        android:padding="@dimen/_4sdp"
+                        android:src="@drawable/previus_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/ivNext"
+                        app:layout_constraintEnd_toStartOf="@+id/tvDate"
+                        app:layout_constraintTop_toTopOf="@+id/ivNext" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvUpcoming"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:minHeight="@dimen/_30sdp"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@+id/ivNext"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/upcoming_rv_item" />
 
-    </androidx.core.widget.NestedScrollView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvNextEmpty"
+                        style="@style/TextView_600_SemiBold_Quicksand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your next session list is empty"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_11ssp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/rvUpcoming"
+                        app:layout_constraintEnd_toEndOf="@+id/rvUpcoming"
+                        app:layout_constraintStart_toStartOf="@+id/rvUpcoming"
+                        app:layout_constraintTop_toTopOf="@+id/rvUpcoming" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvPastSessions"
+                        style="@style/TextView_700_Bold_Quicksand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_18sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:text="Past Sessions"
+                        android:textSize="@dimen/_15ssp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/rvUpcoming" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvPastUpcoming"
+                        style="@style/TextView_400_Regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:text="Your past sessions with notes."
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_11ssp"
+                        app:layout_constraintStart_toStartOf="@+id/tvPastSessions"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPastSessions" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvViewAll"
+                        style="@style/TextView_600_SemiBold_Quicksand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_18sdp"
+                        android:background="@drawable/bg_stock_yellow"
+                        android:backgroundTint="@color/blue"
+                        android:onClick="@{v->vm.onClick(v)}"
+                        android:paddingHorizontal="@dimen/_10sdp"
+                        android:paddingVertical="@dimen/_5sdp"
+                        android:text="@string/view_all"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_8ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tvPastSessions" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:minHeight="@dimen/_100sdp"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPastUpcoming"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/past_rv_item" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvPastEmpty"
+                        style="@style/TextView_600_SemiBold_Quicksand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Your past session list is empty"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_11ssp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/rvPast"
+                        app:layout_constraintEnd_toEndOf="@+id/rvPast"
+                        app:layout_constraintStart_toStartOf="@+id/rvPast"
+                        app:layout_constraintTop_toTopOf="@+id/rvPast" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.core.widget.NestedScrollView>
+        </com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

@@ -9,12 +9,9 @@ import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
 import com.example.newbase_2025.data.model.PersonalData
-import com.example.newbase_2025.data.model.RecentData
 import com.example.newbase_2025.databinding.FragmentPersonalBestsBinding
 import com.example.newbase_2025.databinding.PersonalBestsRvItemBinding
-import com.example.newbase_2025.databinding.TrainedRecentlyRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
-import com.example.newbase_2025.ui.dashboard.tracker.my_star.MyStarFragmentVM
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -79,22 +76,14 @@ class PersonalBestsFragment : BaseFragment<FragmentPersonalBestsBinding>() {
      */
     private fun getDummyRecentList(): ArrayList<PersonalData> {
         val dummyList = arrayListOf(
-            PersonalData( "Gainer Switches:", "9"),
-            PersonalData( "Corks:", "8"),
-            PersonalData( "Gainer Switches:", "9"),
-            PersonalData( "Corks:", "8"),
-            PersonalData( "Gainer Switches:", "9"),
-            PersonalData( "Corks:", "8"),
-            PersonalData( "Gainer Switches:", "9"),
-            PersonalData( "Corks:", "8"),
-            PersonalData( "Gainer Switches:", "9"),
-            PersonalData( "Corks:", "8"),
+            PersonalData("Gainer Switches:", "9"),
+            PersonalData("Corks:", "8"),
+
 
             )
 
         return dummyList
     }
-
 
 
 }

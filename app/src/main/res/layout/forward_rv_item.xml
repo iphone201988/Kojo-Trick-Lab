@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.ForwardsData" />
+            type="com.example.newbase_2025.data.model.HomeType" />
 
         <variable
             name="pos"
@@ -35,7 +35,7 @@
             android:background="@{bean.check?@drawable/yellow_bg:@drawable/bg_stock_blue}"
             android:paddingHorizontal="@dimen/_12sdp"
             android:paddingVertical="@dimen/_5sdp"
-            android:text="@{bean.title}"
+            android:text='@{bean.name+" Tricks"}'
             android:textColor="@{bean.check?@color/white:@color/blue}"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="parent"

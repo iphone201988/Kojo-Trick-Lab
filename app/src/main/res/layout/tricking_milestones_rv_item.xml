@@ -8,7 +8,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.MilestonesData" />
+            type="com.example.newbase_2025.data.model.MilestonesLevel" />
 
         <variable
             name="pos"
@@ -39,11 +39,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv1"
-                setImageFromDrawbale="@{bean.image}"
+                setUrlPost="@{bean.imageUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_120sdp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/home_list_dummy"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -74,7 +73,7 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_5sdp"
-                android:visibility="@{bean.type==1?View.VISIBLE:View.GONE}"
+                visibleIfProgress="@{bean.progressStatus}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv1">
 
@@ -84,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:text="2/4 progressions"
+                    android:text='@{"Ongoing ("+String.valueOf(bean.completedTasks)+"/"+String.valueOf(bean.totalTasks)+")"}'
                     android:textColor="@color/white"
                     android:textSize="@dimen/_8ssp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +113,7 @@
                 android:backgroundTint="@color/green_color"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_5sdp"
-                android:visibility="@{bean.type==2?View.VISIBLE:View.GONE}"
+                visibleIfCompleted="@{bean.progressStatus}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv1">
 
@@ -124,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:text="Completed"
+                    android:text='@{"Completed ("+String.valueOf(bean.completedTasks)+"/"+String.valueOf(bean.totalTasks)+")"}'
                     android:textColor="@color/white"
                     android:textSize="@dimen/_8ssp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -146,6 +145,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clPending"
+                visibleIfNotStarted="@{bean.progressStatus}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -153,7 +153,6 @@
                 android:background="@drawable/btn_bg_32"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_5sdp"
-                android:visibility="@{bean.type==3?View.VISIBLE:View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv1">
 
@@ -163,7 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:text="Not Started (0/10)"
+                    android:text='@{"Not Started ("+String.valueOf(bean.completedTasks)+"/"+String.valueOf(bean.totalTasks)+")"}'
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_8ssp"
                     app:layout_constraintEnd_toEndOf="parent"

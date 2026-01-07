@@ -28,7 +28,6 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
     ConnectivityProvider.ConnectivityStateListener {
 
     lateinit var progressDialogAvl: ProgressDialogAvl
-    private  var progressSheet: ProgressSheet?=null
     open val onRetry: (() -> Unit)? = null
     lateinit var binding: Binding
     val app: App
@@ -46,6 +45,7 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
         binding.setVariable(BR.vm, getViewModel())
         connectivityProvider = ConnectivityProvider.createProvider(this)
         connectivityProvider.addListener(this)
+        progressDialogAvl = ProgressDialogAvl(this)
         setStatusBarColor(R.color.white)
         setStatusBarDarkText()
         onCreateView()
@@ -92,23 +92,13 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
         hideKeyboard()
     }
 
-    fun showLoading(s: String?) {
-        progressSheet?.dismissAllowingStateLoss()
-        progressSheet = ProgressSheet(object : ProgressSheet.BaseCallback {
-            override fun onClick(view: View?) {}
-            override fun onBind(bind: ViewProgressSheetBinding) {
-                progressSheet?.showMessage(s);
-            }
-        })
-        progressSheet?.isCancelable=false
-        progressSheet?.show(supportFragmentManager, progressSheet?.tag)
-
-    }
-
     fun hideLoading() {
-        progressSheet?.dismissAllowingStateLoss()
+        progressDialogAvl.isLoading(false)
     }
 
+    fun showLoading() {
+        progressDialogAvl.isLoading(true)
+    }
     fun onError(error: Throwable, showErrorView: Boolean) {
         if (error is NetworkError) {
 

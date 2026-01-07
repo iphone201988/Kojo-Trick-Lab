@@ -3,10 +3,12 @@ package com.example.newbase_2025.ui.dashboard.tracker.progression_details
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.newbase_2025.data.model.VideoLink
 import com.example.newbase_2025.databinding.HolderUserImageBinding
 
 class UserImagePagerAdapter(
-    private val images: List<Int>, private val onImageClick: (Int) -> Unit
+    private val images: List<VideoLink>,
+    private val onImageClick: (VideoLink) -> Unit
 ) : RecyclerView.Adapter<UserImagePagerAdapter.ImageViewHolder>() {
 
     inner class ImageViewHolder(val binding: HolderUserImageBinding) :
@@ -19,15 +21,17 @@ class UserImagePagerAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val imageUrl = images[position]
-        holder.binding.bean = imageUrl
+        val item = images[position]
+
+        // assuming VideoLink has a field "url: String?"
+        holder.binding.bean = item
         holder.binding.executePendingBindings()
 
-        // Handle click
         holder.binding.root.setOnClickListener {
-            onImageClick(imageUrl)
+            onImageClick(item)
         }
     }
 
     override fun getItemCount(): Int = images.size
 }
+

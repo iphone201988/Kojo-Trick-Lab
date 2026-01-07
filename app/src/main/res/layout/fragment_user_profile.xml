@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.OtherUserData" />
 
         <variable
             name="vm"
@@ -55,31 +59,32 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_207sdp"
             android:onClick="@{v->vm.onClick(v)}"
-            android:src="@drawable/profile_bg"
             android:scaleType="fitXY"
-            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/skin_second"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clCommon" />
 
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCircle1"
             android:layout_width="@dimen/_106sdp"
             android:layout_height="@dimen/_106sdp"
-            android:onClick="@{v->vm.onClick(v)}"
             android:background="@drawable/holder_dummy"
+            android:onClick="@{v->vm.onClick(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCircle"
             android:layout_width="@dimen/_106sdp"
             android:layout_height="@dimen/_106sdp"
-            android:onClick="@{v->vm.onClick(v)}"
             android:background="@drawable/bg_circle"
+            android:onClick="@{v->vm.onClick(v)}"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
             app:layout_constraintEnd_toEndOf="parent"
@@ -94,6 +99,7 @@
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="centerCrop"
             android:visibility="gone"
+            setImageFromUrl="@{bean.profilePicture}"
             app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
             app:layout_constraintEnd_toEndOf="@+id/ivCircle"
             app:layout_constraintStart_toStartOf="@+id/ivCircle"
@@ -121,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12ssp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="TrickerJohn"
+            android:text="@{bean.trickingNickname}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="parent"
@@ -147,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12ssp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="USA"
+            android:text="@{bean.country}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="parent"
@@ -175,7 +181,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12ssp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="3+ years"
+            android:text="@{bean.timeTricking}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12ssp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="Vert kick"
+            android:text="-"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="parent"
@@ -229,7 +235,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12ssp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="Super Man Frount"
+            android:text="-"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="parent"

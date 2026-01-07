@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin1kept)
+    id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -72,7 +73,16 @@ dependencies {
     implementation(libs.imagepicker)
     implementation (libs.lottie)
     implementation (libs.converter.gson)
-
     // dot indicator
     implementation (libs.viewpagerindicator)
+    // country picker
+    implementation (libs.country.picker.android)
+    // exo player
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    // refresh layout
+    implementation (libs.lottie.v520)
+    implementation (libs.lottieswiperefreshlayout)
+
+
 }

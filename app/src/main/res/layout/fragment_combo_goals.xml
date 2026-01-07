@@ -62,10 +62,23 @@
             android:layout_marginTop="@dimen/_20sdp"
             app:layout_constraintTop_toBottomOf="@+id/tvTrack"/>
 
+        <com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout
+            android:id="@+id/ssPullRefresh"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:indicator_overlay="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btnAddNew"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:lottie_rawRes="@raw/refresh">
+
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvComboGoal"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_14sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:clipToPadding="false"
@@ -78,6 +91,7 @@
             tools:listitem="@layout/combo_goal_rv_item" />
 
 
+        </com.nabilmh.lottieswiperefreshlayout.LottieSwipeRefreshLayout>
 
 
 
@@ -91,6 +105,7 @@
             android:background="@drawable/btn_bg"
             android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
+
             android:onClick="@{v->vm.onClick(v)}"
             android:text="@string/add_new_combo_goal"
             android:textColor="@color/white"
@@ -103,30 +118,46 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivProgress"
-            android:layout_width="@dimen/_180sdp"
-            android:layout_height="@dimen/_180sdp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/empty_combo"
-            android:layout_marginBottom="@dimen/_43sdp"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clEmpty"
+            android:layout_width="match_parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvEmptyCombo"
-            style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No Combo Added Yet"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:textSize="@dimen/_15ssp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivProgress"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCommonProgress"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_180sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/empty_combo"
+
+                android:layout_marginBottom="@dimen/_43sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCommonCombo"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Combo Added Yet"
+
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivCommonProgress"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

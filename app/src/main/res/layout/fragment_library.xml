@@ -24,19 +24,6 @@
             tools:context=".ui.dashboard.library.LibraryFragment">
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvRecently"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:text="Recently Added"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRecently"
                 android:layout_width="match_parent"
@@ -44,111 +31,50 @@
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:orientation="horizontal"
+                android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvRecently"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:itemCount="3"
-                tools:listitem="@layout/library_rv_item" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvMostPopular"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Most Popular"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rvRecently" />
+                tools:listitem="@layout/item_section_rv_item" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPopular"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clEmpty"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvMostPopular"
-                tools:itemCount="3"
-                tools:listitem="@layout/library_rv_item" />
-
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSeries"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Series"
-                android:textSize="@dimen/_15ssp"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rvPopular" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivCommonProgress"
+                    android:layout_width="@dimen/_180sdp"
+                    android:layout_height="@dimen/_180sdp"
+                    android:layout_marginBottom="@dimen/_43sdp"
+                    android:scaleType="centerCrop"
+
+                    android:src="@drawable/empty_combo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCommonCombo"
+                    style="@style/TextView_700_Bold_Quicksand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:text="No Library Added Yet"
+                    android:textSize="@dimen/_15ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ivCommonProgress" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvSeries"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvSeries"
-                tools:itemCount="3"
-                tools:listitem="@layout/library_rv_item" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvVert"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Vert Kicks"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rvSeries" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvSetups"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvVert"
-                tools:itemCount="3"
-                tools:listitem="@layout/library_rv_item" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvSetups"
-                style="@style/TextView_700_Bold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_18sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Setups"
-                android:textSize="@dimen/_15ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rvSetups" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvVert"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/tvVert"
-                tools:itemCount="3"
-                tools:listitem="@layout/library_rv_item" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

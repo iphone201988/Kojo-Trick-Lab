@@ -38,6 +38,15 @@
                 android:layout_height="wrap_content"
                 app:vpi_slider_checked_color="@color/blue"
                 app:vpi_slider_normal_color="@color/colorPrimary" />
+
+
+
+            <View
+                android:id="@+id/staticDot"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_8sdp"
+                android:layout_gravity="center"
+                android:background="@drawable/dot_background" />
         </FrameLayout>
 
 
@@ -60,15 +69,19 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivProgress"
-            android:layout_width="@dimen/_17sdp"
-            android:layout_height="@dimen/_17sdp"
-            android:layout_marginEnd="@dimen/_20sdp"
-            android:onClick="@{v->vm.onClick(v)}"
+            android:layout_width="@dimen/_37sdp"
+            android:layout_height="@dimen/_37sdp"
             android:scaleType="centerCrop"
+            android:padding="@dimen/_10sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:src="@drawable/close_icon"
+            android:tint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/tvSkip"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tvSkip" />
+            app:layout_constraintTop_toTopOf="@+id/tvSkip"
+            />
+
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivMAx"
@@ -112,44 +125,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDive" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvJump"
-            style="@style/TextView_400_Regular"
-            android:layout_width="wrap_content"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvStep"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="•  Jump forward, not down"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_11ssp"
-            app:layout_constraintStart_toStartOf="@+id/tvKeyPoints"
-            app:layout_constraintTop_toBottomOf="@+id/tvKeyPoints" />
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/tvKeyPoints"
+            tools:itemCount="5"
+            tools:listitem="@layout/step_rv_item" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvKeep"
-            style="@style/TextView_400_Regular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:text="•  Keep arms extended"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_11ssp"
-            app:layout_constraintStart_toStartOf="@+id/tvKeyPoints"
-            app:layout_constraintTop_toBottomOf="@+id/tvJump" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvSpot"
-            style="@style/TextView_400_Regular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:text="•  Spot the landing zone"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_11ssp"
-            app:layout_constraintStart_toStartOf="@+id/tvKeyPoints"
-            app:layout_constraintTop_toBottomOf="@+id/tvKeep" />
 
 
         <View
@@ -158,7 +148,7 @@
             android:layout_height="@dimen/_1sdp"
             android:layout_marginTop="@dimen/_20sdp"
             android:background="@color/blue_20"
-            app:layout_constraintTop_toBottomOf="@+id/tvSpot" />
+            app:layout_constraintTop_toBottomOf="@+id/rvStep" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -219,7 +209,7 @@
             app:layout_constraintTop_toTopOf="@+id/ivMinus" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btnDownload"
+            android:id="@+id/btnAttempted"
             style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="0dp"
             android:layout_height="@dimen/_38sdp"
@@ -228,15 +218,15 @@
             android:background="@drawable/bg_gradiant"
             android:gravity="center"
             android:onClick="@{v->vm.onClick(v)}"
-            android:text="@string/download"
+            android:text="Attempted"
             android:textColor="@color/blue"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSave"
+            app:layout_constraintEnd_toStartOf="@+id/btnCompleted"
             app:layout_constraintStart_toStartOf="@+id/ivMinus" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btnSave"
+            android:id="@+id/btnCompleted"
             style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="0dp"
             android:layout_height="@dimen/_38sdp"
@@ -245,13 +235,13 @@
             android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
             android:onClick="@{v->vm.onClick(v)}"
-            android:text="Compleated"
+            android:text="Completed"
             android:textColor="@color/white"
             android:textSize="@dimen/_15ssp"
-            app:layout_constraintBottom_toBottomOf="@+id/btnDownload"
+            app:layout_constraintBottom_toBottomOf="@+id/btnAttempted"
             app:layout_constraintEnd_toEndOf="@+id/ivPlus"
-            app:layout_constraintStart_toEndOf="@+id/btnDownload"
-            app:layout_constraintTop_toTopOf="@+id/btnDownload" />
+            app:layout_constraintStart_toEndOf="@+id/btnAttempted"
+            app:layout_constraintTop_toTopOf="@+id/btnAttempted" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

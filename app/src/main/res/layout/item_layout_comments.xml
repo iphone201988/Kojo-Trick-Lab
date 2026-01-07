@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="String" />
+            type="com.example.newbase_2025.data.model.GetCommentData" />
 
         <variable
             name="pos"
@@ -20,62 +20,62 @@
     </data>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@drawable/bg_rv_items"
+        android:padding="@dimen/_10sdp">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profileImage"
+            setImageFromUrl="@{bean.user.profilePicture}"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/personName"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/bg_rv_items"
-            android:padding="@dimen/_10sdp">
+            android:layout_marginStart="@dimen/_5sdp"
+            android:text="@{bean.user.name}"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toEndOf="@id/profileImage"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/profileImage"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:src="@drawable/dummy_image"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/time"
+            style="@style/TextView_300_Light_Quicksand"
+            setTimeAgo="@{bean.createdAt}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_9ssp"
+            app:layout_constraintStart_toStartOf="@id/personName"
+            app:layout_constraintTop_toBottomOf="@id/personName" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/personName"
-                style="@style/TextView_600_SemiBold_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sam Smith"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_12ssp"
-                android:layout_marginStart="@dimen/_5sdp"
-                app:layout_constraintStart_toEndOf="@id/profileImage"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/time"
-                style="@style/TextView_300_Light_Quicksand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2h ago"
-                android:textColor="@color/blue"
-                android:textSize="@dimen/_10ssp"
-                app:layout_constraintTop_toBottomOf="@id/personName"
-                app:layout_constraintStart_toStartOf="@id/personName"/>
-
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDescription"
-                style="@style/TextView_300_Light"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/blue"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:textSize="@dimen/_10ssp"
-                android:text="Great man, you nailed it"
-                app:layout_constraintTop_toBottomOf="@id/profileImage"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDescription"
+            style="@style/TextView_300_Light"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@{bean.message}"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileImage" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

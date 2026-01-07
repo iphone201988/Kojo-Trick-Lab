@@ -16,6 +16,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener(this@App))
+
     }
 
     private fun restartApp() {

@@ -2,18 +2,26 @@ package com.example.newbase_2025.ui.dashboard.change_password
 
 import android.content.Intent
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.CommonApiResponse
 import com.example.newbase_2025.databinding.FragmentChangePasswordBinding
 import com.example.newbase_2025.utils.BindingUtils
 import com.example.newbase_2025.databinding.FragmentLoginBinding
 import com.example.newbase_2025.ui.auth.AuthCommonVM
 import com.example.newbase_2025.ui.dashboard.DashBoardActivity
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
+import com.example.newbase_2025.utils.showInfoToast
+import com.example.newbase_2025.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.toString
 
 @AndroidEntryPoint
 class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
@@ -29,7 +37,10 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
     override fun onCreateView(view: View) {
         // click
         binding.clCommon.tvHeader.text = "Change Password"
+        // click
         initOnClick()
+        // observer
+        initObserver()
     }
 
     /**
@@ -43,26 +54,89 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
                     requireActivity().finish()
                 }
 
-                R.id.ivHidePassword -> {
-                    if (binding.etOldPassword.text.toString().trim().isNotEmpty()) {
-                        showOrHidePassword()
+                R.id.btnLogin -> {
+                    if (validate()) {
+                        val oldPassword = binding.etOldPassword.text.toString().trim()
+                        val newPassword = binding.etNewPassword.text.toString().trim()
+                        val data = HashMap<String, Any>()
+                        data["oldPassword"] = oldPassword
+                        data["newPassword"] = newPassword
+                        viewModel.changePasswordApi(data, Constants.CHANGE_PASSWORD)
+
                     }
 
                 }
 
-                R.id.btnLogin -> {
-                    val intent = Intent(requireContext(), DashBoardActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
+
+                // show or hide password click
+                R.id.ivHideOldPassword -> {
+                    if (binding.etOldPassword.text.toString().trim().isNotEmpty()) {
+                        showOrHidePassword()
+                    }
                 }
+
+                R.id.ivHideNewPassword -> {
+                    if (binding.etNewPassword.text.toString().trim().isNotEmpty()) {
+                        showOrHideNewPassword()
+                    }
+                }
+
+                // show or hide confirm password click
+                R.id.ivHideConfirmPassword -> {
+                    if (binding.etConfirmPassword.text.toString().trim().isNotEmpty()) {
+                        showOrHideConfirmPassword()
+                    }
+                }
+
 
 
             }
         }
     }
 
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
 
-    /*** show or confirm hide password **/
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "changePasswordApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
+                                if (model?.success == true) {
+                                    showSuccessToast(model.message.toString())
+                                    requireActivity().finish()
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+
+                }
+            }
+        }
+    }
+
+
+
+    /*** show or confirm hide old password **/
     private fun showOrHidePassword() {
         // Save the current typeface
         val typeface = binding.etOldPassword.typeface
@@ -80,5 +154,79 @@ class ChangePasswordFragment : BaseFragment<FragmentChangePasswordBinding>() {
         binding.etOldPassword.typeface = typeface
         binding.etOldPassword.setSelection(binding.etOldPassword.length())
     }
+
+    /*** show or hide new password **/
+    private fun showOrHideNewPassword() {
+        // Save the current typeface
+        val typeface = binding.etNewPassword.typeface
+        if (binding.etNewPassword.inputType == InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD) {
+            binding.ivHideNewPassword.setImageResource(R.drawable.show_password)
+            binding.etNewPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        } else {
+            binding.ivHideNewPassword.setImageResource(R.drawable.hide_password)
+            binding.etNewPassword.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        // Reapply the saved typeface to maintain the font style
+        binding.etNewPassword.typeface = typeface
+        binding.etNewPassword.setSelection(binding.etNewPassword.length())
+    }
+
+
+    /*** show or hide confirm password **/
+    private fun showOrHideConfirmPassword() {
+        // Save the current typeface
+        val typeface = binding.etConfirmPassword.typeface
+        if (binding.etConfirmPassword.inputType == InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD) {
+            binding.ivHideConfirmPassword.setImageResource(R.drawable.show_password)
+            binding.etConfirmPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        } else {
+            binding.ivHideConfirmPassword.setImageResource(R.drawable.hide_password)
+            binding.etConfirmPassword.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+
+        // Reapply the saved typeface to maintain the font style
+        binding.etConfirmPassword.typeface = typeface
+        binding.etConfirmPassword.setSelection(binding.etConfirmPassword.length())
+    }
+
+    /*** add validation ***/
+    private fun validate(): Boolean {
+        val oldPassword = binding.etOldPassword.text.toString().trim()
+        val newPassword = binding.etNewPassword.text.toString().trim()
+        val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+        if (oldPassword.isEmpty()) {
+            showInfoToast("Please enter old password")
+            return false
+        } else if (oldPassword.length < 6) {
+            showInfoToast("Password must be at least 6 characters")
+            return false
+        } else if (!oldPassword.any { it.isUpperCase() }) {
+            showInfoToast("Password must contain at least one uppercase letter")
+            return false
+        } else if (newPassword.isEmpty()) {
+            showInfoToast("Please enter new password")
+            return false
+        } else if (newPassword.length < 6) {
+            showInfoToast("Password must be at least 6 characters")
+            return false
+        } else if (!newPassword.any { it.isUpperCase() }) {
+            showInfoToast("Password must contain at least one uppercase letter")
+            return false
+        } else if (confirmPassword.isEmpty()) {
+            showInfoToast("Please enter confirm password")
+            return false
+        } else if (newPassword != confirmPassword) {
+            showInfoToast("New Password and Confirm password do not match")
+            return false
+        }
+
+        return true
+    }
+
+
 
 }

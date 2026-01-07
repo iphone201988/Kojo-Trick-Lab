@@ -59,6 +59,11 @@
             android:name="otpType"
             android:defaultValue=""
             app:argType="string" />
+
+        <argument
+            android:name="userEmail"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -69,7 +74,12 @@
     <fragment
         android:id="@+id/fragmentResetPassword"
         android:name="com.example.newbase_2025.ui.auth.forgot.ResetPasswordFragment"
-        tools:layout="@layout/fragment_reset_password" />
+        tools:layout="@layout/fragment_reset_password">
+        <argument
+            android:name="userEmail"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragmentChangePassword"

@@ -8,6 +8,11 @@
         <variable
             name="vm"
             type="com.example.newbase_2025.ui.dashboard.tracker.my_star.MyStarFragmentVM" />
+
+
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.GetProfileResponse" />
     </data>
 
     <ScrollView
@@ -37,7 +42,7 @@
             android:layout_height="@dimen/_207sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="fitXY"
-            android:src="@drawable/profile_bg"
+            setBgSkin="@{bean.user.skin}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clCommon" />
@@ -75,6 +80,7 @@
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="centerCrop"
             android:visibility="gone"
+            setImageFromUrl="@{bean.user.profilePicture}"
             app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
             app:layout_constraintEnd_toEndOf="@+id/ivCircle"
             app:layout_constraintStart_toStartOf="@+id/ivCircle"
@@ -124,6 +130,7 @@
             android:id="@+id/ivEditBg"
             android:layout_width="146dp"
             android:layout_height="28dp"
+            android:onClick="@{v->vm.onClick(v)}"
             android:layout_marginEnd="@dimen/_14sdp"
             android:src="@drawable/edit_bg"
             app:layout_constraintBottom_toBottomOf="@+id/clProgress"
@@ -151,7 +158,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="8 months"
+            android:text="@{bean.levelData.timeSubscribed.isEmpty() == false ? bean.levelData.timeSubscribed : `-`}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvTime"
@@ -179,7 +186,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="2 years 3 months"
+            setTimePast="@{bean.levelData.timeTricking}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvTimeTracing"
@@ -206,7 +213,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="27 level"
+            android:text='@{String.valueOf(bean.levelData.level)+" level"}'
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvTracingLevel"
@@ -265,10 +272,12 @@
             style="@style/TextView_700_Bold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/transparent"
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_6sdp"
-            android:text="Dive Roll"
+            android:minWidth="@dimen/_60sdp"
+            android:text="@{bean.user.favouriteTrick}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvFavourite"
@@ -279,6 +288,7 @@
             android:layout_width="@dimen/_18sdp"
             android:layout_height="@dimen/_18sdp"
             android:src="@drawable/edit_outline"
+            android:onClick="@{v->vm.onClick(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/tvRoll"
             app:layout_constraintStart_toEndOf="@+id/tvRoll"
             app:layout_constraintTop_toTopOf="@+id/tvRoll" />
@@ -304,8 +314,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_3sdp"
+            android:minWidth="@dimen/_60sdp"
+            android:background="@color/transparent"
             android:paddingEnd="@dimen/_6sdp"
-            android:text="B-Twist"
+            android:text="@{bean.user.bestTrick}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvBest"
@@ -316,6 +328,7 @@
             android:layout_width="@dimen/_18sdp"
             android:layout_height="@dimen/_18sdp"
             android:src="@drawable/edit_outline"
+            android:onClick="@{v->vm.onClick(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/tvTwist"
             app:layout_constraintStart_toEndOf="@+id/tvTwist"
             app:layout_constraintTop_toTopOf="@+id/tvRoll" />

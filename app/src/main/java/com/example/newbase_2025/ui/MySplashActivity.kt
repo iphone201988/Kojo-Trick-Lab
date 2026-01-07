@@ -9,7 +9,9 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseActivity
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.databinding.ActivityMySplashBinding
+import com.example.newbase_2025.ui.auth.AuthActivity
 import com.example.newbase_2025.ui.auth.AuthCommonVM
+import com.example.newbase_2025.ui.dashboard.DashBoardActivity
 import com.example.newbase_2025.ui.onboarding.OnBoardingActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,20 +31,34 @@ class MySplashActivity : BaseActivity<ActivityMySplashBinding>() {
         initView()
         // click
         initOnClick()
+        val data = sharedPrefManager.getLoginData()
+        if (data != null) {
+            if (data.isEmailVerified == true) {
+                val intent = Intent(this@MySplashActivity, DashBoardActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+        }
+
     }
 
     /**
      * Method to initialize click
      */
     private fun initOnClick() {
-       viewModel.onClick.observe(this@MySplashActivity) {
-           when(it?.id){
-               R.id.letsStart->{
-                     val intent = Intent(this@MySplashActivity, OnBoardingActivity::class.java)
-                   startActivity(intent)
-               }
-           }
-       }
+        viewModel.onClick.observe(this@MySplashActivity) {
+            when (it?.id) {
+                R.id.letsStart -> {
+                    val intent = Intent(this@MySplashActivity, OnBoardingActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     /**

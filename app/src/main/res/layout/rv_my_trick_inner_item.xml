@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.SubTitle" />
+            type="com.example.newbase_2025.data.model.HomeType" />
 
         <variable
             name="pos"
@@ -33,7 +33,7 @@
             android:background="@drawable/bg_stock_white"
             android:paddingHorizontal="@dimen/_9sdp"
             android:paddingVertical="@dimen/_4sdp"
-            android:text="@{bean.title}"
+            android:text="@{bean.name}"
             android:gravity="center"
             tool:text="gdffgfgdgddfgdfggdgdfgg"
             android:textColor="@color/white"

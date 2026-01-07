@@ -5,6 +5,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -34,6 +35,20 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Url url: String,
         @Body data: HashMap<String, Any>
+    ): Response<JsonObject>
+
+    @DELETE
+    suspend fun apiPostForRawQuery(
+        @Header("Authorization") token: String,
+        @Url url: String,
+        @QueryMap data: HashMap<String, Any>
+    ): Response<JsonObject>
+
+
+    @POST
+    suspend fun apiPostForToken(
+        @Header("Authorization") token: String,
+        @Url url: String,
     ): Response<JsonObject>
 
     @PUT
@@ -70,8 +85,10 @@ interface ApiService {
 
     @GET
     suspend fun apiGetWithQuery(
-        @Url url: String, @QueryMap data: HashMap<String, String>
+        @Header("Authorization") token: String,
+        @Url url: String, @QueryMap data: HashMap<String, Any>
     ): Response<JsonObject>
+
 
 
     @Multipart
@@ -80,17 +97,6 @@ interface ApiService {
     suspend fun apiForPostMultipart(
         @Url url: String,
         @Header("Authorization") token: String,
-        @PartMap data: Map<String, RequestBody>,
-        @Part parts: MutableList<MultipartBody.Part>
-    ): Response<JsonObject>
-
-    @Multipart
-    @JvmSuppressWildcards
-    @POST
-    suspend fun apiForPostMultipart(
-        @Url url: String,
-        @Header("Authorization") token: String,
-        @PartMap data: Map<String, RequestBody>?,
         @Part parts: MultipartBody.Part?
     ): Response<JsonObject>
 
@@ -98,8 +104,8 @@ interface ApiService {
     @Headers(Constants.HEADER_API)
     @Multipart
     @JvmSuppressWildcards
-    @PUT
-    suspend fun apiForMultipartPut(
+    @POST
+    suspend fun apiForMultipartPost(
         @Url url: String,
         @Header("Authorization") token: String,
         @PartMap data: Map<String, RequestBody>?,

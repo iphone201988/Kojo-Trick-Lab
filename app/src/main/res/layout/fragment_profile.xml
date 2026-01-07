@@ -8,16 +8,22 @@
         <variable
             name="vm"
             type="com.example.newbase_2025.ui.dashboard.profile.ProfileVM" />
+
+        <variable
+            name="bean"
+            type="com.example.newbase_2025.data.model.ProfileUser" />
+
     </data>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:context=".ui.auth.add_profile.AddProfileFragment">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -26,7 +32,7 @@
                 android:layout_height="@dimen/_207sdp"
                 android:onClick="@{v->vm.onClick(v)}"
                 android:scaleType="fitXY"
-                android:src="@drawable/profile_bg"
+                android:src="@drawable/skin_second"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -128,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_12ssp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="TrickerJohn"
+                android:text="@{bean.trickingNickname}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_12ssp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="USA"
+                android:text="@{bean.country}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -182,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_12ssp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="3+ years"
+                android:text="@{bean.timeTricking}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -208,7 +214,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_12ssp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="Vert kick"
+                android:text="@{bean.signatureTrick}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -236,7 +242,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_12ssp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:text="Super Man Frount"
+                android:text="@{bean.dreamTrick}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_15ssp"
                 app:layout_constraintStart_toStartOf="parent"

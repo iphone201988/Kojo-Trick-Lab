@@ -1,6 +1,7 @@
 package com.example.newbase_2025.ui.dashboard.tracker.trained_recently
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.example.newbase_2025.BR
@@ -8,18 +9,23 @@ import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
 import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.base.local.SharedPrefManager
-import com.example.newbase_2025.data.model.RecentData
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.GetTrainedRecentlyAPiResponse
+import com.example.newbase_2025.data.model.RecentlyData
 import com.example.newbase_2025.databinding.FragmentTrainedRecentlyBinding
 import com.example.newbase_2025.databinding.TrainedRecentlyRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
     private val viewModel: TrainedRecentlyFragmentVM by viewModels()
-    private lateinit var trainedRecentAdapter: SimpleRecyclerViewAdapter<RecentData, TrainedRecentlyRvItemBinding>
+    private lateinit var trainedRecentAdapter: SimpleRecyclerViewAdapter<RecentlyData, TrainedRecentlyRvItemBinding>
+    private var trainedRecentlyList = ArrayList<RecentlyData>()
     override fun getLayoutResource(): Int {
 
         return R.layout.fragment_trained_recently
@@ -31,15 +37,31 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
     }
 
     override fun onCreateView(view: View) {
-        binding.check = 1
+        // view
+        initView()
         // adapter
         initTrickAdapter()
         // click
         initOnClick()
-        // clear
-        sharedPrefManager.clearList(SharedPrefManager.KEY.COMBO_LIST)
+        // observer
+        initObserver()
     }
 
+
+    /**
+     * Method to initialize view
+     */
+    private fun initView() {
+        binding.check = 1
+        val userProgressId = arguments?.getString("userProgressId")
+        if (userProgressId != null) {
+            // API call
+            val data = HashMap<String, Any>()
+            data["trickVaultId"] = userProgressId
+            viewModel.getUserProgressApi(data, Constants.PROGRESS_TRACKER)
+        }
+
+    }
 
     /**
      * Method to initialize click
@@ -53,13 +75,64 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
 
                 R.id.tvProgress -> {
                     binding.check = 1
-                    trainedRecentAdapter.list = getDummyRecentList()
+                    val list = trainedRecentlyList
+                    trainedRecentAdapter.list = list
+                    updateEmptyState(list)
                 }
 
                 R.id.tvTrack -> {
                     binding.check = 2
-                    val filteredList = getDummyRecentList().filter { item -> item.check == 1 }
-                    trainedRecentAdapter.list = ArrayList(filteredList)
+                    val list = trainedRecentlyList.filter { it.completedSteps == it.totalSteps }
+                    trainedRecentAdapter.list = list
+                    updateEmptyState(list)
+                }
+
+            }
+        }
+    }
+
+    private fun updateEmptyState(list: List<Any>) {
+        binding.clEmpty.visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getUserProgressApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: GetTrainedRecentlyAPiResponse? =
+                                    BindingUtils.parseJson(jsonData)
+                                val recently = model?.data
+                                if (recently != null) {
+                                    trainedRecentlyList = recently as ArrayList<RecentlyData>
+                                    trainedRecentAdapter.list = trainedRecentlyList
+                                    updateEmptyState(trainedRecentlyList)
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
                 }
             }
         }
@@ -75,28 +148,13 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                     R.id.clRecent -> {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "progressionDetails")
+                        intent.putExtra("progressId", m._id)
                         startActivity(intent)
                     }
                 }
 
             }
         binding.rvTrainedRecently.adapter = trainedRecentAdapter
-        trainedRecentAdapter.list = getDummyRecentList()
-    }
-
-    /**
-     * Get dummy recent list
-     */
-    private fun getDummyRecentList(): ArrayList<RecentData> {
-        val dummyList = arrayListOf(
-            RecentData(R.drawable.home_list_dummy, "Dive Roll", 2),
-            RecentData(R.drawable.home_list_dummy, "Webster Half", 1),
-            RecentData(R.drawable.home_list_dummy, "Fount X-out", 1),
-            RecentData(R.drawable.home_list_dummy, "Super Man Frount", 2),
-
-            )
-
-        return dummyList
     }
 
 

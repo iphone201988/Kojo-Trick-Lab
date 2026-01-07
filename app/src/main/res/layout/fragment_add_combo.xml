@@ -64,7 +64,7 @@
 
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/etEmail"
+                android:id="@+id/etCombo"
                 style="@style/EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

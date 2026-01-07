@@ -8,7 +8,9 @@
     <color name="stroke_color">#EDF1F3</color>
     <color name="grey">#6C7278</color>
     <color name="blue">#1B4C6E</color>
+    <color name="blue_70">#B31B4C6E</color>
     <color name="blue_20">#331B4C6E</color>
+    <color name="blue_40">#661B4C6E</color>
     <color name="yellow_20">#33F1AF1B</color>
     <color name="nav_selected_icon">#17415F</color>
     <color name="nav_selected_text">#17415F</color>
@@ -24,5 +26,8 @@
     <color name="purple">#07CCF4</color>
     <color name="green">#4CC178</color>
     <color name="yellow_FFA24A">#FFA24F</color>
+    <color name="yellow_B8B8B8">#B8B8B8</color>
+    <color name="D3D3D3_20">#33D3D3D3</color>
+    <color name="F1AF1B_20">#33F1AF1B</color>
 
 </resources>

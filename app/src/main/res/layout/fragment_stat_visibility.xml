@@ -15,13 +15,10 @@
         android:layout_height="match_parent"
         tools:context=".ui.dashboard.stat_visibility.StatVisibilityFragment">
 
-
         <include
             android:id="@+id/clCommon"
-            layout="@layout/common_header"
+            layout="@layout/profile_common_header"
             app:vm="@{vm}" />
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -49,18 +46,21 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
+
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchNotification"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etEmail"
                 app:layout_constraintEnd_toEndOf="@+id/etEmail"
-                app:layout_constraintTop_toTopOf="@+id/etEmail" />
+                app:layout_constraintTop_toTopOf="@+id/etEmail"
+                app:track="@drawable/track_background" />
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/etReminder"
@@ -84,16 +84,16 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchReminder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etReminder"
                 app:layout_constraintEnd_toEndOf="@+id/etReminder"
-                app:layout_constraintTop_toTopOf="@+id/etReminder" />
+                app:layout_constraintTop_toTopOf="@+id/etReminder"
+                app:track="@drawable/track_background" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/etNewVideoAlerts"
@@ -115,18 +115,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/etReminder" />
 
 
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchNewVideoAlerts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etNewVideoAlerts"
                 app:layout_constraintEnd_toEndOf="@+id/etNewVideoAlerts"
-                app:layout_constraintTop_toTopOf="@+id/etNewVideoAlerts" />
+                app:layout_constraintTop_toTopOf="@+id/etNewVideoAlerts"
+                app:track="@drawable/track_background" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -148,18 +149,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/etNewVideoAlerts" />
 
+
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchShowPBs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etShowPBs"
                 app:layout_constraintEnd_toEndOf="@+id/etShowPBs"
-                app:layout_constraintTop_toTopOf="@+id/etShowPBs" />
+                app:layout_constraintTop_toTopOf="@+id/etShowPBs"
+                app:track="@drawable/track_background" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -181,18 +184,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/etShowPBs" />
 
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchShowTimeSubscribed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etShowTimeSubscribed"
                 app:layout_constraintEnd_toEndOf="@+id/etShowTimeSubscribed"
-                app:layout_constraintTop_toTopOf="@+id/etShowTimeSubscribed" />
+                app:layout_constraintTop_toTopOf="@+id/etShowTimeSubscribed"
+                app:track="@drawable/track_background" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -215,18 +219,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/etShowTimeSubscribed" />
 
 
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchShowTimeTricking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etShowTimeTricking"
                 app:layout_constraintEnd_toEndOf="@+id/etShowTimeTricking"
-                app:layout_constraintTop_toTopOf="@+id/etShowTimeTricking" />
+                app:layout_constraintTop_toTopOf="@+id/etShowTimeTricking"
+                app:track="@drawable/track_background" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -249,18 +254,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/etShowTimeTricking" />
 
 
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchShowMostTrick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
                 android:layout_margin="8dp"
-                android:checked="true"
+                android:checked="false"
                 android:showText="false"
-                android:thumb="@drawable/toggle_thumb"
-                android:track="@drawable/toggle_track"
+                android:thumb="@drawable/thum_background"
                 app:layout_constraintBottom_toBottomOf="@+id/etShowMostTrick"
                 app:layout_constraintEnd_toEndOf="@+id/etShowMostTrick"
-                app:layout_constraintTop_toTopOf="@+id/etShowMostTrick" />
+                app:layout_constraintTop_toTopOf="@+id/etShowMostTrick"
+                app:track="@drawable/track_background" />
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btnLogin"

@@ -1,26 +1,39 @@
 package com.example.newbase_2025.ui.dashboard.tracker.session_planner.view_all
 
 import android.content.Intent
+import android.os.Handler
+import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import com.example.newbase_2025.BR
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.newbase_2025.R
 import com.example.newbase_2025.base.BaseFragment
 import com.example.newbase_2025.base.BaseViewModel
-import com.example.newbase_2025.base.SimpleRecyclerViewAdapter
-import com.example.newbase_2025.data.model.SessionPlannerData
+import com.example.newbase_2025.data.api.Constants
+import com.example.newbase_2025.data.model.GetPastSessionAPiResponse
+import com.example.newbase_2025.data.model.PastSessionData
+import com.example.newbase_2025.databinding.DeleteOrLogoutDialogItemBinding
 import com.example.newbase_2025.databinding.FragmentViewAllSessionBinding
-import com.example.newbase_2025.databinding.UpcomingRvItemBinding
 import com.example.newbase_2025.ui.common.CommonActivity
-import com.example.newbase_2025.utils.showInfoToast
+import com.example.newbase_2025.utils.BaseCustomDialog
+import com.example.newbase_2025.utils.BindingUtils
+import com.example.newbase_2025.utils.Status
+import com.example.newbase_2025.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
     private val viewModel: ViewAllSessionFragmentVM by viewModels()
-    private lateinit var upcomingAdapter: SimpleRecyclerViewAdapter<SessionPlannerData, UpcomingRvItemBinding>
-
+    private lateinit var clearAllDialogItem: BaseCustomDialog<DeleteOrLogoutDialogItemBinding>
+    private var currentPage = 1
+    private var sessionId: String?=null
+    private var isLoading = false
+    private var isLastPage = false
+    private var isProgress = false
+    private lateinit var viewAllAdapter: ViewAllAdapter
     override fun getLayoutResource(): Int {
         return R.layout.fragment_view_all_session
     }
@@ -31,12 +44,83 @@ class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
     }
 
     override fun onCreateView(view: View) {
-        // adapter
-        initAdapter()
-
         // click
         initOnClick()
+
+        // view
+        initView()
+
+        // observer
+        initObserver()
     }
+
+
+    /**
+     * Method to initialize view
+     */
+
+    private fun initView() {
+        // adapter
+        initAdapter()
+        // api call
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        viewModel.getAllSessionApi(data, Constants.SESSION_PLANNER)
+
+        // pagination
+        pagination()
+
+        // refresh
+        binding.ssPullRefresh.setColorSchemeResources(
+            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+        )
+        binding.ssPullRefresh.setOnRefreshListener {
+            Handler().postDelayed({
+                binding.ssPullRefresh.isRefreshing = false
+                isProgress = true
+                // api call
+                val data = HashMap<String, Any>()
+                data["page"] = 1
+                viewModel.getAllSessionApi(data, Constants.SESSION_PLANNER)
+            }, 2000)
+        }
+    }
+
+
+    /**
+     * home adapter handel pagination
+     */
+    private fun pagination() {
+        binding.rvViewAll.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                if (!isLoading && !isLastPage) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                        loadMoreItems()
+                    }
+                }
+            }
+
+        })
+    }
+
+    /**
+     *  load more function call
+     **/
+    private fun loadMoreItems() {
+        viewAllAdapter.showLoader()
+        isProgress = true
+        isLoading = true
+        currentPage++
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        viewModel.getAllSessionApi(data, Constants.SESSION_PLANNER)
+    }
+
 
     /**
      * Method to initialize click
@@ -49,52 +133,160 @@ class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
                 }
 
                 R.id.tvViewAll -> {
-                    upcomingAdapter.list = emptyList()
-                    upcomingAdapter.notifyDataSetChanged()
-                    binding.tvEmpty.visibility = View.VISIBLE
-
-                    // Optional: Show a toast or log
-                    showInfoToast("All items deleted")
+                    clearAllDialogItem()
+                    // binding.tvEmpty.visibility = View.VISIBLE
                 }
 
             }
         }
     }
 
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    if (!isProgress) {
+                        showLoading()
+                    }
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getAllSessionApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: GetPastSessionAPiResponse? =
+                                    BindingUtils.parseJson(jsonData)
+                                if (model != null) {
+                                    val pastSessionData = model.data
+                                    // Convert PastSessionData → FeedItem.Post
+                                    val feedItems: List<ViewItem> =
+                                        pastSessionData?.filterNotNull()?.map { ViewItem.Post(it) }
+                                            ?: emptyList()
+                                    isLoading = false
+                                    isLastPage = false
+                                    isProgress = true
+                                    if (currentPage == 1) {
+                                        viewAllAdapter.setList(feedItems)
+                                    } else {
+                                        viewAllAdapter.addToList(feedItems)
+                                    }
+                                    isLastPage = currentPage == model.totalPages
+
+                                    if (viewAllAdapter.getList().isNotEmpty()) {
+                                        binding.clEmpty.visibility = View.GONE
+                                    } else {
+                                        binding.clEmpty.visibility = View.VISIBLE
+                                    }
+
+                                    if (pastSessionData != null && pastSessionData.isNotEmpty()) {
+                                        sessionId = model.data[0]?._id
+                                    }
+
+
+
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+
+                            }.also {
+                                viewAllAdapter.hideLoader()
+                                hideLoading()
+                            }
+                        }
+
+                        "deleteAllSessionPlannerApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: GetPastSessionAPiResponse? =
+                                    BindingUtils.parseJson(jsonData)
+                                if (model != null) {
+                                    val data = HashMap<String, Any>()
+                                    data["page"] = currentPage
+                                    viewModel.getAllSessionApi(data, Constants.SESSION_PLANNER)
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+
+                            }.also {
+
+                            }
+                        }
+
+
+                    }
+                }
+
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
+
     /**
-     * Initialize adapter
+     * Method to initialize adapter
      */
+
     private fun initAdapter() {
-        upcomingAdapter = SimpleRecyclerViewAdapter(R.layout.upcoming_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.cardView -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "trainedRecently")
-                    startActivity(intent)
+        viewAllAdapter = ViewAllAdapter(object : ViewAllAdapter.OnItemClickListener {
+            override fun onItemClick(item: PastSessionData?, clickedViewId: Int, position: Int) {
+                when (clickedViewId) {
+                    R.id.clSession -> {
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "pastSession")
+                        intent.putExtra("pastSessionData", item)
+                        startActivity(intent)
+                    }
+
                 }
             }
+        })
 
-        }
-        binding.rvUpcoming.adapter = upcomingAdapter
-        upcomingAdapter.list = getDummySessionList()
-
+        binding.rvViewAll.adapter = viewAllAdapter
     }
 
     /**
-     * Get dummy trick list
+     * dialog bix initialize and handel
      */
-    private fun getDummySessionList(): ArrayList<SessionPlannerData> {
-        val dummyList = arrayListOf(
-            SessionPlannerData(1),
-            SessionPlannerData(2),
-            SessionPlannerData(3),
-            SessionPlannerData(4),
-        )
+    fun clearAllDialogItem() {
+        clearAllDialogItem = BaseCustomDialog(
+            requireContext(), R.layout.delete_or_logout_dialog_item
+        ) {
+            when (it?.id) {
+                R.id.btnDeleteCancel -> {
+                    clearAllDialogItem.dismiss()
+                }
 
+                R.id.btnDeleteComment -> {
+                    if (sessionId!=null){
+                        val data = HashMap<String, Any>()
+                        data["deleteAll"] = true
+                        data["sessionId"] = sessionId!!
+                        viewModel.deleteAllSessionPlannerApi(Constants.SESSION_PLANNER_DELETE,data)
+                    }
+                    clearAllDialogItem.dismiss()
+                }
+            }
+        }
+        clearAllDialogItem.create()
+        clearAllDialogItem.show()
 
+        clearAllDialogItem.binding.apply {
+            text.text = getString(R.string.delete_all_session)
+            tvSure.text = getString(R.string.are_you_sure_you_want_to_delete_all_session)
+            btnDeleteComment.text = getString(R.string.delete)
 
-        return dummyList
+        }
+
     }
-
 
 }

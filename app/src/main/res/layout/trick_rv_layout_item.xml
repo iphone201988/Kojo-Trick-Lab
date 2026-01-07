@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.TrackerData" />
+            type="com.example.newbase_2025.data.model.GetTrackerData" />
 
         <variable
             name="pos"
@@ -37,11 +37,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv1"
-                setImageFromDrawbale="@{bean.image}"
+                setUrlPost="@{bean.imageUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_120sdp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/home_list_dummy"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

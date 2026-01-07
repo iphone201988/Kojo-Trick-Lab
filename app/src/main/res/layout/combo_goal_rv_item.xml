@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.ComboGoalsData" />
+            type="com.example.newbase_2025.data.model.GetComboData" />
 
         <variable
             name="pos"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:gravity="center|start"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="@{bean.title}"
+            android:text="@{bean.goal}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="parent"

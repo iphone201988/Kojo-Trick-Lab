@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.MyTrickData" />
+            type="com.example.newbase_2025.data.model.HomeTrickVault" />
 
         <variable
             name="pos"
@@ -40,11 +40,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv1"
-                setImageFromDrawbale="@{bean.image}"
+                setUrlPost="@{bean.imageLink}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_140sdp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/home_list_dummy"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -57,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:gravity="center"
-                android:text="@{bean.title}"
+                android:text="@{bean.name}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -78,14 +77,14 @@
                 android:text="FEATURED"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_8ssp"
-                android:visibility="@{bean.check?View.VISIBLE:View.GONE}"
+                android:visibility="@{bean.isFeatured()?View.VISIBLE:View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvInner"
-                innerMyTrickAdapter="@{bean.subTitle}"
+                innerMyTrickAdapter="@{bean.types}"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginBottom="@dimen/_5sdp"

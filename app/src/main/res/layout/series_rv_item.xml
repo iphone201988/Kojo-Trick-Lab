@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.SeriesData" />
+            type="com.example.newbase_2025.data.model.CategoryData" />
 
         <variable
             name="pos"
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_140sdp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/home_list_dummy"
+                setUrlPost="@{bean.imageUrl}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -83,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:text="@{bean.videoCount}"
+                    android:text='@{String.valueOf(bean.videoCount+" videos")}'
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_8ssp"
 
@@ -96,7 +96,8 @@
                     android:id="@+id/ivProgress"
                     android:layout_width="@dimen/_10sdp"
                     android:layout_height="@dimen/_10sdp"
-                    android:src="@drawable/video_multi"
+                    android:src="@drawable/library"
+                    app:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
