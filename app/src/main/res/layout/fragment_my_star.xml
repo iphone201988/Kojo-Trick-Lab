@@ -7,12 +7,12 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.tracker.my_star.MyStarFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.my_star.MyStarFragmentVM" />
 
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.GetProfileResponse" />
+            type="com.tech.kojo.data.model.GetProfileResponse" />
     </data>
 
     <ScrollView

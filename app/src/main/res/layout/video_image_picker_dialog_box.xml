@@ -7,7 +7,7 @@
 
         <variable
             name="callback"
-            type="com.example.newbase_2025.utils.BaseCustomDialog.Listener" />
+            type="com.tech.kojo.utils.BaseCustomDialog.Listener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

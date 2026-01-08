@@ -6,10 +6,10 @@
     <data>
         <variable
             name="callback"
-            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+            type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.Notification" />
+            type="com.tech.kojo.data.model.Notification" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

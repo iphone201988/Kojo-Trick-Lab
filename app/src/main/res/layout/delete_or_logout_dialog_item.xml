@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="callback"
+            type="com.tech.kojo.utils.BaseCustomDialog.Listener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/strock_1_radius_12"
+        android:backgroundTint="@color/white"
+        android:paddingVertical="@dimen/_30sdp">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_my_account"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13ssp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSure"
+            style="@style/TextView_400_Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/are_you_sure_you_want_to_delete_nthis_account"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintTop_toBottomOf="@id/text"/>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnDeleteCancel"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:background="@drawable/white_bg_radius_18"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:text="@string/cancel"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11ssp"
+            android:layout_marginTop="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnDeleteComment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSure" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnDeleteComment"
+            style="@style/TextView_600_SemiBold"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/white_bg_radius_18"
+            android:gravity="center"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:text="@string/delete"
+            android:textColor="@color/red_color"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnDeleteCancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnDeleteCancel"
+            app:layout_constraintTop_toTopOf="@+id/btnDeleteCancel" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

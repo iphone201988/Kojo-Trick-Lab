@@ -8,7 +8,7 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.MilestonesLevel" />
+            type="com.tech.kojo.data.model.MilestonesLevel" />
 
         <variable
             name="pos"
@@ -16,7 +16,7 @@
 
         <variable
             name="callback"
-            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+            type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
     </data>
 
     <androidx.cardview.widget.CardView

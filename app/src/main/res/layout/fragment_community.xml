@@ -11,7 +11,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.community.CommunityVm" />
+            type="com.tech.kojo.ui.dashboard.community.CommunityVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

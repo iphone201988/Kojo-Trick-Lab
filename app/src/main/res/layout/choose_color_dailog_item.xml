@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="callback"
+            type="com.tech.kojo.utils.BaseCustomDialog.Listener" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@drawable/radius_bg"
+        android:elevation="@dimen/_2sdp"
+        android:paddingVertical="@dimen/_20sdp"
+
+        >
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:text="@string/select_session_color"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSure"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center"
+            android:text="Choose a color for this session."
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@+id/text"
+            app:layout_constraintTop_toBottomOf="@id/text" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRed"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:background="@drawable/white_bg_radius_18"
+            android:gravity="center"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="Red"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSure" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvGreen"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:background="@drawable/white_bg_radius_18"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="Green"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvRed" />
+
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvOrange"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:background="@drawable/white_bg_radius_18"
+            android:gravity="center"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="Orange"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvGreen" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvBlue"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:background="@drawable/white_bg_radius_18"
+            android:gravity="center"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="Blue"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvOrange" />
+
+
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCancel"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:background="@drawable/white_bg_radius_18"
+            android:gravity="center"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="Cancel"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBlue" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

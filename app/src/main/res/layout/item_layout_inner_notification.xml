@@ -5,7 +5,7 @@
     <data>
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.NotificationData" />
+            type="com.tech.kojo.data.model.NotificationData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

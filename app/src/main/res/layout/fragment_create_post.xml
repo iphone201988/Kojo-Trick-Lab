@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.community.create_Post.CreatePostVm" />
+            type="com.tech.kojo.ui.dashboard.community.create_Post.CreatePostVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

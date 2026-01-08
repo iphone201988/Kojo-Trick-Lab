@@ -7,11 +7,11 @@
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.GetVideoData" />
+            type="com.tech.kojo.data.model.GetVideoData" />
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.library.video_player.VideoPlayerFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.library.video_player.VideoPlayerFragmentVM" />
     </data>
 
     <androidx.core.widget.NestedScrollView

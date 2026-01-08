@@ -7,11 +7,11 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.profile.ProfileVM" />
+            type="com.tech.kojo.ui.dashboard.profile.ProfileVM" />
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.ProfileUser" />
+            type="com.tech.kojo.data.model.ProfileUser" />
 
     </data>
 

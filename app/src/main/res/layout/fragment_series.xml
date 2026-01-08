@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.library.series.SeriesFragmentVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

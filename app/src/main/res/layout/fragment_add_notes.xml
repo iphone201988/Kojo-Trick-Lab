@@ -7,11 +7,11 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.tracker.add_notes.AddNotesFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.add_notes.AddNotesFragmentVM" />
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.GetComboData" />
+            type="com.tech.kojo.data.model.GetComboData" />
 
     </data>
 

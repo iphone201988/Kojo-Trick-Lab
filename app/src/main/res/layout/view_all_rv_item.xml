@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="bean"
+            type="com.tech.kojo.data.model.PastSessionData" />
+
+        <variable
+            name="adapter"
+            type="com.tech.kojo.ui.dashboard.tracker.session_planner.view_all.ViewAllAdapter" />
+
+        <variable
+            name="position"
+            type="int" />
+
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clSession"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSetDate"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            app:setDateFilter="@{bean}"
+            app:allItems="@{adapter.pureList}"
+            app:itemPosition="@{position}"
+            android:background="@drawable/bg_stock_yellow"
+            android:backgroundTint="@color/blue"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_6sdp"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            setLayoutBg="@{bean.color}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:background="@drawable/red_card_bg"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintTop_toBottomOf="@+id/tvSetDate">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvDate"
+                style="@style/TextView_500_Medium"
+                setTimePast="@{bean.date}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_8ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvName" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvName"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:gravity="center|start"
+                android:text="@{bean.title}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toStartOf="@+id/tvDate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tool:text="UTX Kick session" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvDesc"
+                style="@style/TextView_400_Regular"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="18dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{bean.note}"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_9ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tvName"
+                app:layout_constraintTop_toBottomOf="@+id/tvName" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

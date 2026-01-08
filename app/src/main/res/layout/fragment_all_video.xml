@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.library.all_video.AllVideoFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.library.all_video.AllVideoFragmentVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

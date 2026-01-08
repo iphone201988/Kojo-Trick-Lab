@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.auth.AuthCommonVM" />
+            type="com.tech.kojo.ui.auth.AuthCommonVM" />
 
     </data>
 

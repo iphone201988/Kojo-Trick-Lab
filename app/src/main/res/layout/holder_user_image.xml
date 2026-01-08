@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.VideoLink" />
+            type="com.tech.kojo.data.model.VideoLink" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

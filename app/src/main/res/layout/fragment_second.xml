@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.onboarding.OnboardingFragmentVM" />
+            type="com.tech.kojo.ui.onboarding.OnboardingFragmentVM" />
     </data>
 
 

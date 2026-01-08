@@ -7,11 +7,11 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.community.community_detail.CommunityDetailVm" />
+            type="com.tech.kojo.ui.dashboard.community.community_detail.CommunityDetailVm" />
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.PostData" />
+            type="com.tech.kojo.data.model.PostData" />
 
         <variable
             name="type"

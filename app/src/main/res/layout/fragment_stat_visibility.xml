@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.stat_visibility.StatVisibilityVM" />
+            type="com.tech.kojo.ui.dashboard.stat_visibility.StatVisibilityVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

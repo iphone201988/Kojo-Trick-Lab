@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.tracker.tricking_milestones.TrickingMilestonesFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.tricking_milestones.TrickingMilestonesFragmentVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

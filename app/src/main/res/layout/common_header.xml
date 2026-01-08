@@ -6,7 +6,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.base.BaseViewModel" />
+            type="com.tech.kojo.base.BaseViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

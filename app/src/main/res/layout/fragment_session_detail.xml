@@ -7,11 +7,11 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.session_detail.SessionDetailVm" />
+            type="com.tech.kojo.ui.dashboard.session_detail.SessionDetailVm" />
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.NextSessionData" />
+            type="com.tech.kojo.data.model.NextSessionData" />
 
     </data>
 

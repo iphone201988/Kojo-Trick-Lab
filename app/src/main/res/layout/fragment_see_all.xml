@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.tech.kojo.ui.dashboard.library.see_all_video.SeeAllFragmentVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_color"
+        tools:context=".ui.dashboard.library.see_all_video.SeeAllFragment">
+
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/dash_board_common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvRelated"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:text="Related videos"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSeeAll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_20sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvRelated"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_section_rv_item" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clEmpty"
+            android:layout_width="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivCommonProgress"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_180sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/empty_combo"
+
+                android:layout_marginBottom="@dimen/_43sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCommon"
+                style="@style/TextView_700_Bold_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No video Added Yet!"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivCommonProgress"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</layout>

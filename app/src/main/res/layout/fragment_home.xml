@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.home.HomeVM" />
+            type="com.tech.kojo.ui.dashboard.home.HomeVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

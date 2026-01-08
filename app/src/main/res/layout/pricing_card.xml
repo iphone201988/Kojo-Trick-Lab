@@ -5,7 +5,7 @@
     <data>
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.SubTitle" />
+            type="com.tech.kojo.data.model.SubTitle" />
 
         <variable
             name="pos"
@@ -13,7 +13,7 @@
 
         <variable
             name="callback"
-            type="com.example.newbase_2025.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+            type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
 
         <import type="android.view.View" />
     </data>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="bean"
+            type="com.tech.kojo.data.model.TopicCategoryData" />
+
+        <variable
+            name="pos"
+            type="Integer" />
+
+        <variable
+            name="size"
+            type="Integer" />
+
+        <variable
+            name="callback"
+            type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{v->callback.onItemClick(v,bean,pos)}">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSeries"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:gravity="center"
+            android:paddingVertical="@dimen/_5sdp"
+            android:text="@{bean.title}"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/viewSeries"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:background="@color/blue_20"
+            android:visibility="@{pos == size - 1 ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintTop_toBottomOf="@+id/tvSeries" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

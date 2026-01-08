@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.subscription.SubscriptionVM" />
+            type="com.tech.kojo.ui.dashboard.subscription.SubscriptionVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

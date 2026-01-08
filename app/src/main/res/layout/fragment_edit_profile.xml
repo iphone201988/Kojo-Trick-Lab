@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.tech.kojo.ui.dashboard.profile.edit.EditProfileFragmentVM" />
+
+        <variable
+            name="bean"
+            type="com.tech.kojo.data.model.ProfileUser" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.dashboard.profile.edit.EditProfileFragment">
+
+        <include
+            android:id="@+id/clCommon"
+            layout="@layout/profile_common_header"
+            app:vm="@{vm}" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBgProfile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_207sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:scaleType="fitXY"
+            android:src="@drawable/skin_second"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle1"
+            android:layout_width="@dimen/_106sdp"
+            android:layout_height="@dimen/_106sdp"
+            android:background="@drawable/holder_dummy"
+            android:onClick="@{v->vm.onClick(v)}"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivCircle"
+            android:layout_width="@dimen/_106sdp"
+            android:layout_height="@dimen/_106sdp"
+            android:background="@drawable/bg_circle"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivBgProfile" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="@dimen/_103sdp"
+            android:layout_height="@dimen/_103sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
+            app:layout_constraintEnd_toEndOf="@+id/ivCircle"
+            app:layout_constraintStart_toStartOf="@+id/ivCircle"
+            app:layout_constraintTop_toTopOf="@+id/ivCircle"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clUpload"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:background="@drawable/et_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivBgProfile">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvUpload"
+                style="@style/TextView_600_SemiBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12ssp"
+                android:text="@string/upload_profile_picture"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivUpload"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivUpload" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivUpload"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:src="@drawable/upload"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvUpload"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clChoose"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@drawable/et_bg"
+            android:onClick="@{v->vm.onClick(v)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clUpload">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvChoose"
+                style="@style/TextView_600_SemiBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12ssp"
+                android:text="@string/choose_skin"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivChoose"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ivChoose" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivChoose"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:padding="5dp"
+                android:src="@drawable/outline_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnUpdate"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginBottom="@dimen/_25sdp"
+            android:background="@drawable/et_bg"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:text="@string/update"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/clChoose"
+            app:layout_constraintStart_toStartOf="@+id/clChoose" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

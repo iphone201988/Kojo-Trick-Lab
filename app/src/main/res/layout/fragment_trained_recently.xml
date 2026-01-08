@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragmentVM" />
 
         <variable
             name="check"

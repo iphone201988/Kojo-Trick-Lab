@@ -7,7 +7,7 @@
 
         <variable
             name="callback"
-            type="com.example.newbase_2025.utils.BaseCustomBottomSheet.Listener" />
+            type="com.tech.kojo.utils.BaseCustomBottomSheet.Listener" />
 
         <variable
             name="check"

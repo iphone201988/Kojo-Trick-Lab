@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="callback"
+            type="com.tech.kojo.utils.BaseCustomBottomSheet.Listener" />
+
+        <variable
+            name="bean"
+            type="com.tech.kojo.data.model.NextSessionData" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet"
+        android:padding="@dimen/_10sdp">
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_5sdp"
+            android:background="@drawable/btn_bg_32"
+            android:backgroundTint="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitle"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:gravity="end"
+            android:text="Add session for"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toStartOf="@id/tvTitle2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitle2"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:gravity="start"
+            setTimePast="@{bean.date}"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/view" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etSessionTitle"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:background="@drawable/et_bg"
+            android:hint="Session Title"
+            android:text="@{bean.title}"
+            android:imeOptions="actionNext"
+            android:inputType="textEmailAddress"
+            android:nextFocusForward="@+id/etSelectColorTag"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingStart="@dimen/_15sdp"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/etSelectColorTag"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/et_bg"
+            android:hint="Select Color Tag"
+            android:imeOptions="actionNext"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:inputType="textEmailAddress"
+            android:nextFocusForward="@+id/etEnterNote"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingStart="@dimen/_15sdp"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etSessionTitle" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivSelectColor"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@color/red_color"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:padding="@dimen/_5sdp"
+            android:tint="@color/red_color"
+            setBackgroundBg="@{bean.color}"
+            app:layout_constraintBottom_toBottomOf="@+id/etSelectColorTag"
+            app:layout_constraintEnd_toEndOf="@+id/etSelectColorTag"
+            app:layout_constraintTop_toTopOf="@+id/etSelectColorTag"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize30Percent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etEnterNote"
+            style="@style/EditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/et_bg"
+            android:gravity="start"
+            android:text="@{bean.note}"
+            android:hint="Enter Note here..."
+            android:inputType="textMultiLine"
+            android:maxLines="20"
+            android:minHeight="@dimen/_95sdp"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:paddingStart="@dimen/_15sdp"
+            android:singleLine="false"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etSelectColorTag" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnSave"
+            style="@style/TextView_600_SemiBold_Quicksand"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_16ssp"
+            android:background="@drawable/btn_bg"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:onClick="@{v->callback.onViewClick(v)}"
+            android:text="Save Session"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEnterNote" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -6,11 +6,11 @@
     <data>
         <variable
             name="vm"
-            type="com.example.newbase_2025.ui.dashboard.past_session_detail.PastSessionDetailVm" />
+            type="com.tech.kojo.ui.dashboard.past_session_detail.PastSessionDetailVm" />
 
         <variable
             name="bean"
-            type="com.example.newbase_2025.data.model.PastSessionData" />
+            type="com.tech.kojo.data.model.PastSessionData" />
 
     </data>
 

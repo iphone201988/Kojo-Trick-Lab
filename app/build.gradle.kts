@@ -5,14 +5,15 @@ plugins {
     alias(libs.plugins.kotlin1kept)
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.google.services)
 }
 
 android {
-    namespace = "com.example.newbase_2025"
+    namespace = "com.tech.kojo"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.newbase_2025"
+        applicationId = "com.tech.kojo"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -84,5 +85,10 @@ dependencies {
     implementation (libs.lottie.v520)
     implementation (libs.lottieswiperefreshlayout)
 
-
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.0.1")
 }

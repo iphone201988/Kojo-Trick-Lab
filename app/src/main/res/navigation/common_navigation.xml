@@ -6,93 +6,93 @@
 
     <fragment
         android:id="@+id/fragmentMyTrick"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.my_trick.MyTrickFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.my_trick.MyTrickFragment"
         tools:layout="@layout/fragment_my_trick" />
 
     <fragment
         android:id="@+id/fragmentTrainedRecently"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragment"
         tools:layout="@layout/fragment_trained_recently" />
 
     <fragment
         android:id="@+id/fragmentProgressionDetails"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.progression_details.ProgressionDetailsFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.progression_details.ProgressionDetailsFragment"
         tools:layout="@layout/fragment_progression_details" />
 
     <fragment
         android:id="@+id/fragmentComboGoals"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.combo_goals.ComboGoalsFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.combo_goals.ComboGoalsFragment"
         tools:layout="@layout/fragment_combo_goals" />
 
 
     <fragment
         android:id="@+id/fragmentAddCombo"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.add_combo.AddComboFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.add_combo.AddComboFragment"
         tools:layout="@layout/fragment_add_combo" />
 
     <fragment
         android:id="@+id/fragmentAddNotes"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.add_notes.AddNotesFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.add_notes.AddNotesFragment"
         tools:layout="@layout/fragment_add_notes" />
 
 
     <fragment
         android:id="@+id/fragmentForwardTrick"
-        android:name="com.example.newbase_2025.ui.dashboard.home.forword_trick.ForwardTrickFragment"
+        android:name="com.tech.kojo.ui.dashboard.home.forword_trick.ForwardTrickFragment"
         tools:layout="@layout/fragment_forword_trick" />
 
 
     <fragment
         android:id="@+id/fragmentHomeProgressDetails"
-        android:name="com.example.newbase_2025.ui.dashboard.home.progress.HomeProgressDetailsFragment"
+        android:name="com.tech.kojo.ui.dashboard.home.progress.HomeProgressDetailsFragment"
         tools:layout="@layout/fragment_home_progress_details" />
 
 
     <fragment
         android:id="@+id/fragmentFinalProgress"
-        android:name="com.example.newbase_2025.ui.dashboard.home.final_progress.FinalProgressFragment"
+        android:name="com.tech.kojo.ui.dashboard.home.final_progress.FinalProgressFragment"
         tools:layout="@layout/fragment_final_progress" />
 
     <fragment
         android:id="@+id/fragmentTrickingMilestones"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.tricking_milestones.TrickingMilestonesFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.tricking_milestones.TrickingMilestonesFragment"
         tools:layout="@layout/fragment_tricking_milestones" />
 
     <fragment
         android:id="@+id/fragmentCreatePost"
-        android:name="com.example.newbase_2025.ui.dashboard.community.create_Post.CreatePostFragment"
+        android:name="com.tech.kojo.ui.dashboard.community.create_Post.CreatePostFragment"
         tools:layout="@layout/fragment_create_post" />
 
     <fragment
         android:id="@+id/fragmentCommunityDetail"
-        android:name="com.example.newbase_2025.ui.dashboard.community.community_detail.CommunityDetailFragment"
+        android:name="com.tech.kojo.ui.dashboard.community.community_detail.CommunityDetailFragment"
         tools:layout="@layout/fragment_community" />
 
     <fragment
         android:id="@+id/fragmentNotificationNew"
-        android:name="com.example.newbase_2025.ui.dashboard.notification.NotificationNewFragment"
+        android:name="com.tech.kojo.ui.dashboard.notification.NotificationNewFragment"
         tools:layout="@layout/fragment_notification_new" />
 
     <fragment
         android:id="@+id/fragmentCategoryChecking"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.category.CategoryCheckingFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.category.CategoryCheckingFragment"
         tools:layout="@layout/fragment_category_checking" />
 
     <fragment
         android:id="@+id/fragmentMyStar"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.my_star.MyStarFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.my_star.MyStarFragment"
         tools:layout="@layout/fragment_my_star" />
 
 
     <fragment
         android:id="@+id/fragmentPersonalBests"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.personal_bests.PersonalBestsFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.personal_bests.PersonalBestsFragment"
         tools:layout="@layout/fragment_personal_bests" />
 
 
     <fragment
         android:id="@+id/fragmentVideoPlayer"
-        android:name="com.example.newbase_2025.ui.dashboard.library.video_player.VideoPlayerFragment"
+        android:name="com.tech.kojo.ui.dashboard.library.video_player.VideoPlayerFragment"
         tools:layout="@layout/fragment_video_player">
 
 
@@ -117,7 +117,7 @@
 
     <fragment
         android:id="@+id/fragmentUserProfile"
-        android:name="com.example.newbase_2025.ui.dashboard.library.user_profile.UserProfileFragment"
+        android:name="com.tech.kojo.ui.dashboard.library.user_profile.UserProfileFragment"
         tools:layout="@layout/fragment_user_profile">
 
 
@@ -132,7 +132,7 @@
 
     <fragment
         android:id="@+id/fragmentSeries"
-        android:name="com.example.newbase_2025.ui.dashboard.library.series.SeriesFragment"
+        android:name="com.tech.kojo.ui.dashboard.library.series.SeriesFragment"
         tools:layout="@layout/fragment_series">
         <argument
             android:name="categoryId"
@@ -148,29 +148,29 @@
 
     <fragment
         android:id="@+id/fragmentNotification"
-        android:name="com.example.newbase_2025.ui.notification.NotificationFragment"
+        android:name="com.tech.kojo.ui.notification.NotificationFragment"
         tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/fragmentChangePassword"
-        android:name="com.example.newbase_2025.ui.dashboard.change_password.ChangePasswordFragment"
+        android:name="com.tech.kojo.ui.dashboard.change_password.ChangePasswordFragment"
         tools:layout="@layout/fragment_change_password" />
 
 
     <fragment
         android:id="@+id/fragmentStatVisibility"
-        android:name="com.example.newbase_2025.ui.dashboard.stat_visibility.StatVisibilityFragment"
+        android:name="com.tech.kojo.ui.dashboard.stat_visibility.StatVisibilityFragment"
         tools:layout="@layout/fragment_stat_visibility" />
 
 
     <fragment
         android:id="@+id/fragmentSubscription"
-        android:name="com.example.newbase_2025.ui.dashboard.subscription.SubscriptionFragment"
+        android:name="com.tech.kojo.ui.dashboard.subscription.SubscriptionFragment"
         tools:layout="@layout/fragment_subscription" />
 
     <fragment
         android:id="@+id/fragmentAllVideo"
-        android:name="com.example.newbase_2025.ui.dashboard.library.all_video.AllVideoFragment"
+        android:name="com.tech.kojo.ui.dashboard.library.all_video.AllVideoFragment"
         tools:layout="@layout/fragment_all_video">
         <argument
             android:name="videoTopicId"
@@ -186,51 +186,51 @@
 
     <fragment
         android:id="@+id/fragmentSessionPlanner"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.session_planner.SessionPlannerFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.SessionPlannerFragment"
         tools:layout="@layout/fragment_session_planner" />
 
     <fragment
         android:id="@+id/fragmentViewAllSession"
-        android:name="com.example.newbase_2025.ui.dashboard.tracker.session_planner.view_all.ViewAllSessionFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.view_all.ViewAllSessionFragment"
         tools:layout="@layout/fragment_view_all_session" />
 
     <fragment
         android:id="@+id/fragmentSessionDetails"
-        android:name="com.example.newbase_2025.ui.dashboard.session_detail.SessionDetailFragment"
+        android:name="com.tech.kojo.ui.dashboard.session_detail.SessionDetailFragment"
         tools:layout="@layout/fragment_session_detail" />
 
 
     <fragment
         android:id="@+id/fragmentPastSession"
-        android:name="com.example.newbase_2025.ui.dashboard.past_session_detail.PastSessionDetailFragment"
+        android:name="com.tech.kojo.ui.dashboard.past_session_detail.PastSessionDetailFragment"
         tools:layout="@layout/fragment_past_session_detail" />
 
 
     <fragment
         android:id="@+id/fragmentAddReviewSession"
-        android:name="com.example.newbase_2025.ui.dashboard.add_review_post_session.AddReviewPostSessionFragment"
+        android:name="com.tech.kojo.ui.dashboard.add_review_post_session.AddReviewPostSessionFragment"
         tools:layout="@layout/fragment_add_review_post_session" />
 
 
     <fragment
         android:id="@+id/fragmentEditProfileInfo"
-        android:name="com.example.newbase_2025.ui.dashboard.profile.update.EditProfileInfoFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile.update.EditProfileInfoFragment"
         tools:layout="@layout/fragment_edit_profile_info" />
 
 
     <fragment
         android:id="@+id/fragmentEditProfile"
-        android:name="com.example.newbase_2025.ui.dashboard.profile.edit.EditProfileFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile.edit.EditProfileFragment"
         tools:layout="@layout/fragment_edit_profile" />
 
     <fragment
         android:id="@+id/fragmentVideo"
-        android:name="com.example.newbase_2025.ui.dashboard.community.video.VideoFragment"
+        android:name="com.tech.kojo.ui.dashboard.community.video.VideoFragment"
         tools:layout="@layout/fragment_video" />
 
     <fragment
         android:id="@+id/fragmentSeeAll"
-        android:name="com.example.newbase_2025.ui.dashboard.library.see_all_video.SeeAllFragment"
+        android:name="com.tech.kojo.ui.dashboard.library.see_all_video.SeeAllFragment"
         tools:layout="@layout/fragment_see_all">
 
 
