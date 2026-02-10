@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tech.kojo.R
@@ -37,7 +38,10 @@ class SeriesAdapter(
 
         Glide.with(holder.image.context)
             .load(Constants.BASE_URL_IMAGE + item.imageUrl)
+            .placeholder(R.drawable.progress_animation_small)
+            .error(R.drawable.blank_pofile)
             .into(holder.image)
+
 
         holder.image.setOnClickListener {
             listener.onSeriesClick(item, position)

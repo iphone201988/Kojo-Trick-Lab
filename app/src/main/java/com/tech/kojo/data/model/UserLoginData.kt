@@ -38,34 +38,66 @@ data class UploadProfileApiResponse(
 /**
  * login api response
  */
+
 data class LoginApiResponse(
-    val message: String?, val success: Boolean?, val user: LoginUser?
+    val message: String?,
+    val success: Boolean?,
+    val user: LoginUser?
 )
 
 data class LoginUser(
+    val __v: Int?,
     val _id: String?,
-    val address: String?,
-    val countryCode: String?,
-    val dob: String?,
+    val bestTrick: String?,
+    val clipReviews: Int?,
+    val createdAt: String?,
+    val deviceToken: String?,
+    val deviceType: Int?,
     val email: String?,
+    val favouriteTrick: String?,
+    val isDeleted: Boolean?,
     val isEmailVerified: Boolean?,
-    val location: Location?,
     val name: String?,
-    val phone: String?,
+    val newVideoAlert: Boolean?,
+    val notificationAlert: Boolean?,
+    val personalBest: PersonalBest?,
     val profilePicture: String?,
+    val sesionReminderAlert: Boolean?,
+    val skin: String?,
+    val socialLinkedAccounts: List<SocialLinkedAccount?>?,
+    val statVisibility: StatVisibility?,
     val status: String?,
-    val token: String?
+    val token: String?,
+    val updatedAt: String?
 )
 
-class Location
+
+data class SocialLinkedAccount(
+    val _id: String?,
+    val id: String?,
+    val provider: Int?
+)
+
+data class StatVisibility(
+    val showBestTrick: Boolean?,
+    val showFavouriteTrick: Boolean?,
+    val showMostPracticedTrick: Boolean?,
+    val showPBs: Boolean?,
+    val showTimeSubscribed: Boolean?,
+    val showTimeTricking: Boolean?,
+    val showTrickingLevel: Boolean?
+)
 
 /**
  * login api response
  */
-data class GetProfileResponse(
-    val levelData: LevelData?, val message: String?, val success: Boolean?, val user: ProfileUser?
-)
 
+data class GetProfileResponse(
+    val levelData: LevelData?,
+    val message: String?,
+    val success: Boolean?,
+    val user: ProfileUser?
+)
 
 data class ProfileUser(
     val __v: Int?,
@@ -85,13 +117,12 @@ data class ProfileUser(
     val name: String?,
     val newVideoAlert: Boolean?,
     val notificationAlert: Boolean?,
-    val otpVerified: Boolean?,
     val personalBest: PersonalBest?,
     val profilePicture: String?,
     val sesionReminderAlert: Boolean?,
     val signatureTrick: String?,
     val skin: String?,
-    val socialLinkedAccounts: List<Any?>?,
+    val socialLinkedAccounts: List<SocialLinkedAccount?>?,
     val statVisibility: ProfileStatVisibility?,
     val status: String?,
     val tiktockLink: String?,
@@ -102,8 +133,11 @@ data class ProfileUser(
 )
 
 data class PersonalBest(
-    val _id: String?, val corks: Any?, val gainerSwitch: Any?
+    val _id: String?,
+    val corks: Any?,
+    val gainerSwitch: Any?
 )
+
 
 data class ProfileStatVisibility(
     val showBestTrick: Boolean?,

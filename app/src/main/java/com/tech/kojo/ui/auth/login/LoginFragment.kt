@@ -1,20 +1,20 @@
 package com.tech.kojo.ui.auth.login
 
-import android.app.Activity
+
 import android.content.Intent
 import android.text.InputType
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.messaging.FirebaseMessaging
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -30,12 +30,13 @@ import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     private val viewModel: AuthCommonVM by viewModels()
     private var isCheck = false
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var credentialManager: CredentialManager
     private var token = "123456"
     override fun getLayoutResource(): Int {
         return R.layout.fragment_login
@@ -62,11 +63,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             }
             token = it.result
         }
-        // firebase initialize
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
-        mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        credentialManager = CredentialManager.create(requireContext())
     }
+
 
     /**
      * Method to initialize click
@@ -119,8 +118,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
 
                 R.id.clGoogle -> {
-                    mGoogleSignInClient.signOut()
-                    signIn()
+                    googleLogin()
                 }
             }
         }
@@ -182,6 +180,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                                     loginData.let {
                                         sharedPrefManager.setLoginData(it)
                                     }
+                                    loginData.token.let {
+                                        sharedPrefManager.setToken(it.toString())
+                                    }
                                     val intent =
                                         Intent(requireContext(), DashBoardActivity::class.java)
                                     startActivity(intent)
@@ -207,6 +208,85 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
             }
         }
+    }
+
+    /**
+     * Create a Google Sign-In request.
+     */
+    private fun getGoogleRequest(): GetCredentialRequest {
+        val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
+            .setServerClientId(getString(R.string.default_web_client_id)).setAutoSelectEnabled(true)
+            .build()
+
+        return GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+    }
+
+    /**
+     * Perform a Google Sign-In request using the provided request.
+     */
+    private fun googleLogin() {
+        lifecycleScope.launch {
+            try {
+                val result = credentialManager.getCredential(
+                    context = requireContext(), request = getGoogleRequest()
+                )
+
+                handleGoogleResult(result)
+
+            } catch (e: Exception) {
+                Log.e("GoogleLogin", "Error: ${e.message}", e)
+                showErrorToast("Google Sign-In failed")
+            }
+        }
+    }
+
+    /**
+     * Handle the result of the Google Sign-In request.
+     */
+    private fun handleGoogleResult(result: GetCredentialResponse) {
+        val credential = result.credential
+
+        if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+
+            val googleCredential = GoogleIdTokenCredential.createFrom(credential.data)
+
+
+            val idToken = googleCredential.idToken
+
+            val apiData = hashMapOf<String, Any>(
+                "socialId" to getGoogleUid(idToken),
+                "email" to getGoogleEmail(idToken),
+                "name" to googleCredential.displayName.orEmpty(),
+                "avatar" to googleCredential.profilePictureUri?.toString().orEmpty(),
+                "provider" to "2",
+                "deviceType" to "2",
+                "deviceToken" to token
+            )
+
+            viewModel.socialLogin(Constants.SOCIAL_LOGIN, apiData)
+        }
+    }
+
+    /**
+     * Extract the email from the Google ID token.
+     */
+    private fun getGoogleEmail(idToken: String): String {
+        val payload = idToken.split(".")[1]
+        val decoded = String(
+            android.util.Base64.decode(payload, android.util.Base64.URL_SAFE)
+        )
+        return org.json.JSONObject(decoded).optString("email", "")
+    }
+
+    /**
+     * Extract the UID from the Google ID token.
+     */
+    private fun getGoogleUid(idToken: String): String {
+        val payload = idToken.split(".")[1]
+        val decoded = String(
+            android.util.Base64.decode(payload, android.util.Base64.URL_SAFE)
+        )
+        return org.json.JSONObject(decoded).getString("sub")
     }
 
 
@@ -247,42 +327,4 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         binding.etPassword.typeface = typeface
         binding.etPassword.setSelection(binding.etPassword.length())
     }
-
-    /** google sign in **/
-    private fun signIn() {
-        val signInIntent = mGoogleSignInClient.signInIntent
-        resultLauncher.launch(signInIntent)
-    }
-
-
-    /** google launcher **/
-    private val resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val task: Task<GoogleSignInAccount> =
-                    GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                try {
-                    val account = task.getResult(ApiException::class.java)!!
-
-
-                    // Prepare data for API
-                    val apiData = hashMapOf<String, Any>(
-                        "socialId" to account.id.toString(),
-                        "name" to account.givenName.toString(),
-                        "surname" to account.familyName.toString(),
-                        "email" to account.email.toString(),
-                        "avatar" to account.photoUrl.toString(),
-                        "provider" to "2",
-                        "deviceType" to "2",
-                        "deviceToken" to token,
-                        )
-
-                    viewModel.socialLogin(Constants.SOCIAL_LOGIN, apiData)
-
-                } catch (e: ApiException) {
-                    showErrorToast("Google sign-in failed $e")
-                }
-            }
-        }
-
 }

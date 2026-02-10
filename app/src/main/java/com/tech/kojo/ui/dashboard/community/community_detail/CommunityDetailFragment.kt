@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.bumptech.glide.Glide
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -54,6 +55,21 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
         initView()
         // observer
         initObserver()
+        // data set
+        val data = sharedPrefManager.getProfileData()
+        val loginData = sharedPrefManager.getLoginData()
+        val imageUrl = when {
+            data?.profilePicture?.startsWith("http") == true -> data.profilePicture
+            data?.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
+            loginData?.profilePicture?.startsWith("http") == true -> loginData.profilePicture
+            loginData?.profilePicture != null -> Constants.BASE_URL_IMAGE + loginData.profilePicture
+            else -> null
+        }
+        imageUrl?.let { url ->
+            Glide.with(requireActivity()).load(url).placeholder(R.drawable.holder_dummy)
+                .error(R.drawable.holder_dummy).into(binding.chatProfileImage)
+        }
+
     }
 
     /**

@@ -30,7 +30,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profileImage"
-            setImageFromUrl="@{bean.user.profilePicture}"
+            setImageFromUrlHttp="@{bean.user.profilePicture}"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:scaleType="centerCrop"

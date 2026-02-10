@@ -12,7 +12,8 @@ import com.tech.kojo.databinding.ViewAllRvItemBinding
 
 class ViewAllAdapter(
     private val listener: OnItemClickListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>()
+{
 
     private val listItem: MutableList<ViewItem> = mutableListOf()
 
@@ -101,7 +102,6 @@ class ViewAllAdapter(
 
     fun getList(): MutableList<ViewItem> = listItem
 
-    // --------------------- ViewHolders -----------------------------
 
     class LoaderViewHolder(val binding: ItemLoadingBinding) :
         RecyclerView.ViewHolder(binding.root)

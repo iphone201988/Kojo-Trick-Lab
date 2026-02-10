@@ -56,6 +56,28 @@ object BindingUtils {
         }
     }
 
+    @BindingAdapter("setImageFromUrlHttp")
+    @JvmStatic
+    fun setImageFromUrlHttp(image: ShapeableImageView, url: String?) {
+
+        val finalUrl = when {
+            url.isNullOrBlank() -> null
+            url.startsWith("http", ignoreCase = true) -> url
+            else -> Constants.BASE_URL_IMAGE + url
+        }
+
+        if (finalUrl != null) {
+            Glide.with(image.context)
+                .load(finalUrl)
+                .placeholder(R.drawable.progress_animation_small)
+                .error(R.drawable.blank_pofile)
+                .into(image)
+        } else {
+            image.setImageResource(R.drawable.blank_pofile)
+        }
+    }
+
+
     @BindingAdapter("setBgSkin")
     @JvmStatic
     fun setBgSkin(image: AppCompatImageView, url: String?) {
@@ -94,6 +116,8 @@ object BindingUtils {
         if (url != null) {
             Glide.with(image.context).asBitmap().load(Constants.BASE_URL_IMAGE + url)
                 .apply(RequestOptions().frame(1_000_000)).into(image)
+        }else{
+
         }
     }
 

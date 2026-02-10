@@ -151,11 +151,20 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                         binding.tvCommentsCounts.text = commentData.size.toString()
                                         binding.tvMessage.text = commentData[0].comment.toString()
                                         val url = commentData[0].userId?.profilePicture
-                                        Glide.with(requireContext())
-                                            .load(Constants.BASE_URL_IMAGE + url)
-                                            .placeholder(R.drawable.progress_animation_small)
-                                            .error(R.drawable.progress_animation_small)
-                                            .into(binding.ivPerson)
+
+                                        val imageUrl = when {
+                                            url?.startsWith("http") == true -> url
+                                            url != null -> Constants.BASE_URL_IMAGE + url
+                                            else -> null
+                                        }
+                                        imageUrl?.let { url ->
+                                            Glide.with(requireContext())
+                                                .load(url)
+                                                .placeholder(R.drawable.progress_animation_small)
+                                                .error(R.drawable.holder_dummy)
+                                                .into(binding.ivPerson)
+                                        }
+
                                     } else {
                                         binding.tvCommentsCounts.text = "0"
                                         binding.tvMessage.text = "-"
@@ -303,11 +312,21 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         commentsBottomSheet.show()
         commentsBottomSheet.binding.check = 1
         val profileUser = sharedPrefManager.getProfileData()?.profilePicture
-        if (!profileUser.isNullOrEmpty()) {
-            Glide.with(requireContext()).load(Constants.BASE_URL_IMAGE + profileUser)
-                .placeholder(R.drawable.progress_animation_small).error(R.drawable.holder_dummy)
+
+        val imageUrl = when {
+            profileUser?.startsWith("http") == true -> profileUser
+            profileUser != null -> Constants.BASE_URL_IMAGE + profileUser
+            else -> null
+        }
+        imageUrl?.let { url ->
+            Glide.with(requireContext())
+                .load(url)
+                .placeholder(R.drawable.progress_animation_small)
+                .error(R.drawable.holder_dummy)
                 .into(commentsBottomSheet.binding.ivPerson)
         }
+
+
         // adapter
         initCommentAdapter()
 
@@ -316,9 +335,20 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 binding.tvCommentsCounts.text = commentsAdapter.list.size.toString()
                 binding.tvMessage.text = commentsAdapter.list[0].comment.toString()
                 val url = commentsAdapter.list[0].userId?.profilePicture
-                Glide.with(requireContext()).load(Constants.BASE_URL_IMAGE + url)
-                    .placeholder(R.drawable.progress_animation_small)
-                    .error(R.drawable.progress_animation_small).into(binding.ivPerson)
+
+                val imageUrl = when {
+                    url?.startsWith("http") == true -> url
+                    url != null -> Constants.BASE_URL_IMAGE + url
+                    else -> null
+                }
+                imageUrl?.let { url ->
+                    Glide.with(requireContext())
+                        .load(url)
+                        .placeholder(R.drawable.progress_animation_small)
+                        .error(R.drawable.holder_dummy)
+                        .into(binding.ivPerson)
+                }
+
             } else {
                 binding.tvCommentsCounts.text = "0"
                 binding.tvMessage.text = "-"

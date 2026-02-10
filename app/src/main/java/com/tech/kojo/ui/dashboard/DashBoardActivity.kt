@@ -53,6 +53,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     private lateinit var categoryAdapter: SimpleRecyclerViewAdapter<TopicCategoryData, RvCategoryItemBinding>
     private lateinit var deleteOrLogoutDialogItem: BaseCustomDialog<DeleteOrLogoutDialogItemBinding>
     private var PERMISSION_REQUEST_CODE = 16
+
     companion object {
         var changeImage = SingleRequestEvent<Boolean>()
     }
@@ -97,11 +98,19 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         BindingUtils.statusBarStyleWhite(this)
         // data set
         val data = sharedPrefManager.getProfileData()
-        if (data != null) {
-            Glide.with(this@DashBoardActivity).load(Constants.BASE_URL_IMAGE + data.profilePicture)
-                .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
-                .into(binding.profileImage)
+        val loginData = sharedPrefManager.getLoginData()
+        val imageUrl = when {
+            data?.profilePicture?.startsWith("http") == true -> data.profilePicture
+            data?.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
+            loginData?.profilePicture?.startsWith("http") == true -> loginData.profilePicture
+            loginData?.profilePicture != null -> Constants.BASE_URL_IMAGE + loginData.profilePicture
+            else -> null
         }
+        imageUrl?.let { url ->
+            Glide.with(this@DashBoardActivity).load(url).placeholder(R.drawable.holder_dummy)
+                .error(R.drawable.holder_dummy).into(binding.profileImage)
+        }
+
     }
 
 
@@ -110,31 +119,30 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         changeImage.observe(this@DashBoardActivity) {
             when (it?.status) {
                 Status.LOADING -> {
-
                 }
-
                 Status.SUCCESS -> {
                     // data set
                     val data = sharedPrefManager.getProfileData()
                     if (data != null) {
-                        Glide.with(this@DashBoardActivity)
-                            .load(Constants.BASE_URL_IMAGE + data.profilePicture)
-                            .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
-                            .into(binding.profileImage)
+                        val imageUrl = when {
+                            data.profilePicture?.startsWith("http") == true -> data.profilePicture
+                            data.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
+                            else -> null
+                        }
+                        imageUrl?.let { url ->
+                            Glide.with(this@DashBoardActivity).load(url)
+                                .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
+                                .into(binding.profileImage)
+                        }
                     }
                 }
-
                 Status.ERROR -> {
-
                 }
-
                 else -> {
-
                 }
             }
         }
     }
-
     /**
      * click handel
      */
@@ -159,7 +167,9 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             }
         })
     }
+
     private var currentSelectedTabId: Int = -1
+
     /**
      * setup bottom sheet
      */
@@ -485,7 +495,9 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         try {
             if (Build.VERSION.SDK_INT > 32) {
                 ActivityCompat.requestPermissions(
-                    this@DashBoardActivity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), PERMISSION_REQUEST_CODE
+                    this@DashBoardActivity,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    PERMISSION_REQUEST_CODE
                 )
             }
         } catch (e: Exception) {
@@ -517,6 +529,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             R.id.nav_home -> {
                 super.onBackPressed()
             }
+
             else -> {
                 binding.navHome.performClick()
             }

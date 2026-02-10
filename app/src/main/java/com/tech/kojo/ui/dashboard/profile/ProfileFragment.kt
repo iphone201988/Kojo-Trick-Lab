@@ -13,7 +13,9 @@ import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.GetProfileResponse
 import com.tech.kojo.databinding.FragmentProfileBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,6 +62,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         })
 
     }
+
     /** api response observer ***/
     private fun initObserver() {
         viewModel.observeCommon.observe(viewLifecycleOwner) {
@@ -76,16 +79,29 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 var profile = model?.user
                                 if (profile != null) {
-                                    Log.d("dgdgdgdfgdgdf", "initObserver: ${profile.deviceToken}")
                                     sharedPrefManager.setProfileData(profile)
                                     binding.bean = profile
                                     binding.ivCircle1.visibility = View.GONE
                                     binding.ivCircle.visibility = View.VISIBLE
                                     binding.ivProfile.visibility = View.VISIBLE
-                                    Glide.with(requireContext())
-                                        .load(Constants.BASE_URL_IMAGE + profile.profilePicture)
-                                        .placeholder(R.drawable.holder_dummy)
-                                        .error(R.drawable.holder_dummy).into(binding.ivProfile)
+
+                                    val imageUrl = when {
+                                        profile.profilePicture?.startsWith("http") == true -> profile.profilePicture
+                                        profile.profilePicture != null -> Constants.BASE_URL_IMAGE + profile.profilePicture
+                                        else -> null
+                                    }
+                                    imageUrl?.let { url ->
+                                        Glide.with(requireContext()).load(url)
+                                            .placeholder(R.drawable.progress_animation_small)
+                                            .error(R.drawable.holder_dummy).into(binding.ivProfile)
+                                    }
+
+                                    DashBoardActivity.changeImage.postValue(
+                                        Resource.success(
+                                            "changeImage", true
+                                        )
+                                    )
+
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

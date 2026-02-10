@@ -3,11 +3,15 @@ package com.tech.kojo.ui.dashboard.community.video
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
@@ -46,6 +50,9 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
     /**
      * Initialize ExoPlayer with URL safety
      */
+
+
+    @OptIn(UnstableApi::class)
     private fun initializePlayer() {
         val videoPath = arguments?.getString("videoUrl")
 
@@ -56,16 +63,25 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
 
         val fullUrl = Constants.BASE_URL_IMAGE + videoPath
 
-        player = ExoPlayer.Builder(requireContext()).build().apply {
-            binding.playerView.player = this
+        // Create ExoPlayer instance
+        player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
+            binding.playerView.player = exoPlayer
 
-            val mediaItem = MediaItem.fromUri(Uri.parse(fullUrl))
-            setMediaItem(mediaItem)
+            // Create a DataSource factory that allows redirects
+            val dataSourceFactory = DefaultHttpDataSource.Factory()
+                .setAllowCrossProtocolRedirects(true) // Important for 302 redirects
 
-            prepare()
-            playWhenReady = true
+            // Build MediaSource with the factory
+            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(Uri.parse(fullUrl)))
 
-            addListener(object : Player.Listener {
+            // Prepare and start playback
+            exoPlayer.setMediaSource(mediaSource)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+
+            // Error listener
+            exoPlayer.addListener(object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
                     Log.e("ExoPlayer", "Playback error: ${error.message}", error)
                     showInfoToast("Video failed to load.")
@@ -73,6 +89,35 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
             })
         }
     }
+
+
+    /* private fun initializePlayer() {
+         val videoPath = arguments?.getString("videoUrl")
+
+         if (videoPath.isNullOrEmpty()) {
+             showInfoToast("Video URL not found")
+             return
+         }
+
+         val fullUrl = Constants.BASE_URL_IMAGE + videoPath
+
+         player = ExoPlayer.Builder(requireContext()).build().apply {
+             binding.playerView.player = this
+
+             val mediaItem = MediaItem.fromUri(Uri.parse(fullUrl))
+             setMediaItem(mediaItem)
+
+             prepare()
+             playWhenReady = true
+
+             addListener(object : Player.Listener {
+                 override fun onPlayerError(error: PlaybackException) {
+                         Log.e("ExoPlayer", "Playback error: ${error.message}", error)
+                     showInfoToast("Video failed to load.")
+                 }
+             })
+         }
+     }*/
 
     override fun onPause() {
         super.onPause()

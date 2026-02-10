@@ -3,8 +3,8 @@ package com.tech.kojo.data.api
 
 object Constants {
     //const val BASE_URL = "https://951350efff0f.ngrok-free.app/api/v1/"
-    const val BASE_URL = "https://bc6186c951d9.ngrok-free.app/api/v1/"
-    const val BASE_URL_IMAGE = "https://bc6186c951d9.ngrok-free.app"
+    const val BASE_URL = "http://51.21.86.135:8000/api/v1/"
+    const val BASE_URL_IMAGE = "http://51.21.86.135:8000"
 
     /**************** API LIST *****************/
     const val HEADER_API = "X-API-Key:lkcMuYllSgc3jsFi1gg896mtbPxIBzYkEL"

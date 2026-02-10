@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">KojoTrickLab</string>
-
+    <string name="default_web_client_id">740541925912-q6bv5u8c89847dsagl0fji84ojpvqkj1.apps.googleusercontent.com</string>
     <string name="session_expired">session_expired</string>
     <string name="alert">Alert</string>
     <string name="post_detail">Post Detail</string>

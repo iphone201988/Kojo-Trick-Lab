@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tech.kojo.R
@@ -32,6 +33,8 @@ class VideoAdapter (
         holder.title.text = item.title
 
         Glide.with(holder.img.context).asBitmap().load(Constants.BASE_URL_IMAGE + item.videoUrl)
+            .placeholder(R.drawable.progress_animation_small)
+            .error(R.drawable.blank_pofile)
             .into(holder.img)
 
 

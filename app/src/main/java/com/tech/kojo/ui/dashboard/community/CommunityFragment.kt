@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
@@ -18,6 +19,7 @@ import com.tech.kojo.data.model.PinnedApiResponse
 import com.tech.kojo.data.model.PostData
 import com.tech.kojo.databinding.FragmentCommunityBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.ui.dashboard.community.adapter.FeedItem
 import com.tech.kojo.ui.dashboard.community.adapter.MultiViewAdapter
 import com.tech.kojo.utils.BindingUtils
@@ -51,6 +53,21 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
         initOnClick()
         // observer
         initObserver()
+
+        // data set
+        val data = sharedPrefManager.getProfileData()
+        val loginData = sharedPrefManager.getLoginData()
+        val imageUrl = when {
+            data?.profilePicture?.startsWith("http") == true -> data.profilePicture
+            data?.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
+            loginData?.profilePicture?.startsWith("http") == true -> loginData.profilePicture
+            loginData?.profilePicture != null -> Constants.BASE_URL_IMAGE + loginData.profilePicture
+            else -> null
+        }
+        imageUrl?.let { url ->
+            Glide.with(requireActivity()).load(url).placeholder(R.drawable.holder_dummy)
+                .error(R.drawable.holder_dummy).into(binding.profileImage)
+        }
     }
 
 

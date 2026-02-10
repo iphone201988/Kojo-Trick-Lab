@@ -85,10 +85,13 @@ dependencies {
     implementation (libs.lottie.v520)
     implementation (libs.lottieswiperefreshlayout)
 
-    //firebase
+    // Firebase (Push only)
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-messaging-ktx:24.0.1")
+
+// Google Social Login (Latest - Recommended)
+    implementation("androidx.credentials:credentials:1.6.0-rc01")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0-rc01")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+
 }

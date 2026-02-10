@@ -27,7 +27,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPerson"
-            setImageFromUrl="@{bean.userId.profilePicture}"
+            setImageFromUrlHttp="@{bean.userId.profilePicture}"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
             android:layout_marginStart="@dimen/_6sdp"
