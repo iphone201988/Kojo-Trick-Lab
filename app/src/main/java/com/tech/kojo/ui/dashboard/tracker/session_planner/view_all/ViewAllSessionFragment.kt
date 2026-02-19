@@ -131,6 +131,11 @@ class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
 
                 R.id.tvViewAll -> {
                     clearAllDialogItem()

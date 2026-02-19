@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MyApplication"  parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.MyApplication"  parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@android:color/transparent</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="android:windowContentTransitions">true</item>

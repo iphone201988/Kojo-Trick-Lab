@@ -103,7 +103,7 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
                                     var profile = model.user
-                                    sharedPrefManager.setProfileData(profile)
+                                    sharedPrefManager.setLoginData(profile)
                                     binding.bean = model
                                     binding.ivCircle1.visibility = View.GONE
                                     binding.ivCircle.visibility = View.VISIBLE

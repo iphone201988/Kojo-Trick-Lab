@@ -51,9 +51,12 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
      */
     private fun setupSystemUI() {
         enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottomPadding = if (ime.bottom > 0) ime.bottom else systemBars.bottom
+            v.setPadding(0, systemBars.top, 0, bottomPadding)
+
             insets
         }
         BindingUtils.statusBarStyleBlack(this)

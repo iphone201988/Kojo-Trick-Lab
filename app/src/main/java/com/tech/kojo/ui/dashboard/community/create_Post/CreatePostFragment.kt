@@ -180,7 +180,7 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
                         retriever.release()
 
                         if (durationMs > 10_000) {
-                            warningDialogItem(2)  // your alert popup
+                            warningDialogItem(1)  // your alert popup
                             return@registerForActivityResult
                         }
                     }
@@ -190,7 +190,7 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
                     val maxSizeBytes = 20 * 1024 * 1024L // 20MB
 
                     if (fileSizeBytes > maxSizeBytes) {
-                        warningDialogItem(1)  // your alert popup
+                        warningDialogItem(2)  // your alert popup
                         return@registerForActivityResult
                     }
 

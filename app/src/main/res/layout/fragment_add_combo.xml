@@ -9,10 +9,15 @@
             name="vm"
             type="com.tech.kojo.ui.dashboard.tracker.add_combo.AddComboFragmentVM" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="@dimen/_15sdp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".ui.dashboard.tracker.add_combo.AddComboFragment">
 
 
@@ -67,7 +72,7 @@
                 android:id="@+id/etCombo"
                 style="@style/EditText"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_140sdp"
                 android:layout_marginHorizontal="@dimen/_18sdp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/et_bg"
@@ -91,7 +96,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_44sdp"
                 android:layout_marginHorizontal="@dimen/_20sdp"
-                android:layout_marginBottom="@dimen/_22ssp"
                 android:background="@drawable/btn_bg"
                 android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
@@ -106,4 +110,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

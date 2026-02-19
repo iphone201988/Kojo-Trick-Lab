@@ -66,7 +66,7 @@ class StatVisibilityFragment : BaseFragment<FragmentStatVisibilityBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
                                     val profile = model.user
-                                    sharedPrefManager.setProfileData(profile)
+                                    sharedPrefManager.setLoginData(profile)
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
@@ -96,7 +96,7 @@ class StatVisibilityFragment : BaseFragment<FragmentStatVisibilityBinding>() {
     var isInitializing = true
     private fun initView() {
         binding.clCommon.tvHeader.text = "Stat Visibility"
-        val profile = sharedPrefManager.getProfileData()
+        val profile = sharedPrefManager.getLoginData()
         profile?.let {
             binding.switchNotification.isChecked = it.statVisibility?.showTrickingLevel == true
             binding.switchReminder.isChecked = it.statVisibility?.showFavouriteTrick == true

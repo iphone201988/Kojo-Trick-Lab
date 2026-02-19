@@ -13,6 +13,7 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
         const val PROFILE_DATA = "profileData"
         const val COMBO_LIST = "combo_list"
         const val TOKEN = "token"
+        const val ON_BOARDING = "onboarding"
     }
 
     fun setLoginData(isFirst: LoginUser?) {
@@ -35,31 +36,6 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
         }
     }
 
-
-
-
-    fun setProfileData(isFirst: ProfileUser?) {
-        val gson = Gson()
-        val json = gson.toJson(isFirst)
-        val editor = sharedPreferences.edit()
-        editor.putString(KEY.PROFILE_DATA, json)
-        editor.apply()
-    }
-
-
-
-    fun getProfileData(): ProfileUser? {
-        val gson = Gson()
-        val json: String? = sharedPreferences.getString(KEY.PROFILE_DATA, null)
-        return if (!json.isNullOrEmpty()) {
-            gson.fromJson(json, ProfileUser::class.java)
-        } else {
-            null
-        }
-    }
-
-
-
     fun setToken(isFirst: String) {
         val editor = sharedPreferences.edit()
         editor.putString(KEY.TOKEN, isFirst)
@@ -68,6 +44,16 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
 
     fun getToken(): String? {
         return sharedPreferences.getString(KEY.TOKEN, "")
+    }
+
+    fun setOnBoarding(onBoarding: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString(KEY.ON_BOARDING, onBoarding)
+        editor.apply()
+    }
+
+    fun getOnBoarding(): String? {
+        return sharedPreferences.getString(KEY.ON_BOARDING, "")
     }
 
 

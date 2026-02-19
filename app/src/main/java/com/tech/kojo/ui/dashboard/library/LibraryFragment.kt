@@ -124,7 +124,11 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
                 series: LibrarySery,
                 childPosition: Int
             ) {
-
+                val intent = Intent(requireContext(), CommonActivity::class.java)
+                intent.putExtra("fromWhere", "allVideo")
+                intent.putExtra("videoTopicId", series._id)
+                intent.putExtra("videoTitle", series.title)
+                startActivity(intent)
             }
 
             override fun onSeeAllTopicClick(
@@ -141,11 +145,9 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
                 section: LibrarySection.SeriesRow, sectionPosition: Int
             ) {
                 val intent = Intent(requireContext(), CommonActivity::class.java)
-                section.seriesList.firstOrNull()?.let {
-                    intent.putExtra("categoryId", it.categoryId)
-                }
-                intent.putExtra("title", section.title)
-                intent.putExtra("fromWhere", "series")
+                intent.putExtra("fromWhere", "allVideo")
+                intent.putExtra("videoTopicId", section.id)
+                intent.putExtra("videoTitle", section.title)
                 startActivity(intent)
             }
         })
@@ -171,11 +173,16 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
 
         model.data?.series?.let { series ->
             if (series.isNotEmpty()) {
-                list.add(
-                    LibrarySection.SeriesRow(
-                        id = series[0]._id, title = series[0].title, seriesList = series
+
+                series.forEach { item ->
+                    list.add(
+                        LibrarySection.SeriesRow(
+                            id = item._id,
+                            title = item.title,
+                            seriesList = listOf(item)
+                        )
                     )
-                )
+                }
             }
         }
 

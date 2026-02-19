@@ -13,6 +13,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.github.dhaval2404.imagepicker.util.FileUtil
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -29,12 +30,12 @@ import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.AppUtils
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.setBgSkin
 import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.tech.kojo.utils.showSuccessToast
-import com.github.dhaval2404.imagepicker.util.FileUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -73,13 +74,14 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
         // observer
         initObserver()
         // data set
-        val data = sharedPrefManager.getProfileData()
+        val data = sharedPrefManager.getLoginData()
         if (data != null) {
             binding.tvChoose.text = data.skin
             skin = data.skin
             binding.ivCircle1.visibility = View.GONE
             binding.ivCircle.visibility = View.VISIBLE
             binding.ivProfile.visibility = View.VISIBLE
+            setBgSkin(binding.ivBgProfile,data.skin)
             Glide.with(requireContext()).load(Constants.BASE_URL_IMAGE + data.profilePicture)
                 .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
                 .into(binding.ivProfile)
@@ -153,7 +155,7 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
                                     val profile = model.user
-                                    sharedPrefManager.setProfileData(profile)
+                                    sharedPrefManager.setLoginData(profile)
                                     profileImage = null
                                     skin = null
                                     showSuccessToast(model.message.toString())
@@ -255,7 +257,6 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
     }
 
 
-
     /*** gallery launcher ***/
     private var resultLauncherGallery =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -296,14 +297,16 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
     private fun openCameraIntent() {
         val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (pictureIntent.resolveActivity(requireActivity().packageManager) != null) {
+
             try {
                 photoFile2 = AppUtils.createImageFile1(requireActivity())
             } catch (ex: IOException) {
                 ex.printStackTrace()
             }
             if (photoFile2 != null) {
+                val authority = "${requireActivity().packageName}.fileProvider"
                 photoURI = FileProvider.getUriForFile(
-                    requireActivity(), "com.example.newbase_2025.fileProvider", photoFile2!!
+                    requireActivity(), authority, photoFile2!!
                 )
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 resultLauncherCamera.launch(pictureIntent)
@@ -395,6 +398,7 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
                     skin = m.toString()
                     binding.tvChoose.text = m.toString()
                     commonDialog?.dismiss()
+                    setBgSkin(binding.ivBgProfile,m.toString())
                 }
             }
         }

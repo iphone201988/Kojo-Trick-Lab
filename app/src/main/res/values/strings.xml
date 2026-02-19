@@ -101,15 +101,16 @@
     <string name="delete">Delete</string>
     <string name="are_you_sure_you_want_to_delete_nthis_account">Are you sure you want to delete\nthis account?</string>
     <string name="ok">Ok</string>
-    <string name="delete_this_combo_goal">Delete this Combo Goal</string>
+    <string name="remove_this_combo_goal">Remove this Combo Goal</string>
     <string name="delete_this_session">Delete this Session</string>
     <string name="delete_all_session">Delete all past Session</string>
-    <string name="are_you_sure_you_want_to_delete_nthis_combo_goal">Are you sure you want to delete\nthis combo goal?</string>
+    <string name="are_you_sure_you_want_to_remove_nthis_combo_goal">Are you sure you want to remove\nthis combo goal?</string>
     <string name="are_you_sure_you_want_to_delete_this_session">Are you sure you want to delete\nthis session?</string>
     <string name="are_you_sure_you_want_to_delete_all_session">Are you sure you want to delete\nall past session?</string>
     <string name="select_session_color">Select Session color</string>
     <string name="update_session">Update Session</string>
     <string name="update_session_for">Update session for</string>
     <string name="comments">COMMENTS</string>
+    <string name="remove">Remove</string>
 
 </resources>

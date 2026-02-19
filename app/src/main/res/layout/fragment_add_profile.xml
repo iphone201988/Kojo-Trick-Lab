@@ -34,8 +34,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCircle1"
-            android:layout_width="@dimen/_106sdp"
-            android:layout_height="@dimen/_106sdp"
+            android:layout_width="@dimen/_108sdp"
+            android:layout_height="@dimen/_108sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:background="@drawable/holder_dummy"
             app:layout_constraintBottom_toBottomOf="@+id/ivBgProfile"
@@ -46,8 +46,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCircle"
-            android:layout_width="@dimen/_106sdp"
-            android:layout_height="@dimen/_106sdp"
+            android:layout_width="@dimen/_108sdp"
+            android:layout_height="@dimen/_108sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:background="@drawable/bg_circle"
             android:visibility="gone"
@@ -77,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_38sdp"
             android:layout_marginHorizontal="@dimen/_18sdp"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_12sdp"
             android:background="@drawable/et_bg"
             android:onClick="@{v->vm.onClick(v)}"
             app:layout_constraintEnd_toEndOf="parent"
@@ -100,8 +100,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivUpload"
-                android:layout_width="@dimen/_14sdp"
-                android:layout_height="@dimen/_14sdp"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:src="@drawable/upload"
                 app:layout_constraintBottom_toBottomOf="parent"

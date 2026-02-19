@@ -282,8 +282,9 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                 ex.printStackTrace()
             }
             if (photoFile2 != null) {
+                val authority = "${requireActivity().packageName}.fileProvider"
                 photoURI = FileProvider.getUriForFile(
-                    requireActivity(), "com.example.newbase_2025.fileProvider", photoFile2!!
+                    requireActivity(), authority, photoFile2!!
                 )
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 resultLauncherCamera.launch(pictureIntent)

@@ -1,7 +1,11 @@
 package com.tech.kojo.ui.dashboard.library.all_video
 
 import android.content.Intent
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.tech.kojo.BR
@@ -41,9 +45,9 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
         if (args.videoTopicId.isNotEmpty()) {
             viewModel.getVideoTopic(Constants.VIDEO_RELATED + "/${args.videoTopicId}")
         }
-        if (args.videoTitle.isNotEmpty()) {
-            binding.tvLorem.text = args.videoTitle
-        }
+//        if (args.videoTitle.isNotEmpty()) {
+//            binding.tvLorem.text = args.videoTitle
+//        }
         // observer
         initObserver()
         // click
@@ -59,6 +63,11 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
             when (it?.id) {
                 R.id.ivBack -> {
                     requireActivity().finish()
+                }
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
                 }
 
             }
@@ -82,12 +91,12 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
                                 if (model?.success == true && model.data?.isNotEmpty() == true) {
                                     val safeList = model.data
                                     allVideoAdapter.list = safeList
-                                    binding.tvVideoCount.text = "(${safeList.size} videos)"
+                                    spannableText(safeList.size)
                                     binding.clEmpty.visibility = View.GONE
 
                                 } else {
                                     binding.clEmpty.visibility = View.VISIBLE
-                                    binding.tvVideoCount.text = "(0 videos)"
+                                    spannableText(0)
                                 }
 
                             }.onFailure { e ->
@@ -135,6 +144,24 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
             }
         binding.rvAllVideo.adapter = allVideoAdapter
 
+    }
+
+    private fun spannableText(count: Int?){
+        val title = args.videoTitle ?: ""
+        val videoText = if (count == 1) "video" else "videos"
+
+        val fullText = "$title  ($count $videoText)"
+        val spannable = SpannableString(fullText)
+
+        spannable.setSpan(
+            ForegroundColorSpan(
+                ContextCompat.getColor(requireContext(), R.color.blue)
+            ),
+            fullText.indexOf("("),
+            fullText.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        binding.tvLorem.text = spannable
     }
 
 

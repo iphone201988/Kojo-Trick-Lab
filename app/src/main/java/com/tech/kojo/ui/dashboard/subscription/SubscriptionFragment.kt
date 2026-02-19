@@ -9,7 +9,7 @@ import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.base.SimpleRecyclerViewAdapter
-import com.tech.kojo.data.model.SubTitle
+import com.tech.kojo.data.model.AllVideoData
 import com.tech.kojo.databinding.FragmentSubscriptionBinding
 import com.tech.kojo.databinding.PricingCardBinding
 import com.tech.kojo.ui.common.CommonActivity
@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SubscriptionFragment : BaseFragment<FragmentSubscriptionBinding>() {
     private val viewModel: SubscriptionVM by viewModels()
-    private lateinit var planAdapter: SimpleRecyclerViewAdapter<SubTitle, PricingCardBinding>
+    private lateinit var planAdapter: SimpleRecyclerViewAdapter<AllVideoData, PricingCardBinding>
     override fun onCreateView(view: View) {
         initView()
         initOnClick()
@@ -67,9 +67,9 @@ class SubscriptionFragment : BaseFragment<FragmentSubscriptionBinding>() {
     /**
      * Get dummy trick list
      */
-    private fun getDummyTrickList(): ArrayList<SubTitle> {
+    private fun getDummyTrickList(): ArrayList<AllVideoData> {
         val dummyList = arrayListOf(
-            SubTitle("Basic"), SubTitle("Popular"), SubTitle("Premium")
+            AllVideoData("Basic",true), AllVideoData("Popular"), AllVideoData("Premium")
         )
 
         return dummyList

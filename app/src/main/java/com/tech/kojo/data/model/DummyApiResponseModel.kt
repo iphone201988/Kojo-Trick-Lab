@@ -28,5 +28,11 @@ data class NotificationData(
     var time : String
 )
 
+data class ChipData(
+    var title: String,
+    var icon : Int,
+    var link : String?
+)
+
 
 

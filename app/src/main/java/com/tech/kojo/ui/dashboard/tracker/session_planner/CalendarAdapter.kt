@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.tracker.session_planner
 
+import android.content.res.ColorStateList
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -54,7 +55,11 @@ class CalendarAdapter(
             }
 
             item.isToday -> {
-                holder.binding.bgSelected.setBackgroundResource(R.drawable.today_bg)
+                holder.binding.bgSelected.setBackgroundResource(R.drawable.bg_circle)
+                holder.binding.bgSelected.backgroundTintList =
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(holder.itemView.context, R.color.blue)
+                    )
                 holder.binding.tvDay.setTextColor(ContextCompat.getColor(context, R.color.white))
                 if (item.eventCount > 0) {
                     holder.binding.eventDots.visibility = View.VISIBLE

@@ -19,34 +19,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_bottom_sheet">
+        <View
+            android:id="@+id/topView"
+            android:layout_width="@dimen/_54sdp"
+            android:layout_height="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/yellow_bg"
+            android:backgroundTint="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvComments"
-            style="@style/TextView_600_SemiBold"
+            style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_20sdp"
-            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/comments"
-            android:textSize="@dimen/_9ssp"
+            android:textSize="@dimen/_10ssp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/topView" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvCommentsCounts"
-            style="@style/TextView_600_SemiBold"
+            style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_4sdp"
             android:textColor="@color/blue"
-            android:textSize="@dimen/_9ssp"
+            android:textSize="@dimen/_10ssp"
             app:layout_constraintBottom_toBottomOf="@+id/tvComments"
             app:layout_constraintStart_toEndOf="@+id/tvComments"
             app:layout_constraintTop_toTopOf="@+id/tvComments" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTop"
-            style="@style/TextView_600_SemiBold"
+            style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_20sdp"
@@ -63,7 +73,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvMost"
-            style="@style/TextView_600_SemiBold"
+            style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
@@ -127,14 +137,18 @@
                 android:id="@+id/etComments"
                 style="@style/TextView_400_Regular"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_30sdp"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:background="@drawable/et_bg"
-                android:gravity="start|center"
+                android:gravity="start|top"
                 android:hint="Add a comment..."
-                android:imeOptions="actionDone"
-                android:inputType="textEmailAddress"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="4"
                 android:paddingStart="@dimen/_15sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_8sdp"
                 android:textColor="@color/blue"
                 android:textColorHint="@color/blue"
                 android:textSize="@dimen/_11ssp"

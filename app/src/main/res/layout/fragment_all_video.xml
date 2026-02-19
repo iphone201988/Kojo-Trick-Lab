@@ -26,26 +26,15 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvLorem"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
             android:layout_marginTop="@dimen/_18sdp"
-            android:text="Lorem Ispam"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clCommon" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvVideoCount"
-            style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_15ssp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvLorem"
-            app:layout_constraintStart_toEndOf="@+id/tvLorem"
-            app:layout_constraintTop_toTopOf="@+id/tvLorem" />
 
 
         <androidx.recyclerview.widget.RecyclerView

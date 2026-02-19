@@ -34,7 +34,10 @@ class AddComboFragment : BaseFragment<FragmentAddComboBinding>() {
         initOnClick()
         // observer
         initObserver()
-
+        binding.etCombo.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
+        }
     }
 
 

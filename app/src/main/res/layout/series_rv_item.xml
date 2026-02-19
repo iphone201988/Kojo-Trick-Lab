@@ -83,7 +83,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:text='@{String.valueOf(bean.videoCount+" videos")}'
+                    android:text='@{bean.videoCount != null ? bean.videoCount + " " + (bean.videoCount == 1 ? "video" : "videos") : "0 video"}'
+
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_8ssp"
 

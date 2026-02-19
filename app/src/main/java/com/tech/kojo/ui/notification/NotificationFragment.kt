@@ -67,7 +67,7 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
                                     val profile = model.user
-                                    sharedPrefManager.setProfileData(profile)
+                                    sharedPrefManager.setLoginData(profile)
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
@@ -98,7 +98,7 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
     private fun initView() {
         binding.clCommon.tvHeader.text = "Notification"
 
-        val profile = sharedPrefManager.getProfileData()
+        val profile = sharedPrefManager.getLoginData()
         profile?.let {
             binding.switchNotification.isChecked = it.notificationAlert == true
             binding.switchReminder.isChecked = it.sesionReminderAlert == true

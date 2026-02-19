@@ -8,10 +8,6 @@
         <variable
             name="vm"
             type="com.tech.kojo.ui.dashboard.profile.edit.EditProfileFragmentVM" />
-
-        <variable
-            name="bean"
-            type="com.tech.kojo.data.model.ProfileUser" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

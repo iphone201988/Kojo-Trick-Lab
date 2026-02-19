@@ -26,6 +26,7 @@ import com.tech.kojo.databinding.FragmentForwordTrickBinding
 import com.tech.kojo.databinding.VerticalForwardRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.setTextCapitalized
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,11 +87,13 @@ class ForwardTrickFragment : BaseFragment<FragmentForwordTrickBinding>() {
             val data = HashMap<String, Any>()
             data["trickVaultId"] = trackData._id.toString()
             viewModel.getTrickDataByIdApi(data, Constants.TRICKS_DATA)
+            setTextCapitalized(binding.tvTrick, trackData.name)
+            binding.tvDescription.makeTextExpandable(
+                trackData?.description.toString()
+            )
         }
 
-        binding.tvDescription.makeTextExpandable(
-            "This category encompasses all tricks that flip forwards..."
-        )
+
     }
 
     /**

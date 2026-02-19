@@ -144,7 +144,7 @@
                         android:layout_width="@dimen/_26sdp"
                         android:layout_height="@dimen/_26sdp"
                         android:onClick="@{v -> vm.onClick(v)}"
-                        android:padding="@dimen/_5sdp"
+                        android:padding="@dimen/_6sdp"
                         android:src="@drawable/pin"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -274,7 +274,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:background="@drawable/bg_stroke_with_solid"
+                            android:background="@drawable/yellow_bg"
                             android:paddingHorizontal="@dimen/_5sdp"
                             android:paddingVertical="@dimen/_2sdp"
                             android:text="@{String.valueOf(bean.totalComments)}"
@@ -376,7 +376,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:onClick="@{v->vm.onClick(v)}"
                 android:scaleType="fitXY"
-                android:src="@drawable/iv_send_chat"
+                android:src="@drawable/send_icon"
                 app:layout_constraintBottom_toBottomOf="@id/etChat"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/etChat" />

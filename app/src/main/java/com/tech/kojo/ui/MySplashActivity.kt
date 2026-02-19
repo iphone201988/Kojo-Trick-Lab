@@ -32,18 +32,25 @@ class MySplashActivity : BaseActivity<ActivityMySplashBinding>() {
         // click
         initOnClick()
         val data = sharedPrefManager.getLoginData()
-        if (data != null) {
-            if (data.isEmailVerified == true) {
-                val intent = Intent(this@MySplashActivity, DashBoardActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
-                startActivity(intent)
-                finish()
+            if (data != null) {
+                if (data.isEmailVerified == true) {
+                    val intent = Intent(this@MySplashActivity, DashBoardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
             }
-
+        else{
+                if (sharedPrefManager.getOnBoarding()=="true"){
+                    val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
         }
+
 
     }
 

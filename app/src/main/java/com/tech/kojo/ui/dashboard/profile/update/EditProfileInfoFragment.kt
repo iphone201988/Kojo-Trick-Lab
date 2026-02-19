@@ -43,8 +43,8 @@ class EditProfileInfoFragment : BaseFragment<FragmentEditProfileInfoBinding>() {
         initOnClick()
         // observer
         initObserver()
-        val data = sharedPrefManager.getProfileData()
-        if (data!=null){
+        val data = sharedPrefManager.getLoginData()
+        if (data != null) {
             binding.bean = data
         }
     }
@@ -139,7 +139,7 @@ class EditProfileInfoFragment : BaseFragment<FragmentEditProfileInfoBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
                                     val profile = model.user
-                                    sharedPrefManager.setProfileData(profile)
+                                    sharedPrefManager.setLoginData(profile)
                                     showSuccessToast(model.message.toString())
                                 }
                             }.onFailure { e ->

@@ -37,7 +37,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv1"
-                setUrlPost="@{bean.imageUrl}"
+                setUrlPost2="@{bean.imageUrl}"
+                app:titleView="@{tv1}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_120sdp"
                 android:scaleType="centerCrop"
@@ -53,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:gravity="center"
+                android:visibility="gone"
                 android:text="@{bean.title}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20ssp"

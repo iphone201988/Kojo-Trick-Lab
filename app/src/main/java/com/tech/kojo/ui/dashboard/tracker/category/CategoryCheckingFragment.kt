@@ -84,7 +84,7 @@ class CategoryCheckingFragment : BaseFragment<FragmentCategoryCheckingBinding>()
                                         binding.ivUnSelected.isEnabled = true
                                         binding.ivUnSelected.isFocusable = true
                                         if (check) {
-                                            binding.ivUnSelected.setImageResource(R.drawable.bg_complete)
+                                            binding.ivUnSelected.setImageResource(R.drawable.ic_checked_small_tricking)
                                         } else {
                                             binding.ivUnSelected.setImageResource(R.drawable.unselected_box)
                                         }
@@ -110,7 +110,7 @@ class CategoryCheckingFragment : BaseFragment<FragmentCategoryCheckingBinding>()
                                 val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
                                     if (position != -1) {
-                                        showSuccessToast(it.message.toString())
+                                        showSuccessToast(model.message.toString())
                                         if (categoryAdapter.list[position].progressStatus.equals("completed")) {
                                             categoryAdapter.list[position].progressStatus =
                                                 "completed"

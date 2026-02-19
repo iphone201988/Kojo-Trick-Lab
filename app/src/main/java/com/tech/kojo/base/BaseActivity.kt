@@ -128,6 +128,9 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
     }
 
     override fun onStateChange(state: ConnectivityProvider.NetworkState) {
+        if (supportFragmentManager.isStateSaved) {
+            return
+        }
         if (noInternetSheet == null) {
             noInternetSheet = NoInternetSheet()
             noInternetSheet?.isCancelable = false

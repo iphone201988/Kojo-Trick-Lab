@@ -55,6 +55,11 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
                     1 -> binding.ivProgress.setImageResource(R.drawable.second_page)
                     2 -> binding.ivProgress.setImageResource(R.drawable.third_page)
                 }
+                // Next / Start button text
+                binding.tvNext.text = if (position == 2) { "Start"
+                } else {
+                    getString(R.string.next)
+                }
             }
         })
     }
@@ -75,6 +80,7 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
                     if (currentItem < 2) {
                         binding.viewPager.setCurrentItem(currentItem + 1, true)
                     }else{
+                        sharedPrefManager.setOnBoarding("true")
                         val intent = Intent(this@OnBoardingActivity, AuthActivity::class.java)
                         startActivity(intent)
                         finish()

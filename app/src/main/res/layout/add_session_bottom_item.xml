@@ -121,7 +121,6 @@
             style="@style/EditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_18sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/et_bg"
             android:gravity="start"
@@ -135,8 +134,8 @@
             android:singleLine="false"
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/etSelectColorTag"
+            app:layout_constraintStart_toStartOf="@id/etSelectColorTag"
             app:layout_constraintTop_toBottomOf="@+id/etSelectColorTag" />
 
         <androidx.appcompat.widget.AppCompatTextView

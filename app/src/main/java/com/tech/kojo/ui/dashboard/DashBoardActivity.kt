@@ -3,8 +3,14 @@ package com.tech.kojo.ui.dashboard
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -39,6 +45,7 @@ import com.tech.kojo.ui.dashboard.profile.ProfileFragment
 import com.tech.kojo.ui.dashboard.tracker.TrackerFragment
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.event.SingleRequestEvent
 import com.tech.kojo.utils.showErrorToast
@@ -85,6 +92,23 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         initOnClick()
         // observer
         initObserver()
+        val currentUser = sharedPrefManager.getLoginData()
+        if (currentUser!=null){
+            binding.tvUpload.text = currentUser.name
+            binding.ivCircle.visibility = View.VISIBLE
+            binding.ivProfile.visibility = View.VISIBLE
+
+            val imageUrl = when {
+                currentUser.profilePicture?.startsWith("http") == true -> currentUser.profilePicture
+                currentUser.profilePicture != null -> Constants.BASE_URL_IMAGE + currentUser.profilePicture
+                else -> null
+            }
+            imageUrl?.let { url ->
+                Glide.with(this).load(url)
+                    .placeholder(R.drawable.progress_animation_small)
+                    .error(R.drawable.holder_dummy).into(binding.ivProfile)
+            }
+        }
     }
 
     /**
@@ -97,13 +121,10 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         // status bar color change
         BindingUtils.statusBarStyleWhite(this)
         // data set
-        val data = sharedPrefManager.getProfileData()
-        val loginData = sharedPrefManager.getLoginData()
+        val data = sharedPrefManager.getLoginData()
         val imageUrl = when {
             data?.profilePicture?.startsWith("http") == true -> data.profilePicture
             data?.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
-            loginData?.profilePicture?.startsWith("http") == true -> loginData.profilePicture
-            loginData?.profilePicture != null -> Constants.BASE_URL_IMAGE + loginData.profilePicture
             else -> null
         }
         imageUrl?.let { url ->
@@ -122,7 +143,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                 }
                 Status.SUCCESS -> {
                     // data set
-                    val data = sharedPrefManager.getProfileData()
+                    val data = sharedPrefManager.getLoginData()
                     if (data != null) {
                         val imageUrl = when {
                             data.profilePicture?.startsWith("http") == true -> data.profilePicture
@@ -269,7 +290,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
      * dialog initialize
      */
     private fun initDialog() {
-        commonDialog = BaseCustomDialog(this@DashBoardActivity, R.layout.dialog_settings) {
+        commonDialog = BaseCustomDialog(this@DashBoardActivity, R.style.DialogDashboard,R.layout.dialog_settings) {
             when (it?.id) {
                 R.id.tvNotification -> {
                     val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
@@ -309,21 +330,69 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             }
         }
         commonDialog.setCancelable(true)
+        commonDialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            val params = attributes
+            params.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+
+            // Get ivDrawer bottom position
+            val location = IntArray(2)
+            binding.ivDrawer.getLocationOnScreen(location)
+            val ivDrawerBottom = location[1] + binding.ivDrawer.height
+
+            // Only set Y (vertical offset)
+            params.y = ivDrawerBottom + dpToPx(75)
+
+            attributes = params
+
+            setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+    }
+
+    // Helper to convert dp to pixels
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 
     /**
      * menu dialog initialize
      */
     private fun initMenuDialog(categoryList: List<TopicCategoryData>) {
-        menuDialog = BaseCustomDialog(this@DashBoardActivity, R.layout.dailog_video_menu) {
 
-        }
+        menuDialog = BaseCustomDialog(
+            this@DashBoardActivity,R.style.DialogDashboard,
+            R.layout.dailog_video_menu
+        ) { }
+
         menuDialog.setCancelable(true)
-        menuDialog.create()
-        menuDialog.show()
-        // adapter
-        initAdapter(categoryList)
 
+        menuDialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            val params = attributes
+            params.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            // Get ivDrawer1 bottom position
+            val location = IntArray(2)
+            binding.ivDrawer1.getLocationOnScreen(location)
+            val ivDrawerBottom = location[1] + binding.ivDrawer1.height
+            params.y = ivDrawerBottom + dpToPx(-25)
+
+            attributes = params
+
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        menuDialog.show()
+
+        // Setup adapter after show (safer if using binding inside dialog)
+        initAdapter(categoryList)
     }
 
 
@@ -363,6 +432,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                                 val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
                                     sharedPrefManager.clear()
+                                    sharedPrefManager.setOnBoarding("true")
                                     showSuccessToast(model.message.toString())
                                     val intent =
                                         Intent(this@DashBoardActivity, AuthActivity::class.java)
@@ -383,6 +453,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                                 val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
                                     sharedPrefManager.clear()
+                                    sharedPrefManager.setOnBoarding("true")
                                     showSuccessToast(model.message.toString())
                                     val intent =
                                         Intent(this@DashBoardActivity, AuthActivity::class.java)

@@ -22,12 +22,15 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitle"
                 style="@style/TextView_700_Bold"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="start"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/_15ssp"
-                app:layout_constraintBottom_toBottomOf="@+id/tvSeeAll"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintEnd_toStartOf="@id/tvSeeAll"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvSeeAll" />
 
@@ -54,6 +57,7 @@
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:orientation="horizontal"
+            android:paddingBottom="@dimen/_3sdp"
             tools:listitem="@layout/item_video_rv_item"
             tools:itemCount="5"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

@@ -28,8 +28,8 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPerson"
             setImageFromUrlHttp="@{bean.userId.profilePicture}"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
             android:layout_marginStart="@dimen/_6sdp"
             android:scaleType="centerCrop"
             android:onClick="@{v -> callback.onItemClick(v,bean,pos)}"
@@ -46,21 +46,34 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:text='@{"@"+bean.userId.name}'
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_10ssp"
             app:layout_constraintStart_toEndOf="@+id/ivPerson"
             app:layout_constraintTop_toTopOf="@+id/ivPerson" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvCommentsCounts"
-            style="@style/TextView_600_SemiBold"
+            android:id="@+id/tvDash"
+            style="@style/TextView_500_Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sdp"
-
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_8ssp"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:textColor="@color/colorPrimary"
+            android:text="-"
+            android:textSize="@dimen/_10ssp"
             app:layout_constraintBottom_toBottomOf="@+id/tvComments"
             app:layout_constraintStart_toEndOf="@+id/tvComments"
+            app:layout_constraintTop_toTopOf="@+id/tvComments" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCommentsCounts"
+            style="@style/TextView_500_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:textColor="@color/blue"
+            setTimeAgo="@{bean.createdAt}"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvComments"
+            app:layout_constraintStart_toEndOf="@+id/tvDash"
             app:layout_constraintTop_toTopOf="@+id/tvComments" />
 
 
@@ -74,7 +87,7 @@
             android:paddingEnd="@dimen/_18sdp"
             android:text="@{bean.comment}"
             android:textColor="@color/blue"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_10ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tvComments"
             app:layout_constraintTop_toBottomOf="@+id/tvComments" />

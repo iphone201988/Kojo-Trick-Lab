@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_15sdp"
-            android:text="@string/forward_tricks"
+            android:text=""
             android:textSize="@dimen/_16ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clCommon" />
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
-            android:text="This category encompasses all tricks that flip forwards. Note that unlike Gainers."
+            android:text=""
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="parent"

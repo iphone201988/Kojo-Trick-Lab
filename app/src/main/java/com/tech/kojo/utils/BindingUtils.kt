@@ -5,7 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -21,18 +23,23 @@ import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.gson.Gson
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.SimpleRecyclerViewAdapter
 import com.tech.kojo.data.api.Constants
+import com.tech.kojo.data.model.GetComboData
 import com.tech.kojo.data.model.HomeType
 import com.tech.kojo.data.model.NotificationData
 import com.tech.kojo.data.model.PastSessionData
 import com.tech.kojo.databinding.ItemLayoutInnerNotificationBinding
 import com.tech.kojo.databinding.RvMyTrickInnerItemBinding
-import com.google.android.material.imageview.ShapeableImageView
-import com.google.gson.Gson
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -51,7 +58,7 @@ object BindingUtils {
             Glide.with(image.context).load(Constants.BASE_URL_IMAGE + url)
                 .placeholder(R.drawable.progress_animation_small).error(R.drawable.holder_dummy)
                 .into(image)
-        }else{
+        } else {
             image.setImageResource(R.drawable.holder_dummy)
         }
     }
@@ -67,10 +74,8 @@ object BindingUtils {
         }
 
         if (finalUrl != null) {
-            Glide.with(image.context)
-                .load(finalUrl)
-                .placeholder(R.drawable.progress_animation_small)
-                .error(R.drawable.blank_pofile)
+            Glide.with(image.context).load(finalUrl)
+                .placeholder(R.drawable.progress_animation_small).error(R.drawable.blank_pofile)
                 .into(image)
         } else {
             image.setImageResource(R.drawable.blank_pofile)
@@ -96,7 +101,6 @@ object BindingUtils {
     }
 
 
-
     @BindingAdapter("setUrlPost")
     @JvmStatic
     fun setUrlPost(image: ShapeableImageView, url: String?) {
@@ -104,9 +108,55 @@ object BindingUtils {
             Glide.with(image.context).load(Constants.BASE_URL_IMAGE + url)
                 .placeholder(R.drawable.progress_animation_small)
                 .error(R.drawable.progress_animation_small).into(image)
-        }else{
+        } else {
             image.setImageResource(R.drawable.holder_dummy)
         }
+    }
+
+
+    @BindingAdapter(value = ["setUrlPost2", "titleView"], requireAll = false)
+    @JvmStatic
+    fun setUrlPost2(
+        image: ShapeableImageView, url: String?, titleView: AppCompatTextView?
+    ) {
+
+        // Hide title initially (while loading)
+        titleView?.visibility = View.GONE
+
+        if (url.isNullOrEmpty()) {
+            image.setImageResource(R.drawable.holder_dummy)
+            return
+        }
+
+        Glide.with(image.context).load(Constants.BASE_URL_IMAGE + url)
+            .placeholder(R.drawable.progress_animation_small)
+            .error(R.drawable.progress_animation_small)
+            .listener(object : RequestListener<Drawable> {
+
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    titleView?.visibility = View.VISIBLE
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+
+                    // Show title when image loaded
+                    titleView?.visibility = View.VISIBLE
+
+                    return false
+                }
+            }).into(image)
     }
 
 
@@ -116,7 +166,7 @@ object BindingUtils {
         if (url != null) {
             Glide.with(image.context).asBitmap().load(Constants.BASE_URL_IMAGE + url)
                 .apply(RequestOptions().frame(1_000_000)).into(image)
-        }else{
+        } else {
 
         }
     }
@@ -139,7 +189,7 @@ object BindingUtils {
         if (url != null) {
             Glide.with(image.context).load(url).placeholder(R.drawable.progress_animation_small)
                 .error(R.drawable.progress_animation_small).into(image)
-        }else{
+        } else {
             image.setImageResource(R.drawable.holder_dummy)
         }
     }
@@ -224,7 +274,7 @@ object BindingUtils {
         if (status.equals("completed")) {
             view.setImageResource(R.drawable.bg_complete)
         } else {
-            view.setImageResource(R.drawable.unselected_box)
+            view.setImageResource(R.drawable.unselected_category_checkbox)
         }
     }
 
@@ -352,7 +402,7 @@ object BindingUtils {
 
         while (keys.hasNext()) {
             keys.next()
-        // example: "2025-11-22"
+            // example: "2025-11-22"
 
 //            val parts = dateKey.split("-")
 //            if (parts.size == 3) {
@@ -434,7 +484,7 @@ object BindingUtils {
             val days = hours / 24
 
             return when {
-                seconds < 60 -> "just now"
+                seconds < 60 -> "Just now"
 
                 minutes < 60 -> "${minutes} minute${plural(minutes)} ago"
 
@@ -577,8 +627,7 @@ object BindingUtils {
                 "red" -> {
                     image.setBackgroundColor(
                         ContextCompat.getColor(
-                            image.context,
-                            R.color.red_color
+                            image.context, R.color.red_color
                         )
                     )
                 }
@@ -586,8 +635,7 @@ object BindingUtils {
                 "green" -> {
                     image.setBackgroundColor(
                         ContextCompat.getColor(
-                            image.context,
-                            R.color.green_color
+                            image.context, R.color.green_color
                         )
                     )
                 }
@@ -603,6 +651,77 @@ object BindingUtils {
         }
     }
 
+    @BindingAdapter("setTextCapitalized")
+    @JvmStatic
+    fun setTextCapitalized(view: AppCompatTextView, text: String?) {
+        text?.let {
+            view.text = it.replaceFirstChar { char ->
+                if (char.isLowerCase()) char.titlecase() else char.toString()
+            }
+        }
+    }
+
+    @BindingAdapter("formatDateForCombo")
+    @JvmStatic
+    fun formatDateForCombo(textView: AppCompatTextView, isoDate: String?) {
+
+        if (isoDate.isNullOrEmpty()) {
+            textView.text = ""
+            return
+        }
+
+        try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            val date = inputFormat.parse(isoDate)
+
+            if (date != null) {
+                val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+                textView.text = "Last Updated: ${outputFormat.format(date)}"
+            } else {
+                textView.text = ""
+            }
+
+        } catch (e: Exception) {
+            textView.text = ""
+        }
+    }
+
+    @BindingAdapter("setExpandableText")
+    @JvmStatic
+    fun setExpandableText(
+        descText: AppCompatTextView, item: GetComboData
+    ) {
+        val showMoreText =
+            (descText.parent as View).findViewById<AppCompatTextView>(R.id.tvShowMore)
+
+        if (item.isExpanded) {
+            // Expanded
+            descText.maxLines = Int.MAX_VALUE
+            descText.ellipsize = null
+            showMoreText.text = "Show Less"
+            showMoreText.visibility = View.VISIBLE
+        } else {
+            // Collapsed (measure safely)
+            descText.maxLines = Int.MAX_VALUE
+            descText.ellipsize = null
+
+            descText.post {
+                val lineCount = descText.layout?.lineCount ?: 0
+
+                if (lineCount > 2) {
+                    descText.maxLines = 2
+                    descText.ellipsize = TextUtils.TruncateAt.END
+                    showMoreText.visibility = View.VISIBLE
+                    showMoreText.text = "Show More"
+                } else {
+                    showMoreText.visibility = View.GONE
+                }
+            }
+        }
+    }
 
 
 }

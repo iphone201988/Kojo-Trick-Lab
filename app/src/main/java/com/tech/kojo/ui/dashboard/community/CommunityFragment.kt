@@ -55,11 +55,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
         initObserver()
 
         // data set
-        val data = sharedPrefManager.getProfileData()
         val loginData = sharedPrefManager.getLoginData()
         val imageUrl = when {
-            data?.profilePicture?.startsWith("http") == true -> data.profilePicture
-            data?.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
             loginData?.profilePicture?.startsWith("http") == true -> loginData.profilePicture
             loginData?.profilePicture != null -> Constants.BASE_URL_IMAGE + loginData.profilePicture
             else -> null

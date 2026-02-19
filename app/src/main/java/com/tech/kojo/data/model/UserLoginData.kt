@@ -68,7 +68,17 @@ data class LoginUser(
     val statVisibility: StatVisibility?,
     val status: String?,
     val token: String?,
-    val updatedAt: String?
+    val updatedAt: String?,
+    val country: String?,
+    val dreamTrick: String?,
+    val instagramLink: String?,
+    val otpVerified: Boolean?,
+    val role: Int?,
+    val signatureTrick: String?,
+    val tiktockLink: String?,
+    val timeTricking: String?,
+    val trickingNickname: String?,
+    val youtubeLink: String?
 )
 
 
@@ -96,7 +106,7 @@ data class GetProfileResponse(
     val levelData: LevelData?,
     val message: String?,
     val success: Boolean?,
-    val user: ProfileUser?
+    val user: LoginUser?
 )
 
 data class ProfileUser(
@@ -407,7 +417,8 @@ data class GetComboData(
     val goal: String?,
     val notes: String?,
     val updatedAt: String?,
-    val userId: String?
+    val userId: String?,
+    var isExpanded:Boolean = false
 ) : Parcelable
 
 @Parcelize

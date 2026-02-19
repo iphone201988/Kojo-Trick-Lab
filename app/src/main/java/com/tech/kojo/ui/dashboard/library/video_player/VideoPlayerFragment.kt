@@ -2,7 +2,9 @@ package com.tech.kojo.ui.dashboard.library.video_player
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -30,6 +32,7 @@ import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.Instant
 
 @AndroidEntryPoint
 class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
@@ -82,7 +85,9 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 }
 
                 R.id.clComments -> {
-                    initBottomSheet()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        initBottomSheet()
+                    }
                 }
 
                 R.id.ivUser -> {
@@ -250,13 +255,14 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     /**
      * Initialize bottom sheet
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initBottomSheet() {
         commentsBottomSheet = BaseCustomBottomSheet(
             requireContext(), R.layout.comment_bottom_sheet_item
         ) { view ->
             when (view?.id) {
                 R.id.ivSend -> {
-                    val profile = sharedPrefManager.getProfileData()
+                    val profile = sharedPrefManager.getLoginData()
                     val message =
                         commentsBottomSheet.binding.etComments.text?.toString()?.trim().orEmpty()
                     if (message.isNotEmpty()) {
@@ -269,8 +275,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                             __v = null,
                             _id = null,
                             comment = message,
-                            createdAt = "Just now",
-                            updatedAt = null,
+                            createdAt = Instant.now().toString(),
+                            updatedAt = Instant.now().toString(),
                             userId = userProfileData,
                             videoId = userVideoId
                         )
@@ -301,9 +307,12 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 }
 
                 R.id.ivPerson -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "userProfile")
-                    startActivity(intent)
+//                    val loggedInUserId = sharedPrefManager.getLoginData()?._id
+                        showInfoToast("You can't open your own profile")
+//                    val intent = Intent(requireContext(), CommonActivity::class.java)
+//                    intent.putExtra("fromWhere", "userProfile")
+//                    intent.putExtra("userId",loggedInUserId)
+//                    startActivity(intent)
                 }
             }
         }
@@ -311,7 +320,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         commentsBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         commentsBottomSheet.show()
         commentsBottomSheet.binding.check = 1
-        val profileUser = sharedPrefManager.getProfileData()?.profilePicture
+        val profileUser = sharedPrefManager.getLoginData()?.profilePicture
 
         val imageUrl = when {
             profileUser?.startsWith("http") == true -> profileUser
@@ -354,6 +363,10 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 binding.tvMessage.text = "-"
                 binding.ivPerson.setImageResource(R.drawable.holder_dummy)
             }
+        }
+        commentsBottomSheet.binding.etComments.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
         }
     }
 

@@ -11,7 +11,7 @@
 
         <variable
             name="bean"
-            type="com.tech.kojo.data.model.ProfileUser" />
+            type="com.tech.kojo.data.model.LoginUser" />
 
     </data>
 
@@ -32,6 +32,7 @@
                 android:layout_height="@dimen/_207sdp"
                 android:onClick="@{v->vm.onClick(v)}"
                 android:scaleType="fitXY"
+                setBgSkin="@{bean.skin}"
                 android:src="@drawable/skin_second"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -261,6 +262,18 @@
                 android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvDreamTrickValue" />
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginHorizontal="@dimen/_12ssp"
+                android:orientation="vertical"
+                android:textSize="@dimen/_16sdp"
+                android:theme="@style/Theme.MaterialComponents.Bridge"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvSocialMediaLinks" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

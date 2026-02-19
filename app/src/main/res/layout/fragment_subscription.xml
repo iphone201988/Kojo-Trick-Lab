@@ -33,7 +33,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/consFeature"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
+                android:layout_height="@dimen/_232sdp"
                 android:layout_marginHorizontal="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:background="@drawable/radius_bg"
@@ -53,22 +53,24 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/check1"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_marginStart="@dimen/_15sdp"
-                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_32sdp"
                     android:src="@drawable/check"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ivImage" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_600_SemiBold_Quicksand"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
                     android:text="Access to all Programmes"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_13ssp"
+                    android:textSize="@dimen/_16ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="@+id/check1"
                     app:layout_constraintStart_toEndOf="@+id/check1"
                     app:layout_constraintTop_toTopOf="@+id/check1" />
@@ -76,44 +78,47 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/check2"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_marginStart="@dimen/_15sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:src="@drawable/check"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/check1" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_600_SemiBold_Quicksand"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:text="Complete Video Liabary"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_13ssp"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:textSize="@dimen/_16ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="@+id/check2"
                     app:layout_constraintStart_toEndOf="@+id/check2"
                     app:layout_constraintTop_toTopOf="@+id/check2" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/check3"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:layout_marginStart="@dimen/_15sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:src="@drawable/check"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/check2" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_600_SemiBold_Quicksand"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:text="15 Clips Reviews"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_13ssp"
+                    android:textSize="@dimen/_16ssp"
+                    android:layout_marginEnd="@dimen/_20sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/check3"
                     app:layout_constraintStart_toEndOf="@+id/check3"
                     app:layout_constraintTop_toTopOf="@+id/check3" />
@@ -125,9 +130,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/pricing_card"
+                android:layout_marginTop="@dimen/_32sdp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@+id/btnLogin"
                 app:layout_constraintTop_toBottomOf="@+id/consFeature" />
 
 

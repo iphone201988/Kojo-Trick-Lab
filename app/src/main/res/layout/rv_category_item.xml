@@ -38,7 +38,7 @@
             android:layout_marginTop="@dimen/_2sdp"
             android:gravity="center"
             android:paddingVertical="@dimen/_5sdp"
-            android:text="@{bean.title}"
+            setTextCapitalized="@{bean.title}"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

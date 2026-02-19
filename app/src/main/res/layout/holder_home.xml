@@ -40,7 +40,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv1"
-                setUrlPost="@{bean.imageLink}"
+                setUrlPost2="@{bean.imageLink}"
+                app:titleView="@{tv1}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_140sdp"
                 android:scaleType="centerCrop"
@@ -56,7 +57,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:gravity="center"
-                android:text="@{bean.name}"
+                android:visibility="gone"
+                setTextCapitalized="@{bean.name}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_20ssp"
                 app:layout_constraintBottom_toBottomOf="parent"

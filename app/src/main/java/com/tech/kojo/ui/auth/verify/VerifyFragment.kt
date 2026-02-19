@@ -262,34 +262,35 @@ class VerifyFragment : BaseFragment<FragmentVerifyBinding>() {
 
     /** start timer ***/
     private fun startOtpTimer() {
-        val totalTime = 1 * 60 * 1000L
+        val totalTime = 60 * 1000L
 
         otpTimer = object : CountDownTimer(totalTime, 1000) {
+
             override fun onTick(millisUntilFinished: Long) {
                 binding.tvResendCode.isEnabled = false
                 binding.tvResendCode.isFocusable = false
                 binding.tvResendCode.isClickable = false
-                val minutes = millisUntilFinished / 1000 / 60
-                val seconds = millisUntilFinished / 1000 % 60
-                binding.tvResendCode.text =
-                    "Resend Code in " + String.format("%02d:%02d", minutes, seconds)
+                val seconds = millisUntilFinished / 1000
+
+                binding.tvResendCode.text = "Resend Code in ${seconds}s"
+
+                binding.tvResendCode.setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.blue)
+                )
             }
 
             override fun onFinish() {
-                binding.tvResendCode.text = "Resend Otp"
+                binding.tvResendCode.text = "Resend OTP"
                 binding.tvResendCode.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.colorPrimary
-                    )
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimary)
                 )
                 binding.tvResendCode.isEnabled = true
                 binding.tvResendCode.isFocusable = true
                 binding.tvResendCode.isClickable = true
                 otpTimer.cancel()
-                // Handle OTP expiration if needed...
             }
         }
+
         otpTimer.start()
     }
 

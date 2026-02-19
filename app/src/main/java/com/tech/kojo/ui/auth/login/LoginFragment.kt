@@ -48,7 +48,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun onCreateView(view: View) {
         binding.type = false
-        binding.clCommon.tvHeader.text = "Login in with email"
+        binding.clCommon.tvHeader.text = "Login"
 
         // click
         initOnClick()

@@ -48,7 +48,12 @@ class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
         val comboData = arguments?.getParcelable<GetComboData>("comboData")
         if (comboData != null) {
             binding.bean = comboData
-            goalId = comboData._id
+            goalId = comboData?._id
+        }
+
+        binding.etEmail.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
         }
     }
 
@@ -62,6 +67,14 @@ class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
+//                R.id.tvShowMore->{
+//                    comboData?.isExpanded?.let { it1 -> comboData?.isExpanded = !it1 }
+//                    binding.invalidateAll()
+//                    // 🔥 Force scroll re-measure after expansion
+//                    binding.root.post {
+//                        binding.root.requestLayout()
+//                    }
+//                }
 
                 R.id.btnSave -> {
                     val notesText = binding.etEmail.text.toString().trim()

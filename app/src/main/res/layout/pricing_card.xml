@@ -5,7 +5,7 @@
     <data>
         <variable
             name="bean"
-            type="com.tech.kojo.data.model.SubTitle" />
+            type="com.tech.kojo.data.model.AllVideoData" />
 
         <variable
             name="pos"
@@ -22,34 +22,45 @@
     <androidx.cardview.widget.CardView
         android:layout_width="@dimen/_160sdp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/_6sdp"
         android:backgroundTint="@color/white"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="@dimen/_12sdp"
         app:cardElevation="@dimen/_1sdp"
-        app:strokeColor="#F6B63E"
-        app:strokeWidth="2dp">
+        app:strokeColor="@color/colorPrimary"
+        app:strokeWidth="@dimen/_2sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <!-- Most Popular Tag -->
+            android:padding="@dimen/_12sdp">
+            <LinearLayout
+                android:id="@+id/llTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/radius_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:paddingHorizontal="@dimen/_6sdp"
+                android:paddingVertical="@dimen/_3sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/ic_subs_star"
+                    android:scaleType="centerCrop"/>
             <TextView
                 android:id="@+id/tvTag"
                 style="@style/TextView_600_SemiBold_Quicksand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/radius_bg"
-                android:backgroundTint="#FDE9B0"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:text="★ Most Popular"
-                android:textColor="#F6B63E"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:text="Most Popular"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_11ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+              />
+            </LinearLayout>
 
             <!-- Plan Name -->
             <TextView
@@ -57,26 +68,38 @@
                 style="@style/TextView_600_SemiBold_Quicksand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:text="@{bean.title}"
-                android:textSize="@dimen/_14ssp"
+                android:textSize="@dimen/_18ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTag" />
+                app:layout_constraintTop_toBottomOf="@id/llTag" />
 
             <!-- Price -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvPlanName">
             <TextView
-                android:id="@+id/tvPrice"
                 style="@style/TextView_700_Bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="$15.00/month"
+                android:text="$15.00"
                 android:textColor="@color/blue"
-                android:textSize="@dimen/_13ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvPlanName" />
+                android:textSize="@dimen/_18ssp"
+             />
+            <TextView
+                style="@style/TextView_500_Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/month"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_15ssp"/>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

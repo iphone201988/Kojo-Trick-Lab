@@ -101,34 +101,30 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
     private fun initTrickAdapter() {
         trickAdapter =
             SimpleRecyclerViewAdapter(R.layout.trick_rv_layout_item, BR.bean) { v, m, pos ->
-                when (pos) {
-                    0 -> {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "myTrick")
-                        startActivity(intent)
-                    }
-
-                    1 -> {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "comboGoals")
-                        startActivity(intent)
-                    }
-
-                    2 -> {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "sessionPlanner")
-                        startActivity(intent)
-                    }
-
-                    3 -> {
+                when (m.title) {
+                    "Tricking Milestones"->{
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "trickingMilestones")
                         startActivity(intent)
                     }
-
-                    4 -> {
+                    "Session Planner"->{
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "sessionPlanner")
+                        startActivity(intent)
+                    }
+                    "My Tricks"->{
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "myTrick")
+                        startActivity(intent)
+                    }
+                    "My Stats"->{
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "myStar")
+                        startActivity(intent)
+                    }
+                    "Combo Goals"->{
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "comboGoals")
                         startActivity(intent)
                     }
                 }

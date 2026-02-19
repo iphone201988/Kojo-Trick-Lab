@@ -38,6 +38,10 @@ class SeriesFragment : BaseFragment<FragmentSeriesBinding>() {
      //   binding.clCommon.ivBack.setImageResource(R.drawable.three_icon)
         // adapter
         initAdapter()
+        binding.tvSeries.text = args.title?.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase() else it.toString()
+        }
+
         // api call
         if (args.categoryId.isNotEmpty()) {
             viewModel.getVideoCategory(Constants.VIDEO_DATA_GET_TOPIC + "/${args.categoryId}")
@@ -98,6 +102,11 @@ class SeriesFragment : BaseFragment<FragmentSeriesBinding>() {
             when (it?.id) {
                 R.id.ivBack -> {
                     requireActivity().finish()
+                }
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
                 }
 
             }

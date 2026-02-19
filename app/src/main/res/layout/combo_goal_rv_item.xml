@@ -22,8 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
-        android:background="@drawable/bg_stock_grey"
-        android:backgroundTint="@color/stroke_color"
+        android:background="@drawable/calender_bg"
         android:padding="@dimen/_10sdp">
 
 
@@ -35,13 +34,27 @@
             android:gravity="center|start"
             android:paddingEnd="@dimen/_18sdp"
             android:text="@{bean.goal}"
+            app:setExpandableText="@{bean}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Tdr → Shuriken Cutter → Raiz → C9 Hyper →
-Wrap 9 → Hook → Snapuswipe" />
+            tools:text="Tdr → Shuriken Cutter → Raiz → C9 Hyper → Wrap 9 → Hook → Snapuswipe" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvShowMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextView_400_Regular"
+            android:text="Show More"
+            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
+            android:visibility="gone"
+            android:paddingVertical="@dimen/_3sdp"
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:textSize="@dimen/_8ssp"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv1" />
 
 
         <View
@@ -52,7 +65,7 @@ Wrap 9 → Hook → Snapuswipe" />
             android:background="@color/blue_20"
             app:layout_constraintEnd_toEndOf="@+id/tv1"
             app:layout_constraintStart_toStartOf="@+id/tv1"
-            app:layout_constraintTop_toBottomOf="@+id/tv1" />
+            app:layout_constraintTop_toBottomOf="@+id/tvShowMore" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -112,7 +125,7 @@ Wrap 9 → Hook → Snapuswipe" />
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:text="Removes"
+                android:text="Remove"
                 android:textColor="@color/red_color"
                 android:textSize="@dimen/_8ssp"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -54,14 +54,15 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvName"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:gravity="center"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:text="@{bean.title}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toStartOf="@id/tvPhill"
             app:layout_constraintStart_toEndOf="@+id/iv1"
             app:layout_constraintTop_toTopOf="@+id/iv1" />
 

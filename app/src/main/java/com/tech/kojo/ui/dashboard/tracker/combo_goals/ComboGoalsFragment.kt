@@ -65,7 +65,7 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
                     requireActivity().finish()
                 }
 
-                R.id.btnAddNew -> {
+                R.id.btnAddNew ,R.id.btnAddNew2 -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
                     intent.putExtra("fromWhere", "addComboGals")
                     startActivity(intent)
@@ -80,12 +80,6 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
      * Method to initialize view
      */
     private fun initView() {
-        // api call
-        val data = HashMap<String, Any>()
-        data["page"] = currentPage
-        viewModel.getComboGoalApi(data, Constants.GET_COMBO_GOALS)
-
-
         // refresh
         binding.ssPullRefresh.setColorSchemeResources(
             ContextCompat.getColor(requireContext(), R.color.colorPrimary)
@@ -120,8 +114,10 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
                                     comboGoalAdapter.list = combo
                                     if (comboGoalAdapter.list.isNotEmpty()) {
                                         binding.clEmpty.visibility = View.GONE
+                                        binding.btnAddNew.visibility = View.VISIBLE
                                     } else {
                                         binding.clEmpty.visibility = View.VISIBLE
+                                        binding.btnAddNew.visibility = View.GONE
                                     }
                                 }
                             }.onFailure { e ->
@@ -140,8 +136,10 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
                                     comboGoalAdapter.removeItem(position)
                                     if (comboGoalAdapter.list.isNotEmpty()) {
                                         binding.clEmpty.visibility = View.GONE
+                                        binding.btnAddNew.visibility = View.VISIBLE
                                     } else {
                                         binding.clEmpty.visibility = View.VISIBLE
+                                        binding.btnAddNew.visibility = View.GONE
                                     }
                                     comboGoalAdapter.notifyItemChanged(position)
 
@@ -175,6 +173,10 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
         comboGoalAdapter =
             SimpleRecyclerViewAdapter(R.layout.combo_goal_rv_item, BR.bean) { v, m, pos ->
                 when (v?.id) {
+                    R.id.tvShowMore -> {
+                        m.isExpanded = !m.isExpanded
+                        comboGoalAdapter.notifyItemChanged(pos,null)
+                    }
                     R.id.clRemoves -> {
                         position = pos
                         if (m._id != null) {
@@ -219,11 +221,18 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
         deleteComboDialogItem.show()
 
         deleteComboDialogItem.binding.apply {
-            text.text = getString(R.string.delete_this_combo_goal)
-            tvSure.text = getString(R.string.are_you_sure_you_want_to_delete_nthis_combo_goal)
-            btnDeleteComment.text = getString(R.string.delete)
+            text.text = getString(R.string.remove_this_combo_goal)
+            tvSure.text = getString(R.string.are_you_sure_you_want_to_remove_nthis_combo_goal)
+            btnDeleteComment.text = getString(R.string.remove)
 
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        // api call
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        viewModel.getComboGoalApi(data, Constants.GET_COMBO_GOALS)
     }
 }

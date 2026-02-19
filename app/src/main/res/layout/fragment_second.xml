@@ -25,6 +25,7 @@
             android:gravity="center"
             android:textStyle="bold"
             android:text="TRACK YOUR JOURNEY"
+            android:textSize="@dimen/_20ssp"
             android:textColor="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,7 @@
             style="@style/TextView_400_Regular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_13ssp"
             android:text="Log reps, set combo goals, and celebrate milestones as you improve."
@@ -49,8 +50,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivCircle"
-            android:layout_width="@dimen/_233sdp"
-            android:layout_height="@dimen/_233sdp"
+            android:layout_width="@dimen/_252sdp"
+            android:layout_height="@dimen/_252sdp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/_15sdp"
             android:src="@drawable/second_image"

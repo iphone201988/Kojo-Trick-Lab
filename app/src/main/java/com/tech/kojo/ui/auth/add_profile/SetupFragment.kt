@@ -137,7 +137,7 @@ class SetupFragment : BaseFragment<FragmentSetupBinding>() {
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
                                     val profile = model.user
-                                    sharedPrefManager.setProfileData(profile)
+                                    sharedPrefManager.setLoginData(profile)
                                     val action = ForgotEmailFragmentDirections.navigateToSuccessfullyFragment(successfulType = "signup")
                                     BindingUtils.navigateWithSlide(findNavController(), action)
                                 }
