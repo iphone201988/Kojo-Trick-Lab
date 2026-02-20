@@ -37,6 +37,7 @@
             android:layout_width="@dimen/_87sdp"
             android:layout_height="@dimen/_52sdp"
             android:scaleType="centerCrop"
+            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearance="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
@@ -61,6 +62,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:gravity="center"
             android:text="@{bean.name}"
+            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toEndOf="@+id/iv1"
@@ -75,6 +77,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="18dp"
             android:ellipsize="end"
+            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
             android:maxLines="2"
             android:text="@{bean.description}"
             android:textColor="@color/blue"
@@ -179,6 +182,7 @@
             android:background="@drawable/bg_stock_yellow"
             android:backgroundTint="@color/red_color"
             android:paddingHorizontal="@dimen/_10sdp"
+            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
             android:paddingVertical="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view">

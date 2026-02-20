@@ -252,6 +252,10 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                                 if (createSession != null) {
                                     showSuccessToast("Session created successfully")
                                     addSessionBottomSheet.dismiss()
+                                    val data = HashMap<String, Any>()
+                                    data["month"] = currentMonth
+                                    data["year"] = currentYear
+                                    viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

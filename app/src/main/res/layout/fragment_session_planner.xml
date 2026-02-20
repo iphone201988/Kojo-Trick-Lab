@@ -94,6 +94,7 @@
                         android:layout_marginTop="@dimen/_18sdp"
                         android:background="@drawable/calender_bg"
                         android:orientation="vertical"
+                        android:paddingVertical="@dimen/_2sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -392,8 +393,8 @@
                         android:backgroundTint="@color/blue"
                         android:onClick="@{v->vm.onClick(v)}"
                         android:paddingHorizontal="@dimen/_10sdp"
-                        android:paddingVertical="@dimen/_5sdp"
-                        android:text="@string/view_all"
+                        android:paddingVertical="@dimen/_6sdp"
+                        android:text="@string/see_all"
                         android:textColor="@color/blue"
                         android:textSize="@dimen/_8ssp"
                         app:layout_constraintEnd_toEndOf="parent"

@@ -18,7 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/bg_color"
         tools:context=".ui.auth.login.LoginFragment">
 
         <include
@@ -131,7 +131,7 @@
                 app:layout_constraintTop_toTopOf="@+id/tvRememberMe" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLogin"
                 style="@style/TextView_600_SemiBold_Quicksand"
                 android:layout_width="0dp"

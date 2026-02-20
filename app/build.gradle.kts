@@ -81,6 +81,7 @@ dependencies {
     // exo player
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.cast)
     // refresh layout
     implementation (libs.lottie.v520)
     implementation (libs.lottieswiperefreshlayout)
@@ -93,5 +94,9 @@ dependencies {
     implementation("androidx.credentials:credentials:1.6.0-rc01")
     implementation("androidx.credentials:credentials-play-services-auth:1.6.0-rc01")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+
+    implementation(libs.play.services.cast.framework)
+    implementation(libs.play.services.cast)
+    implementation(libs.androidx.mediarouter)
 
 }

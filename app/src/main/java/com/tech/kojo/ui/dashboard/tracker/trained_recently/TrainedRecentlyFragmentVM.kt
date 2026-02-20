@@ -33,4 +33,23 @@ class TrainedRecentlyFragmentVM @Inject constructor(private val apiHelper: ApiHe
             }
         }
     }
+
+    // delete combo goals api
+    fun deleteApi(url: String,request: HashMap<String, Any> ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            observeCommon.postValue(Resource.loading(null))
+            runCatching {
+                val response = apiHelper.apiPostForRawBody(url, request)
+                if (response.isSuccessful) {
+                    observeCommon.postValue(Resource.success("deleteApi", response.body()))
+                } else {
+                    val errorMsg = handleErrorResponse(response.errorBody(), response.code())
+                    observeCommon.postValue(Resource.error(errorMsg, null))
+                }
+            }.onFailure { e ->
+                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                observeCommon.postValue(Resource.error("${e.message}", null))
+            }
+        }
+    }
 }

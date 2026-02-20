@@ -1,6 +1,10 @@
 package com.tech.kojo.ui.dashboard.home.progress
 
+import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -21,9 +25,11 @@ import com.tech.kojo.ui.dashboard.tracker.progression_details.UserImagePagerAdap
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
+import com.tech.kojo.utils.showSuccessToast
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.core.net.toUri
 
 
 @AndroidEntryPoint
@@ -32,6 +38,7 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
     private lateinit var homeProgressionDetailsAdapter: SimpleRecyclerViewAdapter<HomeProgressStep, HomeProgressItemBinding>
     private var trackDetailId: String? = null
     private var diveName: String? = null
+    private var allVideos: List<VideoLink> = emptyList()
 
     override fun getLayoutResource(): Int {
         return R.layout.fragment_home_progress_details
@@ -101,7 +108,7 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                                     homeProgressionDetailsAdapter.list = safeList
 
                                     // view pager data set
-                                    val allVideos: List<VideoLink> =
+                                    allVideos =
                                         home?.steps
                                             ?.flatMap { it?.videoLinks ?: emptyList() }
                                             ?.filterNotNull()
@@ -155,10 +162,38 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                 }
 
                 R.id.btnDownload -> {
-
+                    if (allVideos.isNotEmpty()) {
+                        val currentItem = binding.viewpager.currentItem
+                        val videoUrl = allVideos[currentItem].link
+                        if (!videoUrl.isNullOrEmpty()) {
+                            downloadVideo(videoUrl)
+                        } else {
+                            showErrorToast("Video URL not found")
+                        }
+                    } else {
+                        showErrorToast("No videos available to download")
+                    }
                 }
 
             }
+        }
+    }
+
+    private fun downloadVideo(url: String) {
+        try {
+            val request = DownloadManager.Request((Constants.BASE_URL_IMAGE + url).toUri())
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            request.setTitle("Downloading Video")
+            request.setDescription("Downloading video file...")
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4")
+
+            val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+            showSuccessToast("Download started...")
+        } catch (e: Exception) {
+            Log.e("DownloadError", "Error: ${e.message}", e)
+            showErrorToast("Download failed: ${e.message}")
         }
     }
 

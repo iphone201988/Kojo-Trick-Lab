@@ -1,8 +1,13 @@
 package com.tech.kojo.ui.dashboard.library.video_player
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
@@ -30,9 +35,19 @@ import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
+import com.tech.kojo.utils.showSuccessToast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
+import androidx.core.net.toUri
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaLoadRequestData
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastSession
+import com.google.android.gms.cast.framework.SessionManagerListener
+import com.google.android.gms.common.images.WebImage
+import com.tech.kojo.utils.showToast
 
 @AndroidEntryPoint
 class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
@@ -44,6 +59,11 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     private var topicId: String? = null
     private var videoUrl: String? = null
     private var commentData = ArrayList<CommentsData>()
+    private var videoTitle: String? = null
+
+    private var mCastContext: CastContext? = null
+    private var mCastSession: CastSession? = null
+    private var mSessionManagerListener: SessionManagerListener<CastSession>? = null
 
     private val args: VideoPlayerFragmentArgs by navArgs()
 
@@ -57,6 +77,9 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     }
 
     override fun onCreateView(view: View) {
+        mCastContext = CastContext.getSharedInstance(requireContext())
+        setupCastListener()
+
         // adapter
         initAdapter()
         // click
@@ -72,6 +95,81 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
 
 
+    }
+
+    private fun setupCastListener() {
+        mSessionManagerListener = object : SessionManagerListener<CastSession> {
+            override fun onSessionEnded(session: CastSession, error: Int) {
+                onApplicationDisconnected()
+            }
+
+            override fun onSessionResumed(session: CastSession, wasSuspended: Boolean) {
+                onApplicationConnected(session)
+            }
+
+            override fun onSessionResumeFailed(session: CastSession, error: Int) {
+                onApplicationDisconnected()
+            }
+
+            override fun onSessionStarted(session: CastSession, sessionId: String) {
+                onApplicationConnected(session)
+            }
+
+            override fun onSessionStartFailed(session: CastSession, error: Int) {
+                onApplicationDisconnected()
+            }
+
+            override fun onSessionStarting(session: CastSession) {}
+            override fun onSessionEnding(session: CastSession) {}
+            override fun onSessionResuming(session: CastSession, sessionId: String) {}
+            override fun onSessionSuspended(session: CastSession, reason: Int) {}
+
+            private fun onApplicationConnected(session: CastSession) {
+                mCastSession = session
+                if (!videoUrl.isNullOrEmpty()) {
+                    loadRemoteMedia()
+                }
+            }
+
+            private fun onApplicationDisconnected() {
+                mCastSession = null
+            }
+        }
+    }
+
+    private fun loadRemoteMedia() {
+        if (mCastSession == null) {
+            return
+        }
+        val remoteMediaClient = mCastSession!!.remoteMediaClient ?: return
+
+        val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, videoTitle ?: "Video")
+        
+        val mediaInfo = MediaInfo.Builder(videoUrl!!)
+            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+            .setContentType("video/mp4")
+            .setMetadata(movieMetadata)
+            .build()
+
+        remoteMediaClient.load(MediaLoadRequestData.Builder()
+            .setMediaInfo(mediaInfo)
+            .setAutoplay(true)
+            .build())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mSessionManagerListener?.let {
+            mCastContext?.sessionManager?.addSessionManagerListener(it, CastSession::class.java)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mSessionManagerListener?.let {
+            mCastContext?.sessionManager?.removeSessionManagerListener(it, CastSession::class.java)
+        }
     }
 
     /**
@@ -90,7 +188,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                     }
                 }
 
-                R.id.ivUser -> {
+                R.id.ivVideo -> {
                     if (!videoUrl.isNullOrEmpty()) {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "video")
@@ -115,7 +213,47 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                         showInfoToast("You can't open your own profile")
                     }
                 }
+
+                R.id.clDownload -> {
+                    if (!videoUrl.isNullOrEmpty()) {
+                        downloadVideo(videoUrl!!)
+                    } else {
+                        showErrorToast("Video URL not found")
+                    }
+                }
+
+                R.id.clCast -> {
+                    if (videoUrl.isNullOrEmpty()) {
+                        showErrorToast("Video URL not found")
+                        return@observe
+                    }
+                    val castSession = mCastContext?.sessionManager?.currentCastSession
+                    if (castSession != null && castSession.isConnected) {
+                        loadRemoteMedia()
+                    } else {
+                        showToast("Please connect to a Cast device first")
+                    }
+                }
             }
+        }
+    }
+
+    private fun downloadVideo(url: String) {
+        try {
+            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
+            val request = DownloadManager.Request(fullUrl.toUri())
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            request.setTitle("Downloading Video")
+            request.setDescription("Downloading video file...")
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4")
+
+            val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+            showSuccessToast("Download started...")
+        } catch (e: Exception) {
+            Log.e("DownloadError", "Error: ${e.message}", e)
+            showErrorToast("Download failed: ${e.message}")
         }
     }
 
@@ -134,6 +272,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                 if (model?.success == true && model.data != null) {
                                     binding.bean = model.data
                                     videoUrl = model.data.videoUrl
+                                    videoTitle = model.data.title
                                 }
                             }.onFailure { e ->
                                 showErrorToast(e.message.toString())

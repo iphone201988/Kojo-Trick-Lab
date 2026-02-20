@@ -52,7 +52,7 @@
             android:paddingHorizontal="@dimen/_12sdp"
             android:paddingVertical="@dimen/_4sdp"
             android:textColor="@color/white"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/_14ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/viewpager" />
 

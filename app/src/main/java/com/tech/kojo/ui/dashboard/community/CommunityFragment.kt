@@ -19,7 +19,6 @@ import com.tech.kojo.data.model.PinnedApiResponse
 import com.tech.kojo.data.model.PostData
 import com.tech.kojo.databinding.FragmentCommunityBinding
 import com.tech.kojo.ui.common.CommonActivity
-import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.ui.dashboard.community.adapter.FeedItem
 import com.tech.kojo.ui.dashboard.community.adapter.MultiViewAdapter
 import com.tech.kojo.utils.BindingUtils
@@ -36,6 +35,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
     private var postPosition = -1
     private var isLoading = false
     private var isLastPage = false
+    private var isPopular = false
 
     private lateinit var communityAdapter: MultiViewAdapter
     override fun getLayoutResource(): Int {
@@ -79,6 +79,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                 }
 
                 Status.SUCCESS -> {
+                    hideLoading()
                     when (it.message) {
                         "getPostApi" -> {
                             runCatching {
@@ -100,10 +101,9 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                                     }
                                     isLastPage = currentPage == model.totalPages
 
-                                    if (communityAdapter.getList().isNotEmpty()){
+                                    if (communityAdapter.getList().isNotEmpty()) {
                                         binding.clEmpty.visibility = View.GONE
-                                    }
-                                    else{
+                                    } else {
                                         binding.clEmpty.visibility = View.VISIBLE
                                     }
                                 }
@@ -185,9 +185,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
         // adapter
         initAdapter()
         // api call
-        val data = HashMap<String, Any>()
-        data["page"] = currentPage
-        viewModel.getPostApi(data, Constants.GET_POST)
+        getApi(isPopular)
 
         // pagination
         pagination()
@@ -200,15 +198,17 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
             Handler().postDelayed({
                 binding.ssPullRefresh.isRefreshing = false
                 isProgress = true
-                // api call
-                // api call
-                val data = HashMap<String, Any>()
-                data["page"] = 1
-                viewModel.getPostApi(data, Constants.GET_POST)
+                getApi(isPopular)
             }, 2000)
         }
     }
 
+    private fun getApi(isPopular: Boolean) {
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        data["isPopular"] = isPopular
+        viewModel.getPostApi(data, Constants.GET_POST)
+    }
 
     /**
      * home adapter handel pagination
@@ -236,6 +236,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
             }
         })
     }
+
     /**
      *  load more function call
      **/
@@ -263,9 +264,9 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
 
                 R.id.tvNewest -> {
                     binding.check = 1
-                    val data = HashMap<String, Any>()
-                    data["page"] = currentPage
-                    viewModel.getPostApi(data, Constants.GET_POST)
+                    isPopular = false
+                    getApi(false)
+                    showLoading()
                 }
 
                 R.id.consPinned -> {
@@ -278,9 +279,9 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
 
                 R.id.tvCompleteTask -> {
                     binding.check = 2
-                    val data = HashMap<String, Any>()
-                    data["page"] = currentPage
-                    viewModel.getPostApi(data, Constants.GET_POST)
+                    isPopular = true
+                    getApi(true)
+                    showLoading()
                 }
 
                 R.id.createPost -> {

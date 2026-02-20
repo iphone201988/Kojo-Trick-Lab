@@ -178,7 +178,7 @@
             android:layout_width="@dimen/_26sdp"
             android:layout_height="@dimen/_26sdp"
             android:src="@drawable/iv_heart"
-            android:padding="@dimen/_6sdp"
+            android:padding="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_minus3sdp"
             app:layout_constraintBottom_toBottomOf="@id/addResponse"
             app:layout_constraintEnd_toStartOf="@id/tvLikes"

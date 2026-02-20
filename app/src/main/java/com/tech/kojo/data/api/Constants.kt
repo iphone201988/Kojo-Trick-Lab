@@ -68,6 +68,7 @@ object Constants {
     const val AUTH_GET_USER ="auth/get-user"
     const val VIDEO_DATA_GET_TOPIC ="video-data/get-topic"
     const val GET_ALL_CATEGORY ="video-data/all-category"
+    const val DELETE_USER_PROGRESS ="user-progress/delete"
 
 
 

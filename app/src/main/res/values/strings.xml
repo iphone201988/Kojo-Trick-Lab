@@ -84,6 +84,7 @@
     <string name="next_sessions">Next Sessions</string>
     <string name="upcoming_sessions">Upcoming sessions</string>
     <string name="view_all">View All</string>
+    <string name="see_all">See All</string>
     <string name="clear_all">Clear All</string>
     <string name="session_title">Session Title</string>
     <string name="utx_kick_session">UTX Kick session</string>

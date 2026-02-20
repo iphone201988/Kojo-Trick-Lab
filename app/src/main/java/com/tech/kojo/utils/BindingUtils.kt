@@ -66,7 +66,6 @@ object BindingUtils {
     @BindingAdapter("setImageFromUrlHttp")
     @JvmStatic
     fun setImageFromUrlHttp(image: ShapeableImageView, url: String?) {
-
         val finalUrl = when {
             url.isNullOrBlank() -> null
             url.startsWith("http", ignoreCase = true) -> url

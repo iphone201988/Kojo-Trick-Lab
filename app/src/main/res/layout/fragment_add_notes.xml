@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
+        android:background="@color/bg_color"
         android:paddingBottom="@dimen/_15sdp">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -18,6 +18,7 @@ import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
+import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -124,6 +125,18 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                                 hideLoading()
                             }
                         }
+
+                        "deleteApi" -> {
+                            val message = it.data?.get("message")
+                            if (message != null) {
+                                showSuccessToast(message.toString())
+                                val list = trainedRecentlyList
+                                trainedRecentAdapter.list = list
+                                updateEmptyState(list)
+
+                            }
+
+                        }
                     }
                 }
 
@@ -145,11 +158,19 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
         trainedRecentAdapter =
             SimpleRecyclerViewAdapter(R.layout.trained_recently_rv_item, BR.bean) { v, m, _ ->
                 when (v?.id) {
-                    R.id.clRecent -> {
+                    R.id.iv1, R.id.tvName, R.id.tvDesc -> {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "progressionDetails")
                         intent.putExtra("progressId", m._id)
                         startActivity(intent)
+                    }
+
+                    R.id.clRemoves -> {
+                        if (m._id != null) {
+                            val data = HashMap<String, Any>()
+                            data["trickDataId"] = m._id
+                            viewModel.deleteApi(Constants.DELETE_USER_PROGRESS, data)
+                        }
                     }
                 }
 

@@ -236,6 +236,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                     viewModel.getCommentsApi(
                                         Constants.GET_COMMENTS + "/${communityID}", data
                                     )
+
                                 }
                             }.onFailure { e ->
                                 hideLoading()
@@ -255,6 +256,8 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 if (comment?.isNotEmpty() == true) {
                                     comments = comment as ArrayList<GetCommentData>
                                     commentAdapter.list = comments
+                                    binding.count.text =
+                                        binding.count.text.toString().toInt().plus(1).toString()
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

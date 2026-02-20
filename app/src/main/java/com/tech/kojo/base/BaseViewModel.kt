@@ -7,26 +7,29 @@ import okhttp3.ResponseBody
 import org.json.JSONObject
 
 open class BaseViewModel : ViewModel() {
-
     val onClick: SingleActionEvent<View?> = SingleActionEvent()
     val onUnAuth: SingleActionEvent<Int?> = SingleActionEvent()
-
     fun handleErrorResponse(errorBody: ResponseBody?, code: Int? = null): String {
         val text: String? = errorBody?.string()
-        if (code != null && code == 401) {
-            onUnAuth.postValue(code)
-        }
+        var message = ""
         if (!text.isNullOrEmpty()) {
-            return try {
+            message = try {
                 val obj = JSONObject(text)
-                obj.getString("message")
+                obj.optString("message", text)
             } catch (e: Exception) {
-                return text
+                text
             }
         }
-        return errorBody.toString()
+        // Trigger logout if 401 OR JWT missing
+        if (code == 401 || message.contains("jwt must be provided", ignoreCase = true) || message.contains(
+                "Invalid algorithm",
+                ignoreCase = true
+            )
+        ) {
+            onUnAuth.postValue(401)
+        }
+        return message.ifEmpty { errorBody?.toString() ?: "Unknown error" }
     }
-
     open fun onClick(view: View?) {
         onClick.value = view
     }

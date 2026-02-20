@@ -39,6 +39,7 @@ class CalendarAdapter(
 
         // Reset defaults
         holder.binding.eventDots.visibility = View.GONE
+        holder.binding.eventDots.alpha = 1.0f
         holder.binding.bgSelected.setBackgroundResource(R.drawable.un_selected_date_color)
         holder.binding.tvDay.setTextColor(ContextCompat.getColor(context, R.color.blue))
         holder.itemView.isEnabled = true
@@ -69,8 +70,9 @@ class CalendarAdapter(
 
             isPastDate && item.eventCount > 0 -> {
                 holder.binding.bgSelected.setBackgroundResource(R.drawable.event_old_bg)
-                holder.binding.tvDay.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                holder.binding.tvDay.setTextColor(ContextCompat.getColor(context, R.color.blue_40))
                 holder.binding.eventDots.visibility = View.VISIBLE
+                holder.binding.eventDots.alpha = 0.4f
                 addDots(holder.binding.eventDots, item.eventColors)
                 holder.itemView.isEnabled = false
                 holder.itemView.isClickable = false
@@ -78,7 +80,7 @@ class CalendarAdapter(
 
             isPastDate -> {
                 holder.binding.bgSelected.setBackgroundResource(R.drawable.un_selected_date_color)
-                holder.binding.tvDay.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                holder.binding.tvDay.setTextColor(ContextCompat.getColor(context, R.color.blue_40))
                 holder.binding.eventDots.visibility = View.GONE
                 holder.itemView.isEnabled = false
                 holder.itemView.isClickable = false
@@ -145,4 +147,3 @@ class CalendarAdapter(
         "red" to R.color.red_color,
     )
 }
-
