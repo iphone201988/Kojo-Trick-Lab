@@ -28,7 +28,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.65" />
+            app:layout_constraintGuide_begin="475dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivHeader"
@@ -65,17 +78,26 @@
             app:layout_constraintTop_toBottomOf="@+id/ivProgress" />
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.tech.kojo.utils.RoundedGradientView
             android:id="@+id/clNext1"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_43sdp"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_marginTop="@dimen/_100sdp"
             android:layout_marginBottom="@dimen/_38ssp"
-            android:background="@drawable/btn_bg"
             android:onClick="@{v->vm.onClick(v)}"
             android:visibility="@{type==1?View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/clNext1"
+            app:layout_constraintEnd_toEndOf="@+id/clNext1"
+            app:layout_constraintStart_toStartOf="@+id/clNext1"
+            app:layout_constraintTop_toTopOf="@+id/clNext1">
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -94,30 +116,40 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivNext1"
-                android:layout_width="@dimen/_15sdp"
-                android:layout_height="@dimen/_15sdp"
+                android:layout_width="@dimen/_13sdp"
+                android:layout_height="@dimen/_13sdp"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:src="@drawable/next"
                 app:layout_constraintBottom_toBottomOf="@+id/tvNext1"
                 app:layout_constraintStart_toEndOf="@+id/tvNext1"
-                app:layout_constraintTop_toTopOf="@+id/tvNext1"
+                app:layout_constraintTop_toTopOf="@+id/tvNext1" />
 
-                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+
+        <com.tech.kojo.utils.RoundedGradientView
             android:id="@+id/clNext"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_43sdp"
-            android:layout_marginEnd="@dimen/_35sdp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_marginTop="@dimen/_100sdp"
             android:layout_marginBottom="@dimen/_38ssp"
-            android:background="@drawable/btn_bg"
+            android:layout_marginEnd="@dimen/_16sdp"
             android:onClick="@{v->vm.onClick(v)}"
+            android:layout_marginStart="@dimen/_12sdp"
             android:visibility="@{type==2?View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/ivProgress"
-            app:layout_constraintStart_toEndOf="@+id/clBack">
+            app:layout_constraintEnd_toEndOf="@+id/guideline2"
+            app:layout_constraintStart_toEndOf="@+id/clBack" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/clNext"
+            app:layout_constraintEnd_toEndOf="@+id/clNext"
+            app:layout_constraintStart_toStartOf="@+id/clNext"
+            app:layout_constraintTop_toTopOf="@+id/clNext">
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -149,19 +181,24 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.tech.kojo.utils.RoundedGradientView
             android:id="@+id/clBack"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_43sdp"
-            android:layout_marginStart="@dimen/_35sdp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_42sdp"
             android:layout_marginBottom="@dimen/_38ssp"
-            android:background="@drawable/btn_bg"
             android:onClick="@{v->vm.onClick(v)}"
             android:visibility="@{type==2?View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/clNext"
-            app:layout_constraintStart_toStartOf="@+id/ivProgress">
+            app:layout_constraintStart_toStartOf="@+id/guideline1" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/clBack"
+            app:layout_constraintEnd_toEndOf="@+id/clBack"
+            app:layout_constraintStart_toStartOf="@+id/clBack"
+            app:layout_constraintTop_toTopOf="@+id/clBack">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivBack"

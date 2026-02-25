@@ -49,7 +49,6 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
         if (pastData != null) {
             binding.bean = pastData
         }
-
     }
 
     /**
@@ -71,7 +70,6 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
                         )
                     }
                 }
-
             }
         }
     }
@@ -80,10 +78,7 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
     private fun initObserver() {
         viewModel.observeCommon.observe(viewLifecycleOwner) {
             when (it?.status) {
-                Status.LOADING -> {
-                    showLoading()
-                }
-
+                Status.LOADING -> { showLoading() }
                 Status.SUCCESS -> {
                     when (it.message) {
                         "updateSessionPlannerApi" -> {
@@ -91,7 +86,7 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: CreateSessionApiResponse? =
                                     BindingUtils.parseJson(jsonData)
-                                var update = model?.data
+                                val update = model?.data
                                 if (update != null) {
                                     sessionId = update._id
                                     binding.bean = update
@@ -107,13 +102,13 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
 
                     }
                 }
-
                 Status.ERROR -> {
                     hideLoading()
                     showErrorToast(it.message.toString())
                 }
 
                 else -> {
+
                 }
             }
         }

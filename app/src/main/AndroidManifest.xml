@@ -53,7 +53,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.onboarding.OnBoardingActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".ui.MySplashActivity"
             android:exported="true"

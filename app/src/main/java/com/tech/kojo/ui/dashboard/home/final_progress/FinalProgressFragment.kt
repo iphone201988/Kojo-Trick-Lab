@@ -3,9 +3,17 @@ package com.tech.kojo.ui.dashboard.home.final_progress
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -35,6 +43,8 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
     private var diveName: String? = null
     private var trackDetailId: String? = null
     private var stepId: String? = null
+    private var allVideos: List<VideoLink> = emptyList()
+    private var player: ExoPlayer? = null
 
     override fun getLayoutResource(): Int {
         return R.layout.fragment_final_progress
@@ -79,17 +89,19 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
             repsCount.value = reps
 
             // SAFE VIDEO LINKS (very important)
-            val safeVideos: List<VideoLink> =
-                data.videoLinks?.filterNotNull()?.toList() ?: emptyList()
+            allVideos = data.videoLinks?.filterNotNull()?.toList() ?: emptyList()
             // viewpager
-            val adapter = UserImagePagerAdapter(safeVideos) { videoItem ->
+            val adapter = UserImagePagerAdapter(allVideos, onImageClick = { videoItem ->
                 // click listener callback
-                val intent = Intent(requireContext(), CommonActivity::class.java)
-                intent.putExtra("fromWhere", "video")
-                intent.putExtra("videoUrl", videoItem.link)
-                startActivity(intent)
-            }
+            }, onPlayClick = { videoItem ->
+                if (!videoItem.link.isNullOrEmpty()) {
+                    playLocalVideo(videoItem.link)
+                } else {
+                    showErrorToast("Video not found")
+                }
+            })
             binding.viewpager.adapter = adapter
+            setupViewPager()
         }
     }
 
@@ -103,6 +115,10 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
             when (it?.id) {
                 R.id.ivProgress -> {
                     requireActivity().finish()
+                }
+
+                R.id.ivClosePlayer -> {
+                    stopLocalVideo()
                 }
 
                 R.id.ivPlus -> {
@@ -127,8 +143,65 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
                     apiCall("attempted")
                 }
 
+                R.id.ivMAx -> {
+                    if (allVideos.isNotEmpty()) {
+                        val currentItem = binding.viewpager.currentItem
+                        val videoUrl = allVideos[currentItem].link
+                        if (!videoUrl.isNullOrEmpty()) {
+                            val intent = Intent(requireContext(), CommonActivity::class.java)
+                            intent.putExtra("fromWhere", "video")
+                            intent.putExtra("videoUrl", videoUrl)
+                            startActivity(intent)
+                        } else {
+                            showErrorToast("Video URL not found")
+                        }
+                    }
+                }
+
             }
         }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun playLocalVideo(url: String) {
+        player?.stop()
+        player?.release()
+
+        binding.localPlayerView.visibility = View.VISIBLE
+        binding.ivClosePlayer.visibility = View.VISIBLE
+        binding.viewpager.visibility = View.INVISIBLE
+
+        val videoUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
+
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(videoUrl))
+
+        player = ExoPlayer.Builder(requireContext()).build().apply {
+            setMediaSource(mediaSource)
+            prepare()
+            playWhenReady = true
+            repeatMode = Player.REPEAT_MODE_ALL
+            addListener(object : Player.Listener {
+                override fun onPlayerError(error: PlaybackException) {
+                    super.onPlayerError(error)
+                    showErrorToast("Playback error: ${error.localizedMessage}")
+                }
+            })
+        }
+        binding.localPlayerView.player = player
+    }
+
+    private fun stopLocalVideo() {
+        player?.stop()
+        player?.release()
+        player = null
+        binding.localPlayerView.player = null
+        binding.localPlayerView.visibility = View.GONE
+        binding.ivClosePlayer.visibility = View.GONE
+        binding.viewpager.visibility = View.VISIBLE
     }
 
     /**
@@ -241,6 +314,17 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
     override fun onResume() {
         super.onResume()
         screenStartTime = System.currentTimeMillis()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+        player = null
     }
 
 }

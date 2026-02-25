@@ -62,22 +62,32 @@
             tools:itemCount="5"
             tools:listitem="@layout/personal_bests_rv_item" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btnSaveChanges"
-            style="@style/TextView_600_SemiBold_Quicksand"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/et_bg"
-            android:backgroundTint="@color/colorPrimary"
-            android:gravity="center"
-            android:onClick="@{v->vm.onClick(v)}"
-            android:text="Save Changes"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_15ssp"
             app:layout_constraintEnd_toEndOf="@+id/tvTrack"
             app:layout_constraintStart_toStartOf="@+id/tvTrack"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSaveChanges"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:text="Save Changes"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

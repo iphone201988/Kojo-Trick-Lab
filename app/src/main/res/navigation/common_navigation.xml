@@ -189,6 +189,7 @@
         android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.SessionPlannerFragment"
         tools:layout="@layout/fragment_session_planner" />
 
+
     <fragment
         android:id="@+id/fragmentViewAllSession"
         android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.view_all.ViewAllSessionFragment"

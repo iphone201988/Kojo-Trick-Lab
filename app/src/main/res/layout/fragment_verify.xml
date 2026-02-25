@@ -134,22 +134,34 @@
             app:layout_constraintTop_toTopOf="@+id/edtOtp1" />
 
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btnVerify"
-            style="@style/TextView_600_SemiBold_Quicksand"
+
+        <FrameLayout
+            android:id="@+id/frameVerify"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_44sdp"
+            android:layout_height="@dimen/_42sdp"
             android:layout_marginTop="@dimen/_20sdp"
-            android:background="@drawable/et_bg"
-            android:backgroundTint="@color/colorPrimary"
-            android:onClick="@{v->vm.onClick(v)}"
-            android:text="@string/verify"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_15ssp"
             app:layout_constraintEnd_toEndOf="@+id/edtOtp4"
             app:layout_constraintStart_toStartOf="@+id/edtOtp1"
-            app:layout_constraintTop_toBottomOf="@+id/edtOtp4" />
+            app:layout_constraintTop_toBottomOf="@+id/edtOtp4">
+
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnVerify"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:text="@string/verify"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -161,7 +173,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:elegantTextHeight="true"
             android:paddingVertical="@dimen/_6sdp"
-            app:layout_constraintTop_toBottomOf="@+id/btnVerify"
+            app:layout_constraintTop_toBottomOf="@+id/frameVerify"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/_18sdp"
             android:onClick="@{v->vm.onClick(v)}"

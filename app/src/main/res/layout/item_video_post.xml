@@ -96,6 +96,34 @@
             app:layout_constraintTop_toTopOf="@+id/iv1"
             app:srcCompat="@drawable/video_play" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardVideoPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv1"
+            app:layout_constraintEnd_toEndOf="@+id/iv1"
+            app:layout_constraintStart_toStartOf="@+id/iv1"
+            app:layout_constraintTop_toTopOf="@+id/iv1">
+
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/playerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:use_controller="true" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivMaximize"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_gravity="top|end"
+                android:layout_margin="@dimen/_8sdp"
+                android:src="@drawable/maximize"
+                app:tint="@color/white" />
+
+        </androidx.cardview.widget.CardView>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"
             style="@style/TextView_500_Medium"

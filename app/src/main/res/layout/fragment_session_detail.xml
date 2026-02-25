@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="@dimen/_10sdp"
-            app:layout_constraintBottom_toTopOf="@id/tvEditSession"
+            app:layout_constraintBottom_toTopOf="@id/fEditSession"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/clCommon">
@@ -295,58 +295,93 @@
         </androidx.core.widget.NestedScrollView>
 
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvEditSession"
-            style="@style/TextView_600_SemiBold_Quicksand"
+        <FrameLayout
+            android:id="@+id/fEditSession"
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/et_bg"
-            android:backgroundTint="@color/white"
-            android:gravity="center"
-            android:onClick="@{v->vm.onClick(v)}"
-            android:text="@string/edit_session"
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_15ssp"
-            app:layout_constraintBottom_toTopOf="@id/btnAddSession"
-            app:layout_constraintEnd_toStartOf="@id/tvDeleteSession"
-            app:layout_constraintStart_toStartOf="@id/btnAddSession" />
+            app:layout_constraintBottom_toTopOf="@id/frameAddSession"
+            app:layout_constraintEnd_toStartOf="@id/fDeleteSession"
+            app:layout_constraintStart_toStartOf="@id/frameAddSession">
 
+            <!-- White background version -->
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:buttonColor="@color/white" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvDeleteSession"
-            style="@style/TextView_600_SemiBold_Quicksand"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/tvEditSession"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:text="@string/edit_session"
+                android:textColor="@color/blue"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fDeleteSession"
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
-            android:background="@drawable/et_bg"
-            android:backgroundTint="@color/red_color"
-            android:gravity="center"
-            android:text="Delete Session"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_15ssp"
-            android:onClick="@{v->vm.onClick(v)}"
-            app:layout_constraintBottom_toBottomOf="@id/tvEditSession"
-            app:layout_constraintEnd_toEndOf="@id/btnAddSession"
-            app:layout_constraintStart_toEndOf="@id/tvEditSession"
-            app:layout_constraintTop_toTopOf="@id/tvEditSession" />
+            app:layout_constraintBottom_toBottomOf="@id/fEditSession"
+            app:layout_constraintEnd_toEndOf="@id/frameAddSession"
+            app:layout_constraintStart_toEndOf="@id/fEditSession"
+            app:layout_constraintTop_toTopOf="@id/fEditSession">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btnAddSession"
-            style="@style/TextView_600_SemiBold_Quicksand"
+            <!-- Red version of Golden Button -->
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:buttonColor="@color/red_color" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/tvDeleteSession"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:text="Delete Session"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/frameAddSession"
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginHorizontal="@dimen/_18sdp"
             android:layout_marginBottom="@dimen/_25sdp"
-            android:background="@drawable/et_bg"
-            android:backgroundTint="@color/colorPrimary"
-            android:gravity="center"
-            android:onClick="@{v->vm.onClick(v)}"
-            android:text="Add Review"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_15ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAddSession"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:text="Add Review"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

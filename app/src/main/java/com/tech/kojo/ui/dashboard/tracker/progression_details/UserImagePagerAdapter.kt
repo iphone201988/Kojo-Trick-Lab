@@ -8,7 +8,8 @@ import com.tech.kojo.databinding.HolderUserImageBinding
 
 class UserImagePagerAdapter(
     private val images: List<VideoLink>,
-    private val onImageClick: (VideoLink) -> Unit
+    private val onImageClick: (VideoLink) -> Unit,
+    private val onPlayClick: (VideoLink) -> Unit = {}
 ) : RecyclerView.Adapter<UserImagePagerAdapter.ImageViewHolder>() {
 
     inner class ImageViewHolder(val binding: HolderUserImageBinding) :
@@ -30,8 +31,11 @@ class UserImagePagerAdapter(
         holder.binding.root.setOnClickListener {
             onImageClick(item)
         }
+
+        holder.binding.ivVideoPlay.setOnClickListener {
+            onPlayClick(item)
+        }
     }
 
     override fun getItemCount(): Int = images.size
 }
-

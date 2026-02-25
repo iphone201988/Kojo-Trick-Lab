@@ -91,7 +91,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                     if (binding.etPassword.text.toString().trim().isNotEmpty()) {
                         showOrHidePassword()
                     }
-
                 }
 
                 R.id.btnLogin -> {

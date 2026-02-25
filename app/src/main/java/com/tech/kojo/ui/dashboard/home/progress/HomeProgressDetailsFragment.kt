@@ -3,12 +3,21 @@ package com.tech.kojo.ui.dashboard.home.progress
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -29,7 +38,6 @@ import com.tech.kojo.utils.showSuccessToast
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.net.toUri
 
 
 @AndroidEntryPoint
@@ -39,6 +47,7 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
     private var trackDetailId: String? = null
     private var diveName: String? = null
     private var allVideos: List<VideoLink> = emptyList()
+    private var player: ExoPlayer? = null
 
     override fun getLayoutResource(): Int {
         return R.layout.fragment_home_progress_details
@@ -97,7 +106,7 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: HomeProgressApiResponse? =
                                     BindingUtils.parseJson(jsonData)
-                                if (model!=null){
+                                if (model != null) {
                                     diveName = model.data?.name
                                     val home = model.data
                                     binding.tvTrack.text = home?.description.orEmpty()
@@ -109,17 +118,18 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
 
                                     // view pager data set
                                     allVideos =
-                                        home?.steps
-                                            ?.flatMap { it?.videoLinks ?: emptyList() }
-                                            ?.filterNotNull()
-                                            ?: emptyList()
-                                   // Setup ViewPager
-                                    val adapter = UserImagePagerAdapter(allVideos) { videoItem ->
-                                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                                        intent.putExtra("fromWhere", "video")
-                                        intent.putExtra("videoUrl", videoItem.link)
-                                        startActivity(intent)
-                                    }
+                                        home?.steps?.flatMap { it?.videoLinks ?: emptyList() }
+                                            ?.filterNotNull() ?: emptyList()
+                                    // Setup ViewPager
+                                    val adapter = UserImagePagerAdapter(allVideos, onImageClick = { videoItem ->
+                                        // Optional: click on image logic if different from play
+                                    }, onPlayClick = { videoItem ->
+                                        if (!videoItem.link.isNullOrEmpty()) {
+                                            playLocalVideo(videoItem.link)
+                                        } else {
+                                            showErrorToast("Video not found")
+                                        }
+                                    })
 
                                     binding.viewpager.adapter = adapter
 
@@ -161,6 +171,10 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                     requireActivity().finish()
                 }
 
+                R.id.ivClosePlayer -> {
+                    stopLocalVideo()
+                }
+
                 R.id.btnDownload -> {
                     if (allVideos.isNotEmpty()) {
                         val currentItem = binding.viewpager.currentItem
@@ -175,20 +189,82 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                     }
                 }
 
+                R.id.ivMAx -> {
+                    if (allVideos.isNotEmpty()) {
+                        val currentItem = binding.viewpager.currentItem
+                        val videoUrl = allVideos[currentItem].link
+                        if (!videoUrl.isNullOrEmpty()) {
+                            val intent = Intent(requireContext(), CommonActivity::class.java)
+                            intent.putExtra("fromWhere", "video")
+                            intent.putExtra("videoUrl", videoUrl)
+                            startActivity(intent)
+                        } else {
+                            showErrorToast("Video URL not found")
+                        }
+                    }
+
+                }
             }
+
         }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun playLocalVideo(url: String) {
+        player?.stop()
+        player?.release()
+
+        binding.localPlayerView.visibility = View.VISIBLE
+        binding.ivClosePlayer.visibility = View.VISIBLE
+        binding.viewpager.visibility = View.INVISIBLE
+
+        val videoUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
+
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(videoUrl))
+
+        player = ExoPlayer.Builder(requireContext()).build().apply {
+            setMediaSource(mediaSource)
+            prepare()
+            playWhenReady = true
+            repeatMode = Player.REPEAT_MODE_ALL
+            addListener(object : Player.Listener {
+                override fun onPlayerError(error: PlaybackException) {
+                    super.onPlayerError(error)
+                    showErrorToast("Playback error: ${error.localizedMessage}")
+                }
+            })
+        }
+        binding.localPlayerView.player = player
+    }
+
+    private fun stopLocalVideo() {
+        player?.stop()
+        player?.release()
+        player = null
+        binding.localPlayerView.player = null
+        binding.localPlayerView.visibility = View.GONE
+        binding.ivClosePlayer.visibility = View.GONE
+        binding.viewpager.visibility = View.VISIBLE
     }
 
     private fun downloadVideo(url: String) {
         try {
-            val request = DownloadManager.Request((Constants.BASE_URL_IMAGE + url).toUri())
+            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
+            val request = DownloadManager.Request(fullUrl.toUri())
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
             request.setTitle("Downloading Video")
             request.setDescription("Downloading video file...")
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4")
+            request.setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4"
+            )
 
-            val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val downloadManager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             downloadManager.enqueue(request)
             showSuccessToast("Download started...")
         } catch (e: Exception) {
@@ -242,5 +318,14 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
         binding.rvHomeProgressionDetails.adapter = homeProgressionDetailsAdapter
     }
 
+    override fun onPause() {
+        super.onPause()
+        player?.pause()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+        player = null
+    }
 }

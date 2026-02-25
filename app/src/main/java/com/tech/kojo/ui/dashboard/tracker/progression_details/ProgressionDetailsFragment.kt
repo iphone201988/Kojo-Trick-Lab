@@ -43,6 +43,7 @@ class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBindin
     override fun onCreateView(view: View) {
         // adapter
         initProgressionDetailsAdapter()
+
         // click
         initOnClick()
 
@@ -122,13 +123,19 @@ class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBindin
                                         home?.steps?.flatMap { it?.videoLinks ?: emptyList() }
                                             ?.filterNotNull() ?: emptyList()
                                     // Setup ViewPager
-                                    val adapter = UserImagePagerAdapter(allVideos) { videoItem ->
+                                    val adapter = UserImagePagerAdapter(allVideos, onImageClick = { videoItem ->
                                         val intent =
                                             Intent(requireContext(), CommonActivity::class.java)
                                         intent.putExtra("fromWhere", "video")
                                         intent.putExtra("videoUrl", videoItem.link)
                                         startActivity(intent)
-                                    }
+                                    }, onPlayClick = { videoItem ->
+                                        val intent =
+                                            Intent(requireContext(), CommonActivity::class.java)
+                                        intent.putExtra("fromWhere", "video")
+                                        intent.putExtra("videoUrl", videoItem.link)
+                                        startActivity(intent)
+                                    })
 
                                     binding.viewpager.adapter = adapter
 

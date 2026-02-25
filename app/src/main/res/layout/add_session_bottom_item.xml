@@ -138,23 +138,33 @@
             app:layout_constraintStart_toStartOf="@id/etSelectColorTag"
             app:layout_constraintTop_toBottomOf="@+id/etSelectColorTag" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btnSave"
-            style="@style/TextView_600_SemiBold_Quicksand"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginHorizontal="@dimen/_20sdp"
             android:layout_marginTop="@dimen/_16ssp"
-            android:background="@drawable/btn_bg"
-            android:backgroundTint="@color/colorPrimary"
-            android:gravity="center"
-            android:onClick="@{v->callback.onViewClick(v)}"
-            android:text="Save Session"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_15ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etEnterNote" />
+            app:layout_constraintTop_toBottomOf="@id/etEnterNote">
+
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSave"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->callback.onViewClick(v)}"
+                android:text="Save Session"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

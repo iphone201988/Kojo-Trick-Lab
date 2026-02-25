@@ -1,8 +1,10 @@
 package com.tech.kojo.ui.dashboard.community.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.RecyclerView
 import com.tech.kojo.R
 import com.tech.kojo.data.model.PostData
@@ -15,6 +17,8 @@ class MultiViewAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val listItem: MutableList<FeedItem> = mutableListOf()
+    private var playingPosition: Int = -1
+    private var player: ExoPlayer? = null
 
     companion object {
         private const val TYPE_VIDEO = 1
@@ -80,7 +84,7 @@ class MultiViewAdapter(
             is FeedItem.Post -> {
                 when (holder) {
                     is TextPostViewHolder -> holder.bind(item.post, listener, position)
-                    is VideoPostViewHolder -> holder.bind(item.post, listener, position)
+                    is VideoPostViewHolder -> holder.bind(item.post, listener, position, position == playingPosition, player)
                 }
             }
 
@@ -91,6 +95,7 @@ class MultiViewAdapter(
     fun setList(newList: List<FeedItem>) {
         listItem.clear()
         listItem.addAll(newList)
+        playingPosition = -1
         notifyDataSetChanged()
     }
 
@@ -120,6 +125,21 @@ class MultiViewAdapter(
     }
 
     fun getList(): MutableList<FeedItem> = listItem
+
+    fun setPlayingPosition(position: Int, exoPlayer: ExoPlayer?) {
+        val oldPosition = playingPosition
+        playingPosition = position
+        player = exoPlayer
+        if (oldPosition != -1) {
+            notifyItemChanged(oldPosition)
+        }
+        if (playingPosition != -1) {
+            notifyItemChanged(playingPosition)
+        }
+    }
+
+    fun getPlayingPosition() = playingPosition
+
     // --------------------- ViewHolders -----------------------------
 
     class LoaderViewHolder(val binding: ItemLoadingBinding) :
@@ -148,12 +168,24 @@ class MultiViewAdapter(
         }
     }
 
-    inner class VideoPostViewHolder(private val binding: ItemVideoPostBinding) :
+    inner class VideoPostViewHolder(val binding: ItemVideoPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: PostData?, listener: OnItemClickListener, position: Int) {
+        fun bind(item: PostData?, listener: OnItemClickListener, position: Int, isPlaying: Boolean, player: ExoPlayer?) {
 
             binding.bean = item
+
+            if (isPlaying && player != null) {
+                binding.cardVideoPlayer.visibility = View.VISIBLE
+                binding.ivVideo.visibility = View.GONE
+                binding.iv1.visibility = View.INVISIBLE
+                binding.playerView.player = player
+            } else {
+                binding.cardVideoPlayer.visibility = View.GONE
+                binding.ivVideo.visibility = View.VISIBLE
+                binding.iv1.visibility = View.VISIBLE
+                binding.playerView.player = null
+            }
 
             binding.ivVideo.setOnClickListener {
                 listener.onItemClick(item, binding.ivVideo.id, position)
@@ -170,6 +202,10 @@ class MultiViewAdapter(
 
             binding.cardView.setOnClickListener {
                 listener.onItemClick(item, binding.cardView.id, position)
+            }
+
+            binding.ivMaximize.setOnClickListener {
+                listener.onItemClick(item, binding.ivMaximize.id, position)
             }
 
             binding.executePendingBindings()

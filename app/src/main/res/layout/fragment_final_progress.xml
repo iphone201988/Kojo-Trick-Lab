@@ -13,6 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bg_color"
         tools:context=".ui.dashboard.home.final_progress.FinalProgressFragment">
 
         <androidx.viewpager2.widget.ViewPager2
@@ -21,6 +22,28 @@
             android:layout_height="@dimen/_200sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/localPlayerView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:visibility="gone"
+            app:use_controller="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivClosePlayer"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_margin="@dimen/_10sdp"
+            android:elevation="@dimen/_2sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:src="@drawable/baseline_cancel_24"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/localPlayerView"
+            app:layout_constraintTop_toTopOf="@+id/localPlayerView"
+            app:tint="@color/white" />
 
 
         <FrameLayout

@@ -1,5 +1,4 @@
 package com.tech.kojo.ui.onboarding
-
 import android.content.Intent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -32,13 +31,13 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         BindingUtils.statusBarStyleWhite(this)
         binding.type =1
         // view
         initView()
         // click
         initOnClick()
+
 
         // adapter
         val adapter = OnBoardingPagerAdapter(this@OnBoardingActivity)
@@ -63,7 +62,6 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
             }
         })
     }
-
     /**
      * Method to initialize click
      */

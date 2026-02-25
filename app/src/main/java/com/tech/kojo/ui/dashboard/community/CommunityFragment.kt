@@ -4,8 +4,16 @@ import android.content.Intent
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -36,6 +44,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
     private var isLoading = false
     private var isLastPage = false
     private var isPopular = false
+    private var player: ExoPlayer? = null
 
     private lateinit var communityAdapter: MultiViewAdapter
     override fun getLayoutResource(): Int {
@@ -157,6 +166,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                                 showErrorToast(e.message.toString())
+
                             }.also {
                                 hideLoading()
                             }
@@ -230,11 +240,23 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    stopInLinePlayback()
+                }
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     //   playCenterVideoRvAdapter(recyclerView)
                 }
             }
         })
+    }
+
+    private fun stopInLinePlayback() {
+        if (player != null) {
+            player?.stop()
+            player?.release()
+            player = null
+            communityAdapter.setPlayingPosition(-1, null)
+        }
     }
 
     /**
@@ -311,6 +333,11 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                     }
 
                     R.id.ivVideo -> {
+                        playInLine(item, position)
+                    }
+
+                    R.id.ivMaximize -> {
+                        player?.pause()
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "video")
                         intent.putExtra("videoUrl", item?.videoLink)
@@ -333,6 +360,65 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
         })
 
         binding.rvCommunity.adapter = communityAdapter
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun playInLine(item: PostData?, position: Int) {
+        if (item?.videoLink == null) return
+
+        player?.stop()
+        player?.release()
+
+        val videoUrl = if (item.videoLink.startsWith("http")) {
+            item.videoLink
+        } else {
+            Constants.BASE_URL_IMAGE + item.videoLink
+        }
+
+        Log.d("CommunityFragment", "Playing video: $videoUrl")
+
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+            .setConnectTimeoutMs(15000)
+            .setReadTimeoutMs(15000)
+
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(videoUrl))
+
+        player = ExoPlayer.Builder(requireContext()).build().apply {
+            setMediaSource(mediaSource)
+            prepare()
+            playWhenReady = true
+            addListener(object : Player.Listener {
+                override fun onPlayerError(error: PlaybackException) {
+                    super.onPlayerError(error)
+                    Log.e("CommunityFragment", "Player error at pos $position: ${error.message}", error)
+                    showErrorToast("Playback error: ${error.localizedMessage}")
+                }
+
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    when (playbackState) {
+                        Player.STATE_BUFFERING -> Log.d("CommunityFragment", "Buffering at pos $position")
+                        Player.STATE_READY -> Log.d("CommunityFragment", "Ready to play at pos $position")
+                        Player.STATE_ENDED -> Log.d("CommunityFragment", "Video ended at pos $position")
+                        Player.STATE_IDLE -> Log.d("CommunityFragment", "Player idle at pos $position")
+                    }
+                }
+            })
+        }
+
+        communityAdapter.setPlayingPosition(position, player)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+        player = null
     }
 
 
