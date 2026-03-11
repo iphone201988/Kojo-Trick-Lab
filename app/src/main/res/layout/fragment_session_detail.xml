@@ -12,6 +12,7 @@
         <variable
             name="bean"
             type="com.tech.kojo.data.model.NextSessionData" />
+        <import type="android.view.View"/>
 
     </data>
 
@@ -171,7 +172,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_18sdp"
                     android:layout_marginTop="@dimen/_20sdp"
-                    android:text="@string/session_title"
+                    android:text="@string/session_note"
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_12ssp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -182,12 +183,13 @@
                     style="@style/TextView_400_Regular"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_18sdp"
+                    android:layout_marginHorizontal="@dimen/_18sdp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:text="@{bean.note}"
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_12ssp"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvSessionNote" />
 
 
@@ -245,6 +247,35 @@
                     app:layout_constraintStart_toStartOf="@+id/tvSessionColor"
                     app:layout_constraintTop_toBottomOf="@+id/tvSessionColor"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:id="@+id/tvPostReview"-->
+<!--                    style="@style/TextView_600_SemiBold"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="@dimen/_18sdp"-->
+<!--                    android:layout_marginTop="@dimen/_20sdp"-->
+<!--                    android:visibility='@{bean.review != null &amp;&amp; bean.review != "" ? View.VISIBLE : View.GONE}'-->
+<!--                    android:text="@string/post_session_review"-->
+<!--                    android:textColor="@color/blue"-->
+<!--                    android:textSize="@dimen/_12ssp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/ivRedCircle" />-->
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:id="@+id/tvPostSessionReview"-->
+<!--                    style="@style/TextView_400_Regular"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="@dimen/_18sdp"-->
+<!--                    android:layout_marginTop="@dimen/_5sdp"-->
+<!--                    android:text="@{bean.review}"-->
+<!--                    android:visibility='@{bean.review != null &amp;&amp; bean.review != "" ? View.VISIBLE : View.GONE}'-->
+<!--                    android:textColor="@color/blue"-->
+<!--                    android:maxLines="3"-->
+<!--                    android:ellipsize="end"-->
+<!--                    android:textSize="@dimen/_12ssp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tvPostReview" />-->
 
 
                 <View
@@ -263,6 +294,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_18sdp"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:text="@string/post_session_review"
                     android:textSize="@dimen/_18ssp"
@@ -282,6 +314,7 @@
                     android:hint="Enter here..."
                     android:imeOptions="actionDone"
                     android:focusable="false"
+                    android:visibility="gone"
                     android:focusableInTouchMode="false"
                     android:inputType="textEmailAddress"
                     android:onClick="@{v->vm.onClick(v)}"

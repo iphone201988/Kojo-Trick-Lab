@@ -54,6 +54,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAuth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail"
+                android:background="@color/white"
+                android:visibility="gone"
+                android:elevation="@dimen/_22sdp"
+                tools:itemCount="2"
+                android:paddingTop="@dimen/_2sdp"
+                tools:listitem="@layout/auth_rv_layout"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="@dimen/_2sdp"
+                app:layout_constraintStart_toStartOf="@+id/etEmail"
+                app:layout_constraintEnd_toEndOf="@+id/etEmail"/>
 
 
             <androidx.appcompat.widget.AppCompatEditText

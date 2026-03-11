@@ -35,6 +35,7 @@ import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.github.dhaval2404.imagepicker.util.FileUtil
+import com.tech.kojo.utils.BindingUtils.setBgSkin
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -377,6 +378,7 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
                     skin = m.toString()
                     binding.tvChoose.text = m.toString()
                     commonDialog?.dismiss()
+                    setBgSkin(binding.ivBgProfile,m.toString())
                 }
             }
         }

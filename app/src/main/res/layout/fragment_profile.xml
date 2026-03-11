@@ -34,7 +34,7 @@
                 android:onClick="@{v->vm.onClick(v)}"
                 android:scaleType="fitXY"
                 setBgSkin="@{bean.skin}"
-                android:src="@drawable/skin_second"
+                android:src="@drawable/skin_first"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

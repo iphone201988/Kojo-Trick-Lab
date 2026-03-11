@@ -133,6 +133,10 @@ class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
             }
         }
     }
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 
 
 }

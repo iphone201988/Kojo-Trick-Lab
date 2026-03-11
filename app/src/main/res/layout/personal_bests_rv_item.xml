@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.tech.kojo.data.model.PersonalData" />
+            type="com.tech.kojo.data.model.GetPersonalBestModelData" />
 
         <variable
             name="pos"
@@ -31,7 +31,7 @@
                 style="@style/TextView_500_Medium_Quicksand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{bean.title}"
+                setTextCapitalized="@{bean.trickVaultId.name}"
                 android:textColor="@color/colorPrimary"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:textSize="@dimen/_11ssp"
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_6sdp"
-                android:text="@{bean.value}"
+                android:text='@{bean.value!=null?bean.value.toString():"0"}'
                 android:textColor="@color/blue"
                 android:textSize="@dimen/_12ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -62,6 +62,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:text="Edit"
                 android:background="@drawable/bg_stock_yellow"
+                android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_4sdp"
                 android:backgroundTint="@color/blue"

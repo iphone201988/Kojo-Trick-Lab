@@ -124,5 +124,10 @@ class MyTrickFragment : BaseFragment<FragmentMyTrickBinding>() {
         binding.rvMyTrick.adapter = myTrickAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 
 }

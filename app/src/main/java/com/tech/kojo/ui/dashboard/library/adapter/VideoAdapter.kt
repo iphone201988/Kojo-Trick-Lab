@@ -34,7 +34,7 @@ class VideoAdapter (
 
         Glide.with(holder.img.context).asBitmap().load(Constants.BASE_URL_IMAGE + item.videoUrl)
             .placeholder(R.drawable.progress_animation_small)
-            .error(R.drawable.blank_pofile)
+            .error(R.drawable.holder_dummy)
             .into(holder.img)
 
 

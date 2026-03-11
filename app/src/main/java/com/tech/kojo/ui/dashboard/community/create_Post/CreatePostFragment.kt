@@ -362,4 +362,9 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
         player = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 }

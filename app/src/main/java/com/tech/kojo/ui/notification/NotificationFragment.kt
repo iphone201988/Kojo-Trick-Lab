@@ -126,6 +126,10 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>() {
         viewModel.notificationApi(Constants.UPDATE_PROFILE, map)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 
 
 }

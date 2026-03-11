@@ -80,6 +80,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: GetProfileResponse? = BindingUtils.parseJson(jsonData)
+                                sharedPrefManager.setNotificationCount(model?.notifications)
+                                DashBoardActivity.notificationObserver.postValue(
+                                    Resource.success(
+                                        "notificationObserver", true
+                                    )
+                                )
                                 var profile = model?.user
                                 if (profile != null) {
                                     sharedPrefManager.setLoginData(profile)

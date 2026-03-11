@@ -256,9 +256,8 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 if (comment?.isNotEmpty() == true) {
                                     comments = comment as ArrayList<GetCommentData>
                                     commentAdapter.list = comments
-                                    binding.count.text =
-                                        binding.count.text.toString().toInt().plus(1).toString()
                                 }
+                                binding.count.text = model?.total.toString()
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                                 showErrorToast(e.message.toString())
@@ -293,7 +292,6 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
         binding.rvComments.adapter = commentAdapter
 
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

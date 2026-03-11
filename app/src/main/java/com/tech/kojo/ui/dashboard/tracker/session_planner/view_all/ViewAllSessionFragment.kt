@@ -293,5 +293,8 @@ class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
         }
 
     }
-
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 }

@@ -27,9 +27,11 @@ import com.tech.kojo.data.model.PinnedApiResponse
 import com.tech.kojo.data.model.PostData
 import com.tech.kojo.databinding.FragmentCommunityBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.ui.dashboard.community.adapter.FeedItem
 import com.tech.kojo.ui.dashboard.community.adapter.MultiViewAdapter
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -95,6 +97,12 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: GetPostApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model != null) {
+                                    sharedPrefManager.setNotificationCount(model?.notifications)
+                                    DashBoardActivity.notificationObserver.postValue(
+                                        Resource.success(
+                                            "notificationObserver", true
+                                        )
+                                    )
                                     val posts = model.posts
                                     // Convert PostData → FeedItem.Post
                                     val feedItems: List<FeedItem> =

@@ -113,5 +113,7 @@
     <string name="update_session_for">Update session for</string>
     <string name="comments">COMMENTS</string>
     <string name="remove">Remove</string>
+    <string name="session_note">Session Note</string>
+    <string name="select_trick">Select Trick</string>
 
 </resources>

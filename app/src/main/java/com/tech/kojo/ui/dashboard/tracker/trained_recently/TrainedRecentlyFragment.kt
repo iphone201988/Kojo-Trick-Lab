@@ -178,5 +178,10 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
         binding.rvTrainedRecently.adapter = trainedRecentAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 
 }

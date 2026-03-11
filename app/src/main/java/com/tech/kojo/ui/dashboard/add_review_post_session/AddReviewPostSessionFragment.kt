@@ -45,9 +45,9 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
      */
     private fun initView() {
         // get data
-        val pastData = arguments?.getParcelable<NextSessionData>("sessionData")
-        if (pastData != null) {
-            binding.bean = pastData
+        nextData = arguments?.getParcelable<NextSessionData>("sessionData")
+        if (nextData != null) {
+            binding.bean = nextData
         }
     }
 
@@ -112,6 +112,11 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
     }
 
 

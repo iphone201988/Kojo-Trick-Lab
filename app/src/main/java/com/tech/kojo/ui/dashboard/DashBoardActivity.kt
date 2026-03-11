@@ -51,6 +51,7 @@ import com.tech.kojo.utils.event.SingleRequestEvent
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.compareTo
 
 @AndroidEntryPoint
 class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
@@ -63,6 +64,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
     companion object {
         var changeImage = SingleRequestEvent<Boolean>()
+        var notificationObserver = SingleRequestEvent<Boolean>()
     }
 
     override fun getLayoutResource(): Int {
@@ -137,6 +139,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
     override fun onResume() {
         super.onResume()
+
         changeImage.observe(this@DashBoardActivity) {
             when (it?.status) {
                 Status.LOADING -> {
@@ -155,6 +158,24 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                                 .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
                                 .into(binding.profileImage)
                         }
+                    }
+                }
+                Status.ERROR -> {
+                }
+                else -> {
+                }
+            }
+        }
+        notificationObserver.observe(this@DashBoardActivity){
+            when (it?.status) {
+                Status.LOADING -> {
+                }
+                Status.SUCCESS -> {
+                    if (sharedPrefManager.getNotificationCount()>0){
+                        binding.ivNotification.setImageResource(R.drawable.notification)
+                    }
+                    else{
+                        binding.ivNotification.setImageResource(R.drawable.ic_no_notifications)
                     }
                 }
                 Status.ERROR -> {

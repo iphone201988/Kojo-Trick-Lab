@@ -13,7 +13,8 @@
         <variable
             name="bean"
             type="com.tech.kojo.data.model.GetProfileResponse" />
-    </data>
+        <import type="android.view.View"
+ />   </data>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -95,6 +96,7 @@
             android:layout_marginStart="@dimen/_14sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/btn_bg_32"
+            android:onClick="@{v->vm.onClick(v)}"
             android:backgroundTint="@color/colorPrimary"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_5sdp"
@@ -107,12 +109,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:text="Private  Profile"
+                android:text='@{bean.user.isPrivate()==true?"Private Profile":"Public Profile"}'
                 android:textColor="@color/white"
                 android:textSize="@dimen/_8ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ivProgress"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -120,6 +123,7 @@
                 android:layout_width="@dimen/_10sdp"
                 android:layout_height="@dimen/_10sdp"
                 android:src="@drawable/solar_lock"
+                android:visibility="@{bean.user.isPrivate()==true?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -186,7 +190,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            setTimePast="@{bean.levelData.timeTricking}"
+            android:text="@{bean.user.timeTricking}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvTimeTracing"
@@ -247,17 +251,18 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="128"
+            android:text="0"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvTracingLevel"
             app:layout_constraintTop_toBottomOf="@+id/tvTotal" />
 
 
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvFavourite"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_22sdp"
@@ -265,73 +270,78 @@
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTotalValue" />
+            app:layout_constraintEnd_toStartOf="@id/tvBest"
+            app:layout_constraintTop_toBottomOf="@id/tvTotalValue"
+            app:layout_constraintHorizontal_weight="1"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvBest"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:text="Best Trick:"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toEndOf="@id/tvFavourite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvFavourite"
+            app:layout_constraintHorizontal_weight="1"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvRoll"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/transparent"
+            android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_3sdp"
-            android:layout_marginEnd="@dimen/_18sdp"
-            android:paddingEnd="@dimen/_6sdp"
-            android:minWidth="@dimen/_60sdp"
             android:text="@{bean.user.favouriteTrick}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
-            app:layout_constraintStart_toStartOf="@+id/tvFavourite"
-            app:layout_constraintTop_toBottomOf="@+id/tvFavourite" />
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ivRollEdit"
+            app:layout_constraintTop_toBottomOf="@id/tvFavourite"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivRollEdit"
             android:layout_width="@dimen/_18sdp"
             android:layout_height="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:src="@drawable/edit_outline"
             android:onClick="@{v->vm.onClick(v)}"
-            app:layout_constraintBottom_toBottomOf="@+id/tvRoll"
-            app:layout_constraintStart_toEndOf="@+id/tvRoll"
-            app:layout_constraintTop_toTopOf="@+id/tvRoll" />
-
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvBest"
-            style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_48sdp"
-            android:text="Best Trick: "
-            android:textColor="@color/blue"
-            android:textSize="@dimen/_11ssp"
-            app:layout_constraintBottom_toBottomOf="@+id/tvFavourite"
-            app:layout_constraintStart_toEndOf="@+id/tvFavourite"
-            app:layout_constraintTop_toTopOf="@+id/tvFavourite" />
+            app:layout_constraintStart_toEndOf="@id/tvRoll"
+            app:layout_constraintEnd_toStartOf="@id/tvTwist"
+            app:layout_constraintTop_toTopOf="@id/tvRoll"
+            app:layout_constraintBottom_toBottomOf="@id/tvRoll"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTwist"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_3sdp"
-            android:minWidth="@dimen/_60sdp"
-            android:background="@color/transparent"
-            android:paddingEnd="@dimen/_6sdp"
             android:text="@{bean.user.bestTrick}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
-            app:layout_constraintStart_toStartOf="@+id/tvBest"
-            app:layout_constraintTop_toBottomOf="@+id/tvBest" />
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/ivRollEdit"
+            app:layout_constraintEnd_toStartOf="@id/ivTwistEdit"
+            app:layout_constraintTop_toBottomOf="@id/tvBest"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivTwistEdit"
             android:layout_width="@dimen/_18sdp"
             android:layout_height="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
             android:src="@drawable/edit_outline"
             android:onClick="@{v->vm.onClick(v)}"
-            app:layout_constraintBottom_toBottomOf="@+id/tvTwist"
-            app:layout_constraintStart_toEndOf="@+id/tvTwist"
-            app:layout_constraintTop_toTopOf="@+id/tvRoll" />
+            app:layout_constraintStart_toEndOf="@id/tvTwist"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvTwist"
+            app:layout_constraintBottom_toBottomOf="@id/tvTwist"/>
 
 
         <View
@@ -359,8 +369,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clMost"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_12sdp"
+            android:paddingVertical="@dimen/_12sdp"
             android:layout_marginHorizontal="@dimen/_18sdp"
             android:background="@drawable/strock_1_radius_12"
             app:layout_constraintTop_toBottomOf="@+id/tvPBs">
@@ -374,7 +385,6 @@
                 android:textColor="@color/colorPrimary"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:textSize="@dimen/_11ssp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -384,13 +394,12 @@
                 style="@style/TextView_700_Bold_Quicksand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:text="540 Kick"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:text="-"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/_12ssp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tvPracticed"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="@id/tvPracticed"
+                app:layout_constraintTop_toBottomOf="@id/tvPracticed" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -399,7 +408,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:text="312 reps"
+                android:text="0 reps"
                 android:background="@drawable/bg_stock_yellow"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_3sdp"

@@ -27,7 +27,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPerson"
-            setImageFromUrlHttp="@{bean.userId.profilePicture}"
+            setImageFromUserData="@{bean.userId}"
             android:layout_width="@dimen/_22sdp"
             android:layout_height="@dimen/_22sdp"
             android:layout_marginStart="@dimen/_6sdp"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:text='@{"@"+bean.userId.name}'
+            android:text='@{bean.userId!=null?"@"+bean.userId.name:"@"}'
             android:textSize="@dimen/_10ssp"
             app:layout_constraintStart_toEndOf="@+id/ivPerson"
             app:layout_constraintTop_toTopOf="@+id/ivPerson" />

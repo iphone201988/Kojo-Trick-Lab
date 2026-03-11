@@ -39,7 +39,7 @@ class SeriesAdapter(
         Glide.with(holder.image.context)
             .load(Constants.BASE_URL_IMAGE + item.imageUrl)
             .placeholder(R.drawable.progress_animation_small)
-            .error(R.drawable.blank_pofile)
+            .error(R.drawable.holder_dummy)
             .into(holder.image)
 
 

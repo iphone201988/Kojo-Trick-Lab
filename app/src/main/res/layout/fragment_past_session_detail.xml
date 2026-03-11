@@ -11,6 +11,7 @@
         <variable
             name="bean"
             type="com.tech.kojo.data.model.PastSessionData" />
+        <import type="android.view.View"/>
 
     </data>
 
@@ -33,7 +34,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_marginHorizontal="@dimen/_18sdp"
         app:layout_constraintTop_toBottomOf="@id/clCommon"
-        app:layout_constraintBottom_toTopOf="@id/btnRemoveSession"
+        app:layout_constraintBottom_toTopOf="@id/flBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -142,8 +143,6 @@
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvSessionColor" />
-
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvPostSessionReview"
             style="@style/TextView_600_SemiBold"
@@ -151,6 +150,7 @@
             android:layout_height="wrap_content"
             android:text="@string/post_session_review"
             android:textColor="@color/blue"
+            android:visibility='@{bean.review != null &amp;&amp; bean.review != "" ? View.VISIBLE : View.GONE}'
             android:layout_marginTop="@dimen/_20sdp"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintTop_toBottomOf="@id/ivCircle"
@@ -163,6 +163,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/_12ssp"
+            android:visibility='@{bean.review != null &amp;&amp; bean.review != "" ? View.VISIBLE : View.GONE}'
             android:textColor="@color/blue"
             android:text="@{bean.review}"
             android:layout_marginTop="@dimen/_5sdp"
@@ -174,6 +175,7 @@
 
 
         <FrameLayout
+            android:id="@+id/flBtn"
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginHorizontal="@dimen/_18sdp"

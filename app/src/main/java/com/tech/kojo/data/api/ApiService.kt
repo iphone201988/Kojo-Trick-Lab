@@ -12,6 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -53,6 +54,13 @@ interface ApiService {
 
     @PUT
     suspend fun apiPutForRawBody(
+        @Url url: String,
+        @Header("Authorization") token: String,
+        @Body data: HashMap<String, Any>,
+    ): Response<JsonObject>
+
+    @PATCH
+    suspend fun apiPatchForRawBody(
         @Url url: String,
         @Header("Authorization") token: String,
         @Body data: HashMap<String, Any>,
@@ -112,5 +120,10 @@ interface ApiService {
         @Part profilePic: MultipartBody.Part?,
     ): Response<JsonObject>
 
+    @DELETE
+    suspend fun apiDeleteWithoutData(
+        @Header("Authorization") token: String,
+        @Url url: String,
+    ): Response<JsonObject>
 
 }

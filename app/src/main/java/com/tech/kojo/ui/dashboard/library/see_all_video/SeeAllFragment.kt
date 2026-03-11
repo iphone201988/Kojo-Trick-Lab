@@ -130,5 +130,10 @@ class SeeAllFragment : BaseFragment<FragmentSeeAllBinding>() {
         binding.rvSeeAll.adapter = seeAllAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 
 }

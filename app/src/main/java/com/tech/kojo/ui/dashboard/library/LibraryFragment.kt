@@ -14,10 +14,12 @@ import com.tech.kojo.data.model.LibraryVideoResponse
 import com.tech.kojo.data.model.LibraryVideoX
 import com.tech.kojo.databinding.FragmentLibraryBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.ui.dashboard.library.adapter.LibrarySection
 import com.tech.kojo.ui.dashboard.library.adapter.SectionAdapter
 import com.tech.kojo.ui.dashboard.library.adapter.SectionAdapter.OnSectionClickListener
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,6 +65,12 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: LibraryVideoResponse? = BindingUtils.parseJson(jsonData)
                                 val library = model?.data?.topics
+                                sharedPrefManager.setNotificationCount(model?.notifications)
+                                DashBoardActivity.notificationObserver.postValue(
+                                    Resource.success(
+                                        "notificationObserver", true
+                                    )
+                                )
                                 if (!library.isNullOrEmpty()) {
                                     val sections = model.let { buildSections(it) }
                                     if (sections.isNotEmpty()) {

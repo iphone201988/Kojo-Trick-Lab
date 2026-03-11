@@ -3,6 +3,7 @@ package com.tech.kojo.ui.common
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -14,6 +15,7 @@ import com.tech.kojo.R
 import com.tech.kojo.base.BaseActivity
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.data.model.GetComboData
+import com.tech.kojo.data.model.GetPersonalBestModelData
 import com.tech.kojo.data.model.HomeProgressStep
 import com.tech.kojo.data.model.HomeTrickVault
 import com.tech.kojo.data.model.NextSessionData
@@ -169,8 +171,12 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                     }
 
                     "personalBests" -> {
+                        val personalBestList = intent.getParcelableArrayListExtra<GetPersonalBestModelData>("personalBestList")
+                        val bundle = Bundle()
+                        bundle.putParcelableArrayList("personalBestList", personalBestList)
+
                         graph.setStartDestination(R.id.fragmentPersonalBests)
-                        navController.setGraph(graph, null)
+                        navController.setGraph(graph, bundle)
                     }
 
                     "videoPlayer" -> {

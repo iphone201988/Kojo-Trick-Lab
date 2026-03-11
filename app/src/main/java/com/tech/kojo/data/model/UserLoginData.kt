@@ -78,9 +78,9 @@ data class LoginUser(
     val tiktockLink: String?,
     val timeTricking: String?,
     val trickingNickname: String?,
-    val youtubeLink: String?
+    val youtubeLink: String?,
+    val isPrivate: Boolean?,
 )
-
 
 data class SocialLinkedAccount(
     val _id: String?,
@@ -106,7 +106,8 @@ data class GetProfileResponse(
     val levelData: LevelData?,
     val message: String?,
     val success: Boolean?,
-    val user: LoginUser?
+    val user: LoginUser?,
+    val notifications:Int?
 )
 
 data class ProfileUser(
@@ -164,7 +165,7 @@ data class ProfileStatVisibility(
  * Home Trick api response
  */
 data class HomeTrickApiResponse(
-    val message: String?, val success: Boolean?, val trickVaults: List<HomeTrickVault?>?
+    val message: String?, val success: Boolean?, val trickVaults: List<HomeTrickVault?>?,val notifications:Int?
 )
 
 @Parcelize
@@ -195,7 +196,8 @@ data class GetPostApiResponse(
     val posts: List<PostData?>?,
     val success: Boolean?,
     val totalPages: Int?,
-    val totalPosts: Int?
+    val totalPosts: Int?,
+    val notifications:Int?
 )
 
 @Parcelize
@@ -212,14 +214,9 @@ data class PostData(
     val totalComments: Int?,
     var totalLikes: Int?,
     val updatedAt: String?,
-    val userData: UserData?,
+    val userData: UserIdProfile?,
     val userId: String?,
     val videoLink: String?
-) : Parcelable
-
-@Parcelize
-data class UserData(
-    val _id: String?, val name: String?, val profilePicture: String?
 ) : Parcelable
 
 
@@ -252,11 +249,7 @@ data class GetCommentsApiResponse(
 )
 
 data class GetCommentData(
-    val _id: String?, val createdAt: String?, val message: String?, val user: CommentUser?
-)
-
-data class CommentUser(
-    val _id: String?, val email: String?, val name: String?, val profilePicture: String?
+    val _id: String?, val createdAt: String?, val message: String?, val user: UserIdProfile?
 )
 
 /**
@@ -355,7 +348,7 @@ data class UserProgres(
  * get tracker api response
  */
 data class GetTrackerApiResponse(
-    val `data`: List<GetTrackerData?>?, val success: Boolean?
+    val `data`: List<GetTrackerData?>?, val success: Boolean?,val notifications:Int?
 )
 
 data class GetTrackerData(
@@ -493,16 +486,9 @@ data class CategoryTrick(
  *  get month api response
  */
 data class GetMonthApiResponse(
-    val `data`: MonthSessionData?, val success: Boolean?
+    val success: Boolean,
+    val data: Map<String, List<String>>?
 )
-
-data class MonthSessionData(
-    val `2025-11-22`: List<String?>?,
-    val `2025-11-24`: List<String?>?,
-    val `2025-11-26`: List<String?>?,
-
-
-    )
 
 
 /**
@@ -565,7 +551,7 @@ data class CreateSessionApiResponse(
 
 
 data class LibraryVideoResponse(
-    val `data`: VideoData?, val success: Boolean?
+    val `data`: VideoData?, val success: Boolean?,val notifications:Int?
 )
 
 data class VideoData(
@@ -667,9 +653,10 @@ data class CommentsData(
     val videoId: String?
 )
 
+@Parcelize
 data class UserIdProfile(
-    val _id: String?, val name: String?, val profilePicture: String?
-)
+    val _id: String?, val email: String?, val name: String?, val profilePicture: String?
+): Parcelable
 
 /**
  * get related video
@@ -792,4 +779,64 @@ data class TopicCategoryData(
     val imageUrl: String?,
     val title: String?,
     val updatedAt: String?
+)
+
+/**
+ * get notification data
+ */
+
+data class GetNotificationData(
+    val `data`: List<NotificationData>?,
+    val pagination: Pagination?,
+    val success: Boolean?
+)
+
+data class NotificationData(
+    val __v: Int?,
+    val _id: String?,
+    val body: String?,
+    val createdAt: String?,
+    val `data`: NotificationInnerData?,
+    val isRead: Boolean?,
+    val title: String?,
+    val type: String?,
+    val updatedAt: String?,
+    val userId: String?
+)
+
+data class NotificationInnerData(
+    val deepLink: String?,
+    val postId: String?,
+    val trickDataId: String?,
+    val trickVaultId: String?,
+    val userId: String?
+)
+
+data class GetPersonalBestModel(
+    val message: String?,
+    val personalBests: List<GetPersonalBestModelData?>?,
+    val success: Boolean?
+)
+
+@Parcelize
+data class GetPersonalBestModelData(
+    val __v: Int?,
+    val _id: String?,
+    val createdAt: String?,
+    val trickVaultId: TrickVaultId?,
+    val updatedAt: String?,
+    val userId: String?,
+    val value: Int?
+): Parcelable
+
+@Parcelize
+data class TrickVaultId(
+    val _id: String?,
+    val name: String?
+): Parcelable
+
+data class CreatePersonalBestModel(
+    val message: String?,
+    val personalBest: GetPersonalBestModelData?,
+    val success: Boolean?
 )

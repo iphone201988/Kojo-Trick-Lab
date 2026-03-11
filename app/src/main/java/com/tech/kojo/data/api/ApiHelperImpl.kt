@@ -80,6 +80,19 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService, priv
         return apiService.apiPutForRawBody(url,getTokenFromSPref(), map)
     }
 
+    override suspend fun apiPatchForRawBody(
+        url: String,
+        map: HashMap<String, Any>,
+    ): Response<JsonObject> {
+        return apiService.apiPatchForRawBody(url,getTokenFromSPref(), map)
+    }
+
+    override suspend fun apiDeleteWithoutData(
+        url: String,
+    ): Response<JsonObject> {
+        return apiService.apiDeleteWithoutData(getTokenFromSPref(), url )
+    }
+
     private fun getTokenFromSPref(): String {
         return "Bearer ${
             sharedPrefManager.getToken()

@@ -19,13 +19,6 @@ data class AllVideoData(
 data class Notification(
     var date : String,
     var list : List<NotificationData>
-
-)
-
-data class NotificationData(
-    var title: String,
-    var notification : String,
-    var time : String
 )
 
 data class ChipData(
@@ -33,6 +26,8 @@ data class ChipData(
     var icon : Int,
     var link : String?
 )
+
+data class AuthModel(var userEmail: String?, var userPassword: String?)
 
 
 

@@ -5,11 +5,18 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.PopupWindow
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -35,9 +42,11 @@ import com.tech.kojo.R
 import com.tech.kojo.base.SimpleRecyclerViewAdapter
 import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.GetComboData
+import com.tech.kojo.data.model.HomeTrickVault
 import com.tech.kojo.data.model.HomeType
 import com.tech.kojo.data.model.NotificationData
 import com.tech.kojo.data.model.PastSessionData
+import com.tech.kojo.data.model.UserIdProfile
 import com.tech.kojo.databinding.ItemLayoutInnerNotificationBinding
 import com.tech.kojo.databinding.RvMyTrickInnerItemBinding
 import org.json.JSONObject
@@ -48,6 +57,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.collections.map
 
 object BindingUtils {
 
@@ -74,10 +84,33 @@ object BindingUtils {
 
         if (finalUrl != null) {
             Glide.with(image.context).load(finalUrl)
-                .placeholder(R.drawable.progress_animation_small).error(R.drawable.blank_pofile)
+                .placeholder(R.drawable.progress_animation_small).error(R.drawable.holder_dummy)
                 .into(image)
         } else {
-            image.setImageResource(R.drawable.blank_pofile)
+            image.setImageResource(R.drawable.holder_dummy)
+        }
+    }
+
+
+    @BindingAdapter("setImageFromUserData")
+    @JvmStatic
+    fun setImageFromUserData(image: ShapeableImageView, model: UserIdProfile?) {
+        if (model != null) {
+            val finalUrl = when {
+                model?.profilePicture.isNullOrBlank() -> null
+                model.profilePicture.startsWith("http", ignoreCase = true) -> model.profilePicture
+                else -> Constants.BASE_URL_IMAGE + model?.profilePicture
+            }
+
+            if (finalUrl != null) {
+                Glide.with(image.context).load(finalUrl)
+                    .placeholder(R.drawable.progress_animation_small).error(R.drawable.holder_dummy)
+                    .into(image)
+            } else {
+                image.setImageResource(R.drawable.holder_dummy)
+            }
+        } else {
+            image.setImageResource(R.drawable.holder_dummy)
         }
     }
 
@@ -368,7 +401,17 @@ object BindingUtils {
                 R.layout.item_layout_inner_notification, BR.bean
             ) { v, m, pos ->
                 when (v.id) {
+                    R.id.clMain -> {
+                        when (m.type) {
+                            "NEW_POST" -> {
 
+                            }
+
+                            "NEW_VIDEO" -> {
+
+                            }
+                        }
+                    }
                 }
             }
         view.adapter = notificationAdapter
@@ -720,6 +763,54 @@ object BindingUtils {
                 }
             }
         }
+    }
+
+    @BindingAdapter("setNotificationIcon")
+    @JvmStatic
+    fun setNotificationIcon(imageView: AppCompatImageView, count: Int?) {
+        if ((count ?: 0) > 0) {
+            imageView.setImageResource(R.drawable.notification)
+        } else {
+            imageView.setImageResource(R.drawable.ic_no_notifications)
+        }
+    }
+
+
+    fun showDropdownModel(
+        anchor: View, items: List<HomeTrickVault>, onItemSelected: (HomeTrickVault) -> Unit
+    ) {
+        val context = anchor.context
+        val inflater = LayoutInflater.from(context)
+
+        val popupView = inflater.inflate(R.layout.popup_menu_view, null)
+        val listView = popupView.findViewById<ListView>(R.id.listView)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._250sdp),
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        val adapter =
+            ArrayAdapter(context, android.R.layout.simple_list_item_1, items.map { it.name?.toTitleCase() })
+        listView.adapter = adapter
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            onItemSelected(items[position])
+            popupWindow.dismiss()
+        }
+
+        popupWindow.elevation = 12f
+        popupWindow.isOutsideTouchable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        popupWindow.showAsDropDown(anchor, 0, 0, Gravity.END)
+    }
+
+    fun String.toTitleCase(): String {
+        return lowercase().split(" ")
+            .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } }
     }
 
 

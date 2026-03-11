@@ -4,6 +4,10 @@
 
     <solid android:color="@color/yellow_20"/>
 
+<!--    <solid android:color="#66F1AF1B"/>-->
+    <!-- darker translucent background for contrast -->
+    <!--    <solid android:color="#B3F1AF1B"/>-->
+
     <stroke
         android:width="@dimen/_1sdp"
         android:color="#F1AF1B" />

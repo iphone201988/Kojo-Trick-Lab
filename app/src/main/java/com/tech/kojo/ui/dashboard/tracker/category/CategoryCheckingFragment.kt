@@ -224,5 +224,10 @@ class CategoryCheckingFragment : BaseFragment<FragmentCategoryCheckingBinding>()
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 
 }

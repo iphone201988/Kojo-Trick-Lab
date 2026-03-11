@@ -60,7 +60,7 @@
             android:layout_height="@dimen/_207sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="fitXY"
-            android:src="@drawable/skin_second"
+            android:src="@drawable/skin_first"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clCommon" />

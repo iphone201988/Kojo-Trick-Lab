@@ -140,6 +140,9 @@ class AddComboFragment : BaseFragment<FragmentAddComboBinding>() {
             }
         }
     }
-
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 
 }

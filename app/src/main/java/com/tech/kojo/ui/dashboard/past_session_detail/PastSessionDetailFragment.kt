@@ -143,4 +143,9 @@ class PastSessionDetailFragment : BaseFragment<FragmentPastSessionDetailBinding>
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 }

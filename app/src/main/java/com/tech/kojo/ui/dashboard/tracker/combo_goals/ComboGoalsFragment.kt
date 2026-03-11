@@ -234,5 +234,6 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
         val data = HashMap<String, Any>()
         data["page"] = currentPage
         viewModel.getComboGoalApi(data, Constants.GET_COMBO_GOALS)
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
     }
 }

@@ -57,7 +57,6 @@ class ForwardTrickFragment : BaseFragment<FragmentForwordTrickBinding>() {
         initVerticalForwardAdapter()
         // view
         initView()
-
         // observer
         initObserver()
 
@@ -270,6 +269,10 @@ class ForwardTrickFragment : BaseFragment<FragmentForwordTrickBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 }
 
 

@@ -16,6 +16,7 @@ import com.tech.kojo.BR;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class SimpleRecyclerViewAdapter<M, B extends ViewDataBinding> extends RecyclerView.Adapter<SimpleRecyclerViewAdapter.SimpleViewHolder<B>> {
@@ -98,6 +99,12 @@ public class SimpleRecyclerViewAdapter<M, B extends ViewDataBinding> extends Rec
     }
 
     public void setList(@Nullable List<M> newDataList) {
+        dataList.clear();
+        if (newDataList != null) dataList.addAll(newDataList);
+        notifyDataSetChanged();
+    }
+
+    public void setList1(@Nullable HashSet<M> newDataList) {
         dataList.clear();
         if (newDataList != null) dataList.addAll(newDataList);
         notifyDataSetChanged();

@@ -42,11 +42,50 @@
             android:layout_marginEnd="@dimen/_18sdp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/_1sdp"
-            android:text="How many of each of these tricks you can do consecutively"
+            android:text="Mark the tricks you've landed to estimate your overal Tricking level."
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@+id/tvPersonal"
             app:layout_constraintTop_toBottomOf="@+id/tvPersonal" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clSelectTrick"
+            android:layout_width="0dp"
+            android:paddingVertical="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:background="@drawable/et_bg"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/tvTrack"
+            app:layout_constraintEnd_toEndOf="@id/tvTrack"
+            app:layout_constraintTop_toBottomOf="@id/tvTrack">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPracticed"
+                style="@style/TextView_500_Medium_Quicksand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_trick"
+                android:textColor="@color/blue"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivChoose"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:padding="5dp"
+                android:src="@drawable/outline_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPersonalBests"
@@ -57,12 +96,26 @@
             android:layout_marginBottom="@dimen/_5sdp"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/btnSaveChanges"
-            app:layout_constraintTop_toBottomOf="@+id/tvTrack"
+            app:layout_constraintBottom_toTopOf="@+id/flChanges"
+            app:layout_constraintTop_toBottomOf="@+id/clSelectTrick"
             tools:itemCount="5"
             tools:listitem="@layout/personal_bests_rv_item" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNoView"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No tricks added yet"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/flChanges"
+            app:layout_constraintTop_toBottomOf="@+id/tvTrack"/>
 
         <FrameLayout
+            android:id="@+id/flChanges"
             android:layout_width="0dp"
             android:layout_height="@dimen/_44sdp"
             android:layout_marginTop="@dimen/_10sdp"

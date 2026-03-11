@@ -18,5 +18,7 @@ interface ApiHelper {
     suspend fun apiForPostMultipart(url: String, part: MultipartBody.Part?): Response<JsonObject>
     suspend fun apiForMultipartPost(url: String,map: HashMap<String, RequestBody>?, part: MultipartBody.Part?): Response<JsonObject>
     suspend fun apiPutForRawBody(url: String,map: HashMap<String, Any>): Response<JsonObject>
+    suspend fun apiPatchForRawBody(url: String,map: HashMap<String, Any>): Response<JsonObject>
+    suspend fun apiDeleteWithoutData(url: String): Response<JsonObject>
 
 }

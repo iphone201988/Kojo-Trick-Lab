@@ -20,7 +20,9 @@ import com.tech.kojo.data.model.HomeTrickVault
 import com.tech.kojo.databinding.FragmentHomeBinding
 import com.tech.kojo.databinding.HolderHomeBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,6 +74,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: HomeTrickApiResponse? = BindingUtils.parseJson(jsonData)
+                                sharedPrefManager.setNotificationCount(model?.notifications)
+                                DashBoardActivity.notificationObserver.postValue(
+                                    Resource.success(
+                                        "notificationObserver", true
+                                    )
+                                )
                                 var home = model?.trickVaults
                                 if (home != null) {
                                     homeAdapter.list = home

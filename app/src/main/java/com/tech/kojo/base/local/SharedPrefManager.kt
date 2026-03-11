@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.tech.kojo.data.model.LoginUser
 import com.tech.kojo.data.model.ProfileUser
 import com.google.gson.Gson
+import com.tech.kojo.utils.saveValue
 import javax.inject.Inject
 
 class SharedPrefManager @Inject constructor(private val sharedPreferences: SharedPreferences) {
@@ -14,6 +15,7 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
         const val COMBO_LIST = "combo_list"
         const val TOKEN = "token"
         const val ON_BOARDING = "onboarding"
+        const val NOTIFICATION_COUNT="notification_count"
     }
 
     fun setLoginData(isFirst: LoginUser?) {
@@ -54,6 +56,14 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
 
     fun getOnBoarding(): String? {
         return sharedPreferences.getString(KEY.ON_BOARDING, "")
+    }
+
+    fun setNotificationCount(type: Int?) {
+        sharedPreferences.saveValue(KEY.NOTIFICATION_COUNT, type)
+    }
+
+    fun getNotificationCount(): Int {
+        return sharedPreferences.getInt(KEY.NOTIFICATION_COUNT, 0)
     }
 
 

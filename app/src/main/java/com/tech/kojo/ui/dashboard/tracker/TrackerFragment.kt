@@ -15,7 +15,9 @@ import com.tech.kojo.data.model.GetTrackerData
 import com.tech.kojo.databinding.FragmentTrackerBinding
 import com.tech.kojo.databinding.TrickRvLayoutItemBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,6 +71,12 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: GetTrackerApiResponse? = BindingUtils.parseJson(jsonData)
+                                sharedPrefManager.setNotificationCount(model?.notifications)
+                                DashBoardActivity.notificationObserver.postValue(
+                                    Resource.success(
+                                        "notificationObserver", true
+                                    )
+                                )
                                 var tracker = model?.data
                                 if (tracker != null) {
                                     trickAdapter.list = tracker

@@ -164,5 +164,10 @@ class AllVideoFragment : BaseFragment<FragmentAllVideoBinding>() {
         binding.tvLorem.text = spannable
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
 
 }

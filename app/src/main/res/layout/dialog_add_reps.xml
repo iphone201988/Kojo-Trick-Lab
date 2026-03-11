@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="callback"
+            type="com.tech.kojo.utils.BaseCustomDialog.Listener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/strock_1_radius_12"
+        android:backgroundTint="@color/white"
+        android:paddingVertical="@dimen/_20sdp"
+        android:paddingHorizontal="@dimen/_8sdp">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTitle"
+            style="@style/TextView_700_Bold_Quicksand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Backward Tricks"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSubTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/TextView_400_Regular"
+            android:textColor="@color/blue"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:text="No. of times you practiced this trick"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"/>
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etReps"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_38sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/et_bg"
+            android:hint="Enter reps"
+            android:maxLength="5"
+            android:inputType="number"
+            android:paddingStart="@dimen/_15sdp"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSubTitle" />
+        <FrameLayout
+            android:id="@+id/fDeleteSession"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            app:layout_constraintTop_toBottomOf="@id/etReps"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/frameAddSession">
+
+            <!-- Red version of Golden Button -->
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:buttonColor="@color/red_color" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/tvCancel"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->callback.onViewClick(v)}"
+                android:text="Cancel"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frameAddSession"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/fDeleteSession">
+
+            <com.tech.kojo.utils.GoldenButtonView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/tvSave"
+                style="@style/TextView_600_SemiBold_Quicksand"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@null"
+                android:gravity="center"
+                android:onClick="@{v->callback.onViewClick(v)}"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp" />
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

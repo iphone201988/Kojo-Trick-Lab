@@ -71,5 +71,12 @@ object Constants {
     const val DELETE_USER_PROGRESS ="user-progress/delete"
 
 
+    // notification
+    const val GET_NOTIFICATION="notification"
+
+    // personal best
+    const val GET_PERSONAL_BEST ="personal-best"
+
+
 
 }

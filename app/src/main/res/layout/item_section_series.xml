@@ -37,24 +37,32 @@
             android:layout_marginBottom="@dimen/_10sdp"
             android:gravity="center"
             android:textColor="@color/white"
+            android:shadowColor="@color/black"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="4"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-
-
-
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:clipChildren="true"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="@dimen/_5sdp"
+            app:cardBackgroundColor="@color/transparent"
+            android:layout_marginEnd="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="@+id/ivVideoImage"
+            app:layout_constraintTop_toTopOf="@+id/ivVideoImage">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:layout_marginEnd="@dimen/_12sdp"
             android:background="@drawable/bg_stock_yellow"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_4sdp"
-            app:layout_constraintEnd_toEndOf="@+id/ivVideoImage"
-            app:layout_constraintTop_toTopOf="@+id/ivVideoImage">
+           >
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvVideoCount"
@@ -80,6 +88,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

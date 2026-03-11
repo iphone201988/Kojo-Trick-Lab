@@ -147,5 +147,9 @@ class TrickingMilestonesFragment : BaseFragment<FragmentTrickingMilestonesBindin
         binding.rvMilestones.adapter = milestonesAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 
 }

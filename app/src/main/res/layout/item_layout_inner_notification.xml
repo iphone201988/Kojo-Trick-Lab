@@ -4,14 +4,22 @@
 
     <data>
         <variable
+            name="callback"
+            type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
+        <variable
             name="bean"
             type="com.tech.kojo.data.model.NotificationData" />
+        <variable
+            name="pos"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clMain"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_height="wrap_content"
         android:padding="@dimen/_10sdp"
+        android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
         android:layout_marginBottom="@dimen/_10sdp"
         android:paddingHorizontal="@dimen/_10sdp"
         android:background="@drawable/bg_rv_items">
@@ -37,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/blue"
-            android:text="@{bean.time}"
+            setTimeAgo="@{bean.updatedAt}"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/title"
@@ -53,7 +61,9 @@
             android:textSize="@dimen/_10ssp"
             android:layout_marginTop="@dimen/_5sdp"
             android:textColor="@color/blue"
-            android:text="@{bean.notification}"
+            android:text="@{bean.body}"
+            android:maxLines="2"
+            android:ellipsize="marquee"
             app:layout_constraintTop_toBottomOf="@id/title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

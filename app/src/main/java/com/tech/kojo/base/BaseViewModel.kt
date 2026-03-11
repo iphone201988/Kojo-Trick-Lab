@@ -1,6 +1,7 @@
 package com.tech.kojo.base
 
 import android.view.View
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tech.kojo.utils.event.SingleActionEvent
 import okhttp3.ResponseBody
@@ -9,6 +10,7 @@ import org.json.JSONObject
 open class BaseViewModel : ViewModel() {
     val onClick: SingleActionEvent<View?> = SingleActionEvent()
     val onUnAuth: SingleActionEvent<Int?> = SingleActionEvent()
+    val notificationCount = MutableLiveData<Int>()
     fun handleErrorResponse(errorBody: ResponseBody?, code: Int? = null): String {
         val text: String? = errorBody?.string()
         var message = ""

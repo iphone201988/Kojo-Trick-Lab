@@ -131,5 +131,9 @@ class SeriesFragment : BaseFragment<FragmentSeriesBinding>() {
         binding.rvSeries.adapter = seriesAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.tech.kojo.ui.dashboard.tracker.personal_bests
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.tech.kojo.BR
@@ -8,17 +9,39 @@ import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.base.SimpleRecyclerViewAdapter
+import com.tech.kojo.data.api.Constants
+import com.tech.kojo.data.model.CommonApiResponse
+import com.tech.kojo.data.model.CreatePersonalBestModel
+import com.tech.kojo.data.model.GetPersonalBestModelData
+import com.tech.kojo.data.model.HomeProgressStep
+import com.tech.kojo.data.model.HomeTrickApiResponse
+import com.tech.kojo.data.model.HomeTrickVault
 import com.tech.kojo.data.model.PersonalData
+import com.tech.kojo.databinding.DialogAddRepsBinding
 import com.tech.kojo.databinding.FragmentPersonalBestsBinding
 import com.tech.kojo.databinding.PersonalBestsRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.DashBoardActivity
+import com.tech.kojo.utils.BaseCustomDialog
+import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.toTitleCase
+import com.tech.kojo.utils.Resource
+import com.tech.kojo.utils.Status
+import com.tech.kojo.utils.showErrorToast
+import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class PersonalBestsFragment : BaseFragment<FragmentPersonalBestsBinding>() {
     private val viewModel: PersonalBestsFragmentVM by viewModels()
-    private lateinit var personalAdapter: SimpleRecyclerViewAdapter<PersonalData, PersonalBestsRvItemBinding>
+    private lateinit var personalAdapter: SimpleRecyclerViewAdapter<GetPersonalBestModelData, PersonalBestsRvItemBinding>
+    private var personalBestList = ArrayList<GetPersonalBestModelData>()
+    private var popupList = ArrayList<HomeTrickVault>()
+    private var trickId: String?=null
+    private lateinit var dialogAddRepsBinding: BaseCustomDialog<DialogAddRepsBinding>
+    private lateinit var dialogEditDeleteRepsBinding: BaseCustomDialog<DialogAddRepsBinding>
+    private var position:Int?=null
     override fun getLayoutResource(): Int {
 
         return R.layout.fragment_personal_bests
@@ -30,10 +53,19 @@ class PersonalBestsFragment : BaseFragment<FragmentPersonalBestsBinding>() {
     }
 
     override fun onCreateView(view: View) {
+        arguments?.let {
+            personalBestList = it.getParcelableArrayList("personalBestList") ?: arrayListOf()
+        }
+        handleUi()
+        // api call
+        viewModel.getHomeTrickApi(Constants.GET_TRICKS_VAULT_ALL)
         // click
         initOnClick()
-        // adapter
-        initPersonalAdapter()
+
+        // observer
+        initObserver()
+        // dialog
+        initDialog()
     }
 
 
@@ -46,8 +78,115 @@ class PersonalBestsFragment : BaseFragment<FragmentPersonalBestsBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
+                R.id.clSelectTrick->{
+                    BindingUtils.showDropdownModel(it, popupList) { selected ->
+                        binding.tvPracticed.text = selected.name
+                        trickId = selected?._id
+                        dialogAddRepsBinding.binding.tvTitle.text="${selected.name}"
+                        dialogAddRepsBinding.show()
+                    }
+                }
+            }
+        }
+    }
 
 
+    /** api response observer ***/
+    private fun initObserver() {
+        viewModel.observeCommon.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getHomeTrickApi" -> {
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model: HomeTrickApiResponse? = BindingUtils.parseJson(jsonData)
+                                var home = model?.trickVaults
+                                if (home != null) {
+                                    popupList = home as ArrayList<HomeTrickVault>
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                        "createPersonalTrick"->{
+                            runCatching {
+                                val jsonData = it?.data?.toString().orEmpty()
+                                val model : CreatePersonalBestModel? = BindingUtils.parseJson(jsonData)
+                                if (model!=null){
+                                    if (model.personalBest!=null){
+                                        personalBestList.add(0,model.personalBest)
+                                        personalAdapter.list = personalBestList
+                                        personalAdapter.notifyDataSetChanged()
+                                        trickId = null
+                                    }
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                        "editPersonalTrick"->{
+                            runCatching {
+                                val jsonData = it?.data?.toString().orEmpty()
+                                val model : CreatePersonalBestModel? = BindingUtils.parseJson(jsonData)
+                                if (model!=null){
+                                    if (model.personalBest!=null){
+                                        showSuccessToast("Personal Trick Updated Successfully")
+                                        val updatedItem = model.personalBest
+                                        val index = personalBestList.indexOfFirst { item -> item._id == updatedItem?._id }
+                                        if (index != -1) {
+                                            personalBestList[index] = updatedItem!!
+                                            personalAdapter.list = personalBestList
+                                            personalAdapter.notifyItemChanged(index)
+                                        }
+                                    }
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                        "deletePersonalTrick"->{
+                            runCatching {
+                                val jsonData = it?.data?.toString().orEmpty()
+                                val model : CommonApiResponse? = BindingUtils.parseJson(jsonData)
+                                if (model!=null){
+                                        showSuccessToast("Personal Trick Deleted Successfully")
+                                    personalBestList.removeAt(position!!)
+                                    personalAdapter.list = personalBestList
+                                    personalAdapter.notifyDataSetChanged()
+                                    position = null
+                                    handleUi()
+                                }
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(e.message.toString())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
             }
         }
     }
@@ -57,32 +196,83 @@ class PersonalBestsFragment : BaseFragment<FragmentPersonalBestsBinding>() {
      */
     private fun initPersonalAdapter() {
         personalAdapter =
-            SimpleRecyclerViewAdapter(R.layout.personal_bests_rv_item, BR.bean) { v, m, _ ->
+            SimpleRecyclerViewAdapter(R.layout.personal_bests_rv_item, BR.bean) { v, m, pos ->
                 when (v?.id) {
-                    R.id.clRecent -> {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "progressionDetails")
-                        startActivity(intent)
+                    R.id.tvEdit -> {
+                        position = pos
+                        initEditDeleteDialog(m)
                     }
                 }
 
             }
         binding.rvPersonalBests.adapter = personalAdapter
-        personalAdapter.list = getDummyRecentList()
+        personalAdapter.list = personalBestList
     }
 
-    /**
-     * Get dummy recent list
-     */
-    private fun getDummyRecentList(): ArrayList<PersonalData> {
-        val dummyList = arrayListOf(
-            PersonalData("Gainer Switches:", "9"),
-            PersonalData("Corks:", "8"),
+    private fun initDialog(){
+        dialogAddRepsBinding = BaseCustomDialog(requireContext(), R.layout.dialog_add_reps){
+            when(it?.id){
+                R.id.tvCancel->{
+                    dialogAddRepsBinding.dismiss()
+                }
+                R.id.tvSave->{
+                    if (dialogAddRepsBinding.binding.etReps.text.isNullOrEmpty()){
+                        showErrorToast("Please enter reps")
+                        return@BaseCustomDialog
+                    }
+                    val request = HashMap<String, Any>()
+                    request["trickVaultId"]=trickId.toString()
+                    request["value"]=dialogAddRepsBinding.binding.etReps.text.toString().trim()
+                    viewModel.createPersonalTrick(Constants.GET_PERSONAL_BEST,request)
+                    dialogAddRepsBinding.dismiss()
+                }
+            }
+        }
+        dialogAddRepsBinding.setCancelable(false)
+    }
 
 
-            )
+    private fun initEditDeleteDialog(model: GetPersonalBestModelData){
+        dialogEditDeleteRepsBinding = BaseCustomDialog(requireContext(), R.layout.dialog_add_reps){
+            when(it?.id){
+                R.id.tvCancel->{
+                    viewModel.deletePersonalTrick("${Constants.GET_PERSONAL_BEST}/${model._id}")
+                    dialogEditDeleteRepsBinding.dismiss()
+                }
+                R.id.tvSave->{
+                    if (dialogEditDeleteRepsBinding.binding.etReps.text.isNullOrEmpty()){
+                        showErrorToast("Please enter reps")
+                        return@BaseCustomDialog
+                    }
+                    val request = HashMap<String, Any>()
+                    request["trickVaultId"]=model.trickVaultId?._id.toString()
+                    request["value"]=dialogEditDeleteRepsBinding.binding.etReps.text.toString().trim()
+                    viewModel.editPersonalTrick("${Constants.GET_PERSONAL_BEST}/${model._id}",request)
+                    dialogEditDeleteRepsBinding.dismiss()
+                }
+            }
+        }
+        dialogEditDeleteRepsBinding.setCancelable(false)
+        dialogEditDeleteRepsBinding.binding.tvCancel.text = "Delete"
+        dialogEditDeleteRepsBinding.binding.etReps.setText(model.value.toString())
+        dialogEditDeleteRepsBinding.binding.tvTitle.text=model.trickVaultId?.name?.toTitleCase()
+        dialogEditDeleteRepsBinding.show()
+    }
 
-        return dummyList
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
+    }
+
+    private fun handleUi(){
+        if (personalBestList.isNotEmpty()) {
+            // adapter
+            initPersonalAdapter()
+            binding.tvNoView.visibility = View.GONE
+        }
+        else{
+            binding.tvNoView.visibility = View.VISIBLE
+        }
     }
 
 

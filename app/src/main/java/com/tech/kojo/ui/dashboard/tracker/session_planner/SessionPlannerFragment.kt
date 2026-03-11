@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -20,7 +21,6 @@ import com.tech.kojo.data.model.CreateSessionApiResponse
 import com.tech.kojo.data.model.GetMonthApiResponse
 import com.tech.kojo.data.model.GetNextDateAPiResponse
 import com.tech.kojo.data.model.GetPastSessionAPiResponse
-import com.tech.kojo.data.model.MonthSessionData
 import com.tech.kojo.data.model.NextSessionData
 import com.tech.kojo.data.model.PastSessionData
 import com.tech.kojo.databinding.AddSessionBottomItemBinding
@@ -36,10 +36,9 @@ import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.tech.kojo.utils.showSuccessToast
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
-
+import java.time.YearMonth
 
 @AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,11 +59,16 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
     private var dateType = ""
     private var currentPage = 1
     private var startX = 0f
-    override fun getLayoutResource(): Int {
 
+    // Add this property to track if current month is selected
+    private var isCurrentMonthSelected = true
+
+    // Initialize selectedDate with current date
+    private var selectedDate: LocalDate = LocalDate.now()
+
+    override fun getLayoutResource(): Int {
         return R.layout.fragment_session_planner
     }
-
 
     override fun getViewModel(): BaseViewModel {
         return viewModel
@@ -82,14 +86,35 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
 
         // observer
         initObserver()
-
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updatePreviousButtonState() {
+        val today = LocalDate.now()
+        val isEnabled = selectedDate.isAfter(today)
+        binding.ivPrevius.isEnabled = isEnabled
+        binding.ivPrevius.alpha = if (isEnabled) 1f else 0.4f
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateAddButtonState() {
+        val today = LocalDate.now()
+        val currentYearMonth = YearMonth.from(today)
+        val selectedYearMonth = YearMonth.from(selectedDate)
+
+        val isPastDate = selectedDate.isBefore(today)
+        val isToday = selectedDate == today
+        val shouldEnableAdd = !isPastDate || isToday
+
+        binding.btnAdd.isEnabled = shouldEnableAdd
+        binding.btnAdd.alpha = if (shouldEnableAdd) 1f else 0.4f
+        isCurrentMonthSelected = selectedYearMonth == currentYearMonth
+    }
 
     /**
      * Method to initialize click
      */
-    private var selectedDate: LocalDate = LocalDate.now()
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
@@ -105,20 +130,80 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
 
                 R.id.btnNext -> {
                     currentMonth++
+
                     if (currentMonth > 12) {
                         currentMonth = 1
                         currentYear++
                     }
-                    loadCalendar()
+
+                    // Don't automatically select first day of month
+                    // Instead, try to keep the same day of month if possible
+                    val targetDate = try {
+                        // Try to keep the same day of month
+                        LocalDate.of(currentYear, currentMonth, selectedDate.dayOfMonth)
+                    } catch (e: Exception) {
+                        // If day doesn't exist in new month (e.g., Jan 31 -> Feb), use last day of month
+                        LocalDate.of(currentYear, currentMonth,
+                            YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                    }
+
+                    selectedDate = targetDate
+
+                    binding.tvDate.text = BindingUtils.formatDate(selectedDate)
+
+                    // Update calendar selection if adapter exists
+                    if (::dayAdapter.isInitialized) {
+                        dayAdapter.updateSelection(selectedDate)
+                    }
+
+                    updatePreviousButtonState()
+                    updateAddButtonState()
+
+                    // Call month API
+                    val data = HashMap<String, Any>()
+                    data["month"] = currentMonth
+                    data["year"] = currentYear
+
+                    viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
                 }
 
                 R.id.btnPrev -> {
                     currentMonth--
+
                     if (currentMonth < 1) {
                         currentMonth = 12
                         currentYear--
                     }
-                    loadCalendar()
+
+                    // Don't automatically select first day of month
+                    // Instead, try to keep the same day of month if possible
+                    val targetDate = try {
+                        // Try to keep the same day of month
+                        LocalDate.of(currentYear, currentMonth, selectedDate.dayOfMonth)
+                    } catch (e: Exception) {
+                        // If day doesn't exist in new month, use last day of month
+                        LocalDate.of(currentYear, currentMonth,
+                            YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+                    }
+
+                    selectedDate = targetDate
+
+                    binding.tvDate.text = BindingUtils.formatDate(selectedDate)
+
+                    // Update calendar selection if adapter exists
+                    if (::dayAdapter.isInitialized) {
+                        dayAdapter.updateSelection(selectedDate)
+                    }
+
+                    updatePreviousButtonState()
+                    updateAddButtonState()
+
+                    // Call month API
+                    val data = HashMap<String, Any>()
+                    data["month"] = currentMonth
+                    data["year"] = currentYear
+
+                    viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
                 }
 
                 R.id.btnAdd -> {
@@ -126,27 +211,70 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                 }
 
                 R.id.ivNext -> {
-                    selectedDate = selectedDate.plusDays(1)
+                    val newDate = selectedDate.plusDays(1)
+                    val oldMonth = selectedDate.monthValue
+                    val oldYear = selectedDate.year
+
+                    selectedDate = newDate
                     binding.tvDate.text = BindingUtils.formatDate(selectedDate)
 
-                    val data = HashMap<String, Any>()
-                    val date = BindingUtils.formatDateForApi(selectedDate)
-                    data["date"] = date
+                    // Check if month changed
+                    if (selectedDate.monthValue != oldMonth || selectedDate.year != oldYear) {
+                        // Month changed - update current month and year
+                        currentMonth = selectedDate.monthValue
+                        currentYear = selectedDate.year
 
-                    viewModel.getSessionDateApi1(Constants.SESSION_PLANNER_DATE, data)
+                        // Load new month data
+                        val monthData = HashMap<String, Any>()
+                        monthData["month"] = currentMonth
+                        monthData["year"] = currentYear
+                        viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, monthData)
+                    } else {
+                        // Same month - just update selection and fetch day data
+                        dayAdapter.updateSelection(selectedDate)
+                        updatePreviousButtonState()
+                        updateAddButtonState()
+
+                        val data = HashMap<String, Any>()
+                        val date = BindingUtils.formatDateForApi(selectedDate)
+                        data["date"] = date
+
+                        viewModel.getSessionDateApi1(Constants.SESSION_PLANNER_DATE, data)
+                    }
                 }
 
                 R.id.ivPrevius -> {
-                    selectedDate = selectedDate.minusDays(1)
+                    val newDate = selectedDate.minusDays(1)
+                    val oldMonth = selectedDate.monthValue
+                    val oldYear = selectedDate.year
+
+                    selectedDate = newDate
                     binding.tvDate.text = BindingUtils.formatDate(selectedDate)
 
-                    val data = HashMap<String, Any>()
-                    val date = BindingUtils.formatDateForApi(selectedDate)
-                    data["date"] = date
+                    // Check if month changed
+                    if (selectedDate.monthValue != oldMonth || selectedDate.year != oldYear) {
+                        // Month changed - update current month and year
+                        currentMonth = selectedDate.monthValue
+                        currentYear = selectedDate.year
 
-                    viewModel.getSessionDateApi1(Constants.SESSION_PLANNER_DATE, data)
+                        // Load new month data
+                        val monthData = HashMap<String, Any>()
+                        monthData["month"] = currentMonth
+                        monthData["year"] = currentYear
+                        viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, monthData)
+                    } else {
+                        // Same month - just update selection and fetch day data
+                        dayAdapter.updateSelection(selectedDate)
+                        updatePreviousButtonState()
+                        updateAddButtonState()
+
+                        val data = HashMap<String, Any>()
+                        val date = BindingUtils.formatDateForApi(selectedDate)
+                        data["date"] = date
+
+                        viewModel.getSessionDateApi1(Constants.SESSION_PLANNER_DATE, data)
+                    }
                 }
-
             }
         }
     }
@@ -154,15 +282,21 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
     /**
      * Method to initialize view
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initView() {
         val data = HashMap<String, Any>()
         data["month"] = currentMonth
         data["year"] = currentYear
         viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
-        // adapter
-        loadCalendar()
-        binding.tvDate.text = BindingUtils.getFormattedToday()
 
+        // adapter - load calendar after API response
+        // The calendar will be loaded in the observer after month API success
+        loadCalendar()
+        binding.tvDate.text = BindingUtils.formatDate(selectedDate)
+        dateType = BindingUtils.formatDate(selectedDate.toString())
+
+        updatePreviousButtonState()
+        updateAddButtonState()
 
         // refresh
         binding.ssPullRefresh.setColorSchemeResources(
@@ -181,14 +315,12 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
         }
     }
 
-
     /**
      * Method to load calendar
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun loadCalendar() {
         daysList = CalendarUtils.getMonthDays(currentYear, currentMonth)
-
 
         daysList.forEach { day ->
             val key = day.date?.toString() ?: ""
@@ -197,25 +329,38 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
             day.eventColors = colors
         }
 
-
         dayAdapter = CalendarAdapter(daysList) { date ->
+            selectedDate = date
+
             val formatted = BindingUtils.formatDate(date.toString())
             dateType = formatted
+
             dayAdapter.updateSelection(date)
             binding.tvDate.text = dateType
+
+            updatePreviousButtonState()
+            updateAddButtonState()
+
             val data = HashMap<String, Any>()
-            data["date"] = date
+            data["date"] = BindingUtils.formatDateForApi(date)
+
             viewModel.getSessionDateApi(Constants.SESSION_PLANNER_DATE, data)
-
-
         }
 
         binding.rvCalendar.layoutManager = GridLayoutManager(requireContext(), 7)
         binding.rvCalendar.adapter = dayAdapter
 
+        // Make sure the selected date is in the current month
+        // If not, adjust it to the first day of the month
+        if (selectedDate.monthValue != currentMonth || selectedDate.year != currentYear) {
+            selectedDate = LocalDate.of(currentYear, currentMonth, 1)
+        }
+
+        // Set selection to current selected date
+        dayAdapter.updateSelection(selectedDate)
+
         updateMonthTitle()
     }
-
 
     /**
      * Method to update month title
@@ -228,9 +373,9 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
             date.month.name.lowercase().replaceFirstChar { it.uppercase() } + " " + currentYear
     }
 
-
     /** api response observer ***/
     private var eventColorMap: MutableMap<String, List<String>> = mutableMapOf()
+
     private fun initObserver() {
         viewModel.observeCommon.observe(viewLifecycleOwner) {
             when (it?.status) {
@@ -238,7 +383,6 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                     if (!isProgress) {
                         showLoading()
                     }
-
                 }
 
                 Status.SUCCESS -> {
@@ -255,7 +399,9 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                                     val data = HashMap<String, Any>()
                                     data["month"] = currentMonth
                                     data["year"] = currentYear
-                                    viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
+                                    viewModel.getSessionMonthApi(
+                                        Constants.SESSION_PLANNER_MONTH, data
+                                    )
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
@@ -269,30 +415,25 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: GetMonthApiResponse? = BindingUtils.parseJson(jsonData)
-                                var month = model?.data
-                                if (month != null) {
-                                    val colorMap = BindingUtils.parseMonthColorJson(
-                                        jsonData,
-                                        currentMonth,
-                                        currentYear
-                                    )
-                                    isProgress = true
-                                    eventColorMap =
-                                        colorMap.mapValues { listOf(it.value) }.toMutableMap()
-                                    // Refresh calendar
-                                    loadCalendar()
-                                }
+
+                                val monthData = model?.data ?: emptyMap()
+
+                                // API already returns: Map<String, List<String>>
+                                eventColorMap = monthData.toMutableMap()
+
+                                isProgress = true
+                                loadCalendar()
+
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                                 showErrorToast(e.message.toString())
                             }.also {
+                                // After loading calendar with current month data, fetch sessions for selected date
                                 val data = HashMap<String, Any>()
-                                val date = BindingUtils.getCurrentDate()
-                                data["date"] = date
+                                data["date"] = BindingUtils.formatDateForApi(selectedDate)
                                 viewModel.getSessionDateApi(Constants.SESSION_PLANNER_DATE, data)
                             }
                         }
-
 
                         "getSessionDateApi" -> {
                             runCatching {
@@ -340,7 +481,6 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                             }
                         }
 
-
                         "getSessionPastApi" -> {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
@@ -353,7 +493,6 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                                         binding.tvPastEmpty.visibility = View.GONE
                                     } else {
                                         binding.tvPastEmpty.visibility = View.VISIBLE
-
                                     }
                                 }
                             }.onFailure { e ->
@@ -377,26 +516,6 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun MonthSessionData.toEventColorMap(): Map<LocalDate, List<String>> {
-
-        val map = mutableMapOf<LocalDate, List<String>>()
-
-        this::class.java.declaredFields.forEach { field ->
-            field.isAccessible = true
-            val key = field.name
-            val value = field.get(this) as? List<String>?
-
-            if (!value.isNullOrEmpty()) {
-                val date = LocalDate.parse(key)
-                map[date] = value
-            }
-        }
-
-        return map
-    }
-
-
     /**
      * Initialize adapter
      */
@@ -410,10 +529,8 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                     startActivity(intent)
                 }
             }
-
         }
         binding.rvUpcoming.adapter = upcomingAdapter
-
 
         pastAdapter = SimpleRecyclerViewAdapter(R.layout.past_rv_item, BR.bean) { v, m, _ ->
             when (v?.id) {
@@ -424,15 +541,14 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                     startActivity(intent)
                 }
             }
-
         }
         binding.rvPast.adapter = pastAdapter
-
     }
 
     /**
      * Initialize bottom sheet
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initBottomSheet() {
         addSessionBottomSheet = BaseCustomBottomSheet(
             requireContext(), R.layout.add_session_bottom_item
@@ -446,6 +562,7 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                     val sessionTitle =
                         addSessionBottomSheet.binding.etSessionTitle.text.toString().trim()
                     val enterNote = addSessionBottomSheet.binding.etEnterNote.text.toString().trim()
+
                     if (sessionTitle.isEmpty()) {
                         showInfoToast("Please add session title")
                     } else if (enterNote.isEmpty()) {
@@ -455,6 +572,7 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                         data["title"] = sessionTitle
                         data["note"] = enterNote
                         data["color"] = colorCode
+
                         if (dateType.isEmpty()) {
                             val dateType = BindingUtils.getCurrentDate()
                             data["date"] = dateType
@@ -464,14 +582,26 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                         }
 
                         viewModel.createSessionPlannerApi(Constants.SESSION_CREATE, data)
-
                     }
-
                 }
             }
         }
+
         addSessionBottomSheet.behavior.isDraggable = true
         addSessionBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        // Check if we're in a past month before showing the bottom sheet
+        val today = LocalDate.now()
+        val selectedYearMonth = YearMonth.from(selectedDate)
+        val currentYearMonth = YearMonth.from(today)
+
+        if (selectedYearMonth.isBefore(currentYearMonth) ||
+            (selectedYearMonth == currentYearMonth && selectedDate.isBefore(today))) {
+            showInfoToast("Cannot add sessions for past dates")
+            addSessionBottomSheet.dismiss()
+            return
+        }
+
         addSessionBottomSheet.show()
 
         if (dateType.isEmpty()) {
@@ -479,9 +609,7 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
         } else {
             addSessionBottomSheet.binding.tvTitle2.text = dateType
         }
-
     }
-
 
     /**
      * choose color dialog initialize
@@ -533,13 +661,15 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                     colorCode = "red"
                     chooseColorDialog.dismiss()
                 }
-
-
             }
         }
         chooseColorDialog.setCancelable(true)
         chooseColorDialog.create()
         chooseColorDialog.show()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
     }
 }

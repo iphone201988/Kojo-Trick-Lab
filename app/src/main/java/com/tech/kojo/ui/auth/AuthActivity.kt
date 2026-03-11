@@ -28,9 +28,15 @@ class AuthActivity : BaseActivity<ActivityAuthBinding>() {
 
     override fun onCreateView() {
         BindingUtils.statusBarStyleWhite(this)
+        val from = intent.getStringExtra("open")
         navController.graph =
             navController.navInflater.inflate(R.navigation.auth_section_navigation).apply {
-                setStartDestination(R.id.fragmentLogin)
+                if (from=="setup"){
+                    setStartDestination(R.id.fragmentSetup)
+                }
+                else{
+                    setStartDestination(R.id.fragmentLogin)
+                }
             }
     }
 
