@@ -16,11 +16,11 @@ import javax.inject.Inject
 class SessionDetailVm @Inject constructor(private val apiHelper: ApiHelper) : BaseViewModel() {
     val observeCommon = SingleRequestEvent<JsonObject>()
     // delete session  api
-    fun deleteSessionApi(url: String) {
+    fun deleteSessionApi(url: String,request:HashMap<String, Any>) {
         viewModelScope.launch(Dispatchers.IO) {
             observeCommon.postValue(Resource.loading(null))
             runCatching {
-                val response = apiHelper.apiPostForToken(url)
+                val response = apiHelper.apiPostForRawQuery(url,request)
                 if (response.isSuccessful) {
                     observeCommon.postValue(Resource.success("deleteSessionApi", response.body()))
                 } else {

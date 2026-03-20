@@ -25,12 +25,6 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
     }
 
     override fun onCreateView() {
-        enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
         BindingUtils.statusBarStyleWhite(this)
         binding.type =1
         // view

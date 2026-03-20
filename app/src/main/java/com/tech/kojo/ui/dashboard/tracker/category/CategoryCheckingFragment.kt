@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.tracker.category
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -14,6 +15,7 @@ import com.tech.kojo.data.model.CommonApiResponse
 import com.tech.kojo.data.model.GetCategoryByIdApiResponse
 import com.tech.kojo.databinding.CatgoryRvItemBinding
 import com.tech.kojo.databinding.FragmentCategoryCheckingBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
@@ -153,7 +155,11 @@ class CategoryCheckingFragment : BaseFragment<FragmentCategoryCheckingBinding>()
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
                 R.id.ivUnSelected -> {
                     check = !check
                     if (check) {

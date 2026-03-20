@@ -7,7 +7,7 @@
 
         <variable
             name="bean"
-            type="com.tech.kojo.data.model.GetPersonalBestModelData" />
+            type="com.tech.kojo.data.model.PersonalBest" />
 
         <variable
             name="pos"
@@ -31,7 +31,7 @@
                 style="@style/TextView_500_Medium_Quicksand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                setTextCapitalized="@{bean.trickVaultId.name}"
+                setTextCapitalizedPersonalBest="@{bean.name}"
                 android:textColor="@color/colorPrimary"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:textSize="@dimen/_11ssp"
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_6sdp"
-                android:text='@{bean.value!=null?bean.value.toString():"0"}'
+                showPersonalBestValue="@{bean.count}"
                 android:textColor="@color/blue"
                 android:textSize="@dimen/_12ssp"
                 app:layout_constraintBottom_toBottomOf="parent"

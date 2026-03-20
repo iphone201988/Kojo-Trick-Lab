@@ -202,7 +202,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 R.id.ivVideo -> {
                     if (!videoUrl.isNullOrEmpty()) {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "video")
+                        intent.putExtra("fromWhere", "videoVimeo")
                         intent.putExtra("videoUrl", videoUrl)
                         startActivity(intent)
                     }
@@ -362,8 +362,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
                         "postComments" -> {
                             runCatching {
-                                // Successfully posted comment
-                                showSuccessToast("Comment posted successfully")
+//                                // Successfully posted comment
+//                                showSuccessToast("Comment posted successfully")
                             }.onFailure { e ->
                                 showErrorToast(e.message.orEmpty())
                             }.also {
@@ -506,7 +506,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                 _id = it._id,
                                 name = it.name,
                                 profilePicture = it.profilePicture,
-                                email = ""
+                                email = "",
+                                isPrivate = it.isPrivate
                             )
                         }
 

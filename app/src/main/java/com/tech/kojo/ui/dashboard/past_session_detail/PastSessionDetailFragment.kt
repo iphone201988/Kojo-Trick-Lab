@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.past_session_detail
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -11,6 +12,7 @@ import com.tech.kojo.data.model.CommonApiResponse
 import com.tech.kojo.data.model.PastSessionData
 import com.tech.kojo.databinding.DeleteOrLogoutDialogItemBinding
 import com.tech.kojo.databinding.FragmentPastSessionDetailBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
@@ -51,6 +53,12 @@ class PastSessionDetailFragment : BaseFragment<FragmentPastSessionDetailBinding>
             when (it?.id) {
                 R.id.ivBack -> {
                     requireActivity().finish()
+                }
+
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
                 }
 
                 R.id.btnRemoveSession -> {
@@ -126,7 +134,11 @@ class PastSessionDetailFragment : BaseFragment<FragmentPastSessionDetailBinding>
                 }
 
                 R.id.btnDeleteComment -> {
-                    viewModel.deleteSessionApi(Constants.SESSION_PLANNER_DELETE+"/$sessionId")
+                    if (sessionId!=null) {
+                        val request = HashMap<String, Any>()
+                        request["sessionId"] = sessionId!!
+                        viewModel.deleteSessionApi(Constants.SESSION_PLANNER_DELETE,request)
+                    }
                     pastSessionDialogItem.dismiss()
                 }
             }

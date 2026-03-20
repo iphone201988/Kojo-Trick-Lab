@@ -82,6 +82,11 @@ class SessionDetailFragment : BaseFragment<FragmentSessionDetailBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
 
                 R.id.tvDeleteSession -> {
                     deleteSessionDialogItem()
@@ -177,7 +182,11 @@ class SessionDetailFragment : BaseFragment<FragmentSessionDetailBinding>() {
                 }
 
                 R.id.btnDeleteComment -> {
-                    viewModel.deleteSessionApi(Constants.SESSION_PLANNER_DELETE+"/$sessionId")
+                    if (sessionId!=null) {
+                        val request = HashMap<String, Any>()
+                        request["sessionId"] = sessionId!!
+                        viewModel.deleteSessionApi(Constants.SESSION_PLANNER_DELETE,request)
+                    }
                     pastSessionDialogItem.dismiss()
                 }
             }

@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.profile.edit
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.util.FileUtil
+import com.google.android.material.imageview.ShapeableImageView
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -30,6 +32,8 @@ import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.AppUtils
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.compressImage
+import com.tech.kojo.utils.BindingUtils.hasCameraPermission
 import com.tech.kojo.utils.BindingUtils.setBgSkin
 import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
@@ -40,6 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
@@ -49,9 +54,9 @@ import java.io.IOException
 class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
     private val viewModel: EditProfileFragmentVM by viewModels()
     private var imageDialog: BaseCustomDialog<VideoImagePickerDialogBoxBinding>? = null
-    private var photoFile2: File? = null
     private var photoURI: Uri? = null
     private var multipartPart: MultipartBody.Part? = null
+    private var photoFile: File? = null
     private var profileImage: String? = null
     private var skin: String? = null
 
@@ -111,7 +116,7 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
                     viewModel.editProfileApi(Constants.UPDATE_PROFILE, data)
                 }
 
-                R.id.clUpload -> {
+                R.id.clUpload,R.id.ivCircle1,R.id.ivCircle,R.id.ivProfile -> {
                     imageDialog()
                 }
 
@@ -189,193 +194,109 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
 
     /**** image pick dialog  handel ***/
     private fun imageDialog() {
+
         imageDialog = BaseCustomDialog(requireActivity(), R.layout.video_image_picker_dialog_box) {
             when (it.id) {
                 R.id.tvCamera, R.id.imageCamera -> {
-                    if (!BindingUtils.hasPermissions(
-                            requireActivity(), BindingUtils.permissions
-                        )
-                    ) {
-                        permissionResultLauncher1.launch(BindingUtils.permissions)
+                    if (!hasCameraPermission(requireContext())) {
+                        permissionResultLauncher.launch(arrayOf(Manifest.permission.CAMERA))
                     } else {
-                        // camera
-                        openCameraIntent()
+                        openCamera()
                     }
-                    imageDialog!!.dismiss()
+                    imageDialog?.dismiss()
                 }
 
                 R.id.imageGallery, R.id.tvGallery -> {
-                    if (!BindingUtils.hasPermissions(
-                            requireActivity(), BindingUtils.permissions
-                        )
-                    ) {
-                        permissionResultLauncher.launch(BindingUtils.permissions)
-
-                    } else {
-                        galleryImagePicker()
-
-                    }
-                    imageDialog!!.dismiss()
-                }
-
-            }
-        }
-        imageDialog!!.create()
-        imageDialog!!.show()
-
-    }
-
-    /**** Gallery permission  ***/
-    private var allGranted = false
-    private val permissionResultLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            for (it in permissions.entries) {
-                it.key
-                val isGranted = it.value
-                allGranted = isGranted
-            }
-            when {
-                allGranted -> {
-                    galleryImagePicker()
-                }
-
-                else -> {
-                    showInfoToast("Permission Denied")
+                    openGallery()
+                    imageDialog?.dismiss()
                 }
             }
         }
 
-    /*** open gallery ***/
-
-    private fun galleryImagePicker() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
-            action = Intent.ACTION_GET_CONTENT
-        }
-        resultLauncherGallery.launch(Intent.createChooser(intent, "Select Picture"))
+        imageDialog?.create()
+        imageDialog?.show()
     }
 
 
-    /*** gallery launcher ***/
-    private var resultLauncherGallery =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data: Intent? = result.data
-                val imageUri = data?.data
-                imageUri?.let { uri ->
-                    try {
-                        binding.ivCircle1.visibility = View.GONE
-                        binding.ivCircle.visibility = View.VISIBLE
-                        binding.ivProfile.visibility = View.VISIBLE
-                        Glide.with(requireActivity()).load(imageUri).into(binding.ivProfile)
-                        multipartPart = convertMultipartPartGal(uri)
-
-                        viewModel.uploadProfile(Constants.UPLOAD, multipartPart)
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        showErrorToast("Image compression failed")
-                    }
-
-                }
-            }
-        }
-
-
-    private val permissionResultLauncher1: ActivityResultLauncher<Array<String>> =
+    private val permissionResultLauncher: ActivityResultLauncher<Array<String>> =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val allGranted = permissions.all { it.value }
             if (allGranted) {
-                openCameraIntent()
+                openCamera()
             } else {
                 showInfoToast("Permission Denied")
             }
         }
 
-    /**** open camera ***/
-    private fun openCameraIntent() {
-        val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (pictureIntent.resolveActivity(requireActivity().packageManager) != null) {
 
-            try {
-                photoFile2 = AppUtils.createImageFile1(requireActivity())
-            } catch (ex: IOException) {
-                ex.printStackTrace()
-            }
-            if (photoFile2 != null) {
-                val authority = "${requireActivity().packageName}.fileProvider"
-                photoURI = FileProvider.getUriForFile(
-                    requireActivity(), authority, photoFile2!!
-                )
-                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                resultLauncherCamera.launch(pictureIntent)
-            } else {
-                Log.d("TAG", "openCameraIntent: ")
-            }
-        } else {
-            Log.d("TAG", "openCameraIntent: ")
-        }
+    private fun openGallery() {
+        galleryLauncher.launch("image/*")
     }
 
-    /*** camera launcher ***/
-    private val resultLauncherCamera =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                if (photoFile2?.exists() == true) {
-                    photoURI?.let { uri ->
-                        lifecycleScope.launch {
-                            try {
-                                binding.ivCircle1.visibility = View.GONE
-                                binding.ivCircle.visibility = View.VISIBLE
-                                binding.ivProfile.visibility = View.VISIBLE
-                                Glide.with(requireActivity()).load(uri).into(binding.ivProfile)
+    /**
+     * Method to handle selected image
+     */
 
-                                multipartPart = convertMultipartPart(requireActivity(), uri)
 
-                                viewModel.uploadProfile(Constants.UPLOAD, multipartPart)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                showErrorToast("Compression fail")
-                            }
-                        }
-                    }
-                }
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                bindImage(it, binding.ivProfile) { multipartPart = it }
+                val request = HashMap<String, RequestBody>()
+                viewModel.uploadProfile(Constants.UPLOAD, multipartPart)
             }
         }
 
-    /*** convert image in multipart ***/
-    private fun convertMultipartPart(context: Context, imageUri: Uri): MultipartBody.Part? {
+
+    /**
+     * Method to open camera
+     */
+    private fun openCamera() {
+        photoFile = BindingUtils.createImageFile(requireContext())
+        photoURI = FileProvider.getUriForFile(
+            requireContext(), "${requireContext().packageName}.fileProvider", photoFile!!
+        )
+        cameraLauncher.launch(photoURI!!)
+    }
+
+
+    /**
+     * Method to handle selected image
+     */
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && photoURI != null) {
+                bindImage(photoURI!!, binding.ivProfile) { multipartPart = it }
+                val request = HashMap<String, RequestBody>()
+                viewModel.uploadProfile(Constants.UPLOAD, multipartPart)
+            }
+        }
+
+    private fun bindImage(
+        uri: Uri, imageView: ShapeableImageView, onMultipartReady: (MultipartBody.Part?) -> Unit
+    ) {
+        binding.ivCircle1.visibility = View.GONE
+        binding.ivCircle.visibility = View.VISIBLE
+        binding.ivProfile.visibility = View.VISIBLE
+        val compressedUri = compressImage(uri,requireContext() )
+        Glide.with(requireActivity()).load(uri).into(binding.ivProfile)
+        onMultipartReady(uriToMultipart(compressedUri!!))
+    }
+
+    private fun uriToMultipart(uri: Uri): MultipartBody.Part? {
         return try {
-            // Open input stream from content resolver
-            val inputStream = context.contentResolver.openInputStream(imageUri) ?: return null
-
-            // Create a temp file to copy data
-            val tempFile = File(context.cacheDir, "upload_${System.currentTimeMillis()}.jpg")
-            val outputStream = FileOutputStream(tempFile)
-            inputStream.copyTo(outputStream)
-            inputStream.close()
-            outputStream.close()
-
-            // Create multipart from the temp file
-            val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("file", tempFile.name, requestFile)
-
+            val inputStream = requireContext().contentResolver.openInputStream(uri) ?: return null
+            val file = File(requireContext().cacheDir, "img_${System.currentTimeMillis()}.jpg")
+            file.outputStream().use { output ->
+                inputStream.copyTo(output)
+            }
+            MultipartBody.Part.createFormData(
+                "file", file.name, file.asRequestBody("image/*".toMediaTypeOrNull())
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.d("error", "uriToMultipart:$e: ")
             null
         }
-    }
-
-    private fun convertMultipartPartGal(imageUri: Uri): MultipartBody.Part {
-        val file = FileUtil.getTempFile(requireActivity(), imageUri)
-        val fileName =
-            "${file!!.nameWithoutExtension}_${System.currentTimeMillis()}.${file.extension}"
-        val newFile = File(file.parent, fileName)
-        file.renameTo(newFile)
-        return MultipartBody.Part.createFormData(
-            "file", newFile.name, newFile.asRequestBody("image/*".toMediaTypeOrNull())
-        )
     }
 
 

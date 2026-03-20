@@ -230,6 +230,11 @@
         tools:layout="@layout/fragment_video" />
 
     <fragment
+        android:id="@+id/fragmentVideoVimeo"
+        android:name="com.tech.kojo.ui.dashboard.community.video.VimeoVideoFragment"
+        tools:layout="@layout/fragment_vimeo_video" />
+
+    <fragment
         android:id="@+id/fragmentSeeAll"
         android:name="com.tech.kojo.ui.dashboard.library.see_all_video.SeeAllFragment"
         tools:layout="@layout/fragment_see_all">

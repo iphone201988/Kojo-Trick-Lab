@@ -75,13 +75,35 @@ class CommunityDetailVm @Inject constructor(private val apiHelper: ApiHelper) : 
 
 
     // get comments api
-    fun getCommentsApi(url: String,data: HashMap<String, Any>) {
+    fun getCommentsApi(url: String,data: HashMap<String, Any>,isLoading:Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isLoading){
+                observeCommon.postValue(Resource.loading(null))
+            }
+            runCatching {
+                val response = apiHelper.apiGetWithQuery(data,url)
+                if (response.isSuccessful) {
+                    observeCommon.postValue(Resource.success("getCommentsApi", response.body()))
+                } else {
+                    val errorMsg = handleErrorResponse(response.errorBody(), response.code())
+                    observeCommon.postValue(Resource.error(errorMsg, null))
+                }
+            }.onFailure { e ->
+                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                observeCommon.postValue(Resource.error("${e.message}", null))
+            }
+        }
+    }
+
+
+    // get post detail api
+    fun getPostDetailApi(url: String,data: HashMap<String, Any>) {
         viewModelScope.launch(Dispatchers.IO) {
             observeCommon.postValue(Resource.loading(null))
             runCatching {
                 val response = apiHelper.apiGetWithQuery(data,url)
                 if (response.isSuccessful) {
-                    observeCommon.postValue(Resource.success("getCommentsApi", response.body()))
+                    observeCommon.postValue(Resource.success("getPostDetailApi", response.body()))
                 } else {
                     val errorMsg = handleErrorResponse(response.errorBody(), response.code())
                     observeCommon.postValue(Resource.error(errorMsg, null))

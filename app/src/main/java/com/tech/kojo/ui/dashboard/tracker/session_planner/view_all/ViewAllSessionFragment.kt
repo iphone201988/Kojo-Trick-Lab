@@ -181,8 +181,10 @@ class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
 
                                     if (viewAllAdapter.getList().isNotEmpty()) {
                                         binding.clEmpty.visibility = View.GONE
+                                        binding.tvViewAll.visibility = View.VISIBLE
                                     } else {
                                         binding.clEmpty.visibility = View.VISIBLE
+                                        binding.tvViewAll.visibility=View.INVISIBLE
                                     }
 
                                     if (pastSessionData != null && pastSessionData.isNotEmpty()) {
@@ -275,7 +277,7 @@ class ViewAllSessionFragment : BaseFragment<FragmentViewAllSessionBinding>() {
                     if (sessionId!=null){
                         val data = HashMap<String, Any>()
                         data["deleteAll"] = true
-                        data["sessionId"] = sessionId!!
+//                        data["sessionId"] = sessionId!!
                         viewModel.deleteAllSessionPlannerApi(Constants.SESSION_PLANNER_DELETE,data)
                     }
                     clearAllDialogItem.dismiss()

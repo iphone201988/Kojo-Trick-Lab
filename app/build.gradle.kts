@@ -98,5 +98,4 @@ dependencies {
     implementation(libs.play.services.cast.framework)
     implementation(libs.play.services.cast)
     implementation(libs.androidx.mediarouter)
-
 }

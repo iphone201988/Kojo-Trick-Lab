@@ -24,25 +24,16 @@ class GoldenButtonView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val dp           = resources.displayMetrics.density
+    private val dp = resources.displayMetrics.density
     private val cornerRadius = 12f * dp
 
-    private val rectF    = RectF()
+    private val rectF = RectF()
     private val clipPath = Path()
 
-    // ── Read custom attr or fallback to colorPrimary ──────────────────────────
+    private var buttonColor: Int = ContextCompat.getColor(context, R.color.colorPrimary)
+
+    // Paints
     private val basePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = if (attrs != null) {
-            val ta = context.obtainStyledAttributes(attrs, R.styleable.GoldenButtonView)
-            val c  = ta.getColor(
-                R.styleable.GoldenButtonView_buttonColor,
-                ContextCompat.getColor(context, R.color.colorPrimary)  // default
-            )
-            ta.recycle()
-            c
-        } else {
-            ContextCompat.getColor(context, R.color.colorPrimary)
-        }
         style = Paint.Style.FILL
     }
 
@@ -55,8 +46,37 @@ class GoldenButtonView @JvmOverloads constructor(
     }
 
     private val innerShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style  = Paint.Style.STROKE
-        color  = Color.argb(8, 0, 0, 0)
+        style = Paint.Style.STROKE
+        color = Color.argb(8, 0, 0, 0)
+    }
+
+    init {
+        attrs?.let {
+            val ta = context.obtainStyledAttributes(it, R.styleable.GoldenButtonView)
+            buttonColor = ta.getColor(
+                R.styleable.GoldenButtonView_buttonColor,
+                buttonColor
+            )
+            ta.recycle()
+        }
+        basePaint.color = buttonColor
+    }
+
+    // Allow dynamic update
+    fun setButtonColor(color: Int) {
+        buttonColor = color
+        basePaint.color = color
+        invalidate()
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val minWidth = (120 * dp).toInt()
+        val minHeight = (48 * dp).toInt()
+
+        val width = resolveSize(minWidth, widthMeasureSpec)
+        val height = resolveSize(minHeight, heightMeasureSpec)
+
+        setMeasuredDimension(width, height)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -66,14 +86,14 @@ class GoldenButtonView @JvmOverloads constructor(
         val h = height.toFloat()
         if (w == 0f || h == 0f) return
 
-        val cr      = cornerRadius
+        val cr = cornerRadius
         val minSide = minOf(w, h)
 
-        val blurRadius  = minSide * 0.15f
+        val blurRadius = minSide * 0.15f
         val strokeWidth = minSide * 0.10f
 
         innerShadowPaint.strokeWidth = strokeWidth
-        innerShadowPaint.maskFilter  = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
+        innerShadowPaint.maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
 
         clipPath.reset()
         rectF.set(0f, 0f, w, h)
@@ -82,12 +102,14 @@ class GoldenButtonView @JvmOverloads constructor(
         canvas.save()
         canvas.clipPath(clipPath)
 
+        // Base
         canvas.drawRoundRect(rectF, cr, cr, basePaint)
 
+        // Gloss gradient
         gradientPaint.shader = LinearGradient(
             w / 2f, 0f, w / 2f, h,
             intArrayOf(
-                Color.argb(0,  255, 255, 255),
+                Color.argb(0, 255, 255, 255),
                 Color.argb(38, 255, 255, 255)
             ),
             floatArrayOf(0f, 1f),
@@ -95,6 +117,7 @@ class GoldenButtonView @JvmOverloads constructor(
         )
         canvas.drawRoundRect(rectF, cr, cr, gradientPaint)
 
+        // Top shadow
         topShadowPaint.shader = LinearGradient(
             0f, 0f, 0f, minSide * 0.4f,
             intArrayOf(
@@ -106,8 +129,10 @@ class GoldenButtonView @JvmOverloads constructor(
         )
         canvas.drawRoundRect(rectF, cr, cr, topShadowPaint)
 
-        val inset   = strokeWidth / 2f
+        // Inner shadow
+        val inset = strokeWidth / 2f
         val innerCr = (cr - inset).coerceAtLeast(0f)
+
         canvas.drawRoundRect(
             RectF(inset, inset, w - inset, h - inset),
             innerCr, innerCr,

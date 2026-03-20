@@ -74,7 +74,7 @@ class ForwardTrickFragment : BaseFragment<FragmentForwordTrickBinding>() {
             // Always add first item
             updatedList.add(
                 HomeType(
-                    _id = "", name = "All Forward", check = true
+                    _id = "", name = "All", check = true
                 )
             )
             val typeList = trackData.types?.map { it as HomeType } ?: emptyList()

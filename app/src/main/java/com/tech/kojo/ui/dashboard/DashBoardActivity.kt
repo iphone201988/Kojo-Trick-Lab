@@ -100,15 +100,21 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             binding.ivCircle.visibility = View.VISIBLE
             binding.ivProfile.visibility = View.VISIBLE
 
+
             val imageUrl = when {
-                currentUser.profilePicture?.startsWith("http") == true -> currentUser.profilePicture
-                currentUser.profilePicture != null -> Constants.BASE_URL_IMAGE + currentUser.profilePicture
-                else -> null
+                currentUser?.profilePicture.isNullOrEmpty() -> null
+                currentUser?.profilePicture?.startsWith("http") == true -> currentUser.profilePicture
+                else -> Constants.BASE_URL_IMAGE + currentUser?.profilePicture
             }
-            imageUrl?.let { url ->
-                Glide.with(this).load(url)
-                    .placeholder(R.drawable.progress_animation_small)
-                    .error(R.drawable.holder_dummy).into(binding.ivProfile)
+
+            if (imageUrl != null) {
+                Glide.with(this@DashBoardActivity)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.holder_dummy)
+                    .error(R.drawable.holder_dummy)
+                    .into(binding.ivProfile)
+            } else {
+                binding.ivProfile.setImageResource(R.drawable.holder_dummy)
             }
         }
     }
@@ -124,14 +130,21 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         BindingUtils.statusBarStyleWhite(this)
         // data set
         val data = sharedPrefManager.getLoginData()
+
         val imageUrl = when {
+            data?.profilePicture.isNullOrEmpty() -> null
             data?.profilePicture?.startsWith("http") == true -> data.profilePicture
-            data?.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
-            else -> null
+            else -> Constants.BASE_URL_IMAGE + data?.profilePicture
         }
-        imageUrl?.let { url ->
-            Glide.with(this@DashBoardActivity).load(url).placeholder(R.drawable.holder_dummy)
-                .error(R.drawable.holder_dummy).into(binding.profileImage)
+
+        if (imageUrl != null) {
+            Glide.with(this@DashBoardActivity)
+                .load(imageUrl)
+                .placeholder(R.drawable.holder_dummy)
+                .error(R.drawable.holder_dummy)
+                .into(binding.profileImage)
+        } else {
+            binding.profileImage.setImageResource(R.drawable.holder_dummy)
         }
 
     }
@@ -149,14 +162,25 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     val data = sharedPrefManager.getLoginData()
                     if (data != null) {
                         val imageUrl = when {
-                            data.profilePicture?.startsWith("http") == true -> data.profilePicture
-                            data.profilePicture != null -> Constants.BASE_URL_IMAGE + data.profilePicture
-                            else -> null
+                            data?.profilePicture.isNullOrEmpty() -> null
+                            data?.profilePicture?.startsWith("http") == true -> data.profilePicture
+                            else -> Constants.BASE_URL_IMAGE + data?.profilePicture
                         }
-                        imageUrl?.let { url ->
-                            Glide.with(this@DashBoardActivity).load(url)
-                                .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
+
+                        if (imageUrl != null) {
+                            Glide.with(this@DashBoardActivity)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.holder_dummy)
+                                .error(R.drawable.holder_dummy)
                                 .into(binding.profileImage)
+                            Glide.with(this@DashBoardActivity)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.holder_dummy)
+                                .error(R.drawable.holder_dummy)
+                                .into(binding.ivProfile)
+                        } else {
+                            binding.profileImage.setImageResource(R.drawable.holder_dummy)
+                            binding.ivProfile.setImageResource(R.drawable.holder_dummy)
                         }
                     }
                 }

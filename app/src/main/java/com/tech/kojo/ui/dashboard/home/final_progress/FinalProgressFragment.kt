@@ -3,17 +3,11 @@ package com.tech.kojo.ui.dashboard.home.final_progress
 import android.content.Intent
 import android.util.Log
 import android.view.View
-import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.media3.common.MediaItem
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -44,12 +38,14 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
     private var trackDetailId: String? = null
     private var stepId: String? = null
     private var allVideos: List<VideoLink> = emptyList()
-    private var player: ExoPlayer? = null
+    private var reorderedVideos: List<VideoLink> = emptyList()
+    private var videoPagerAdapter: UserImagePagerAdapter? = null
+    private var screenStartTime: Long = 0L
+    private var pagerRecyclerView: RecyclerView? = null
 
     override fun getLayoutResource(): Int {
         return R.layout.fragment_final_progress
     }
-
 
     override fun getViewModel(): BaseViewModel {
         return viewModel
@@ -58,13 +54,35 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
     override fun onCreateView(view: View) {
         // click
         initOnClick()
-        // dot indicators
-        setupViewPager()
         // view
         initView()
         // observer
         initObserver()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        screenStartTime = System.currentTimeMillis()
+        // Resume video playback when fragment becomes visible
+        pagerRecyclerView?.post {
+            videoPagerAdapter?.playVideoAt(binding.viewpager.currentItem, pagerRecyclerView!!)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Pause and release all videos when fragment is not visible
+        pagerRecyclerView?.let {
+            videoPagerAdapter?.releaseAllPlayers(it)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Release all players to prevent memory leaks
+        pagerRecyclerView?.let {
+            videoPagerAdapter?.releaseAllPlayers(it)
+        }
     }
 
     /**
@@ -82,7 +100,13 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
             stepId = data._id
             binding.tvDive.text = diveName.orEmpty()
             binding.tvSkip.text = diveName.orEmpty()
-            stepAdapter.list = data.keypoints ?: emptyList()
+            (data.keypoints ?: emptyList()).also { list ->
+                stepAdapter.list = list
+
+                val isVisible = list.isNotEmpty()
+                binding.rvStep.visibility = if (isVisible) View.VISIBLE else View.GONE
+                binding.tvKeyPoints.visibility = if (isVisible) View.VISIBLE else View.GONE
+            }
             // SAFE REPS
             val reps = data.progress?.repsCount ?: 0
             binding.etCount.setText(reps.toString())
@@ -90,35 +114,145 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
 
             // SAFE VIDEO LINKS (very important)
             allVideos = data.videoLinks?.filterNotNull()?.toList() ?: emptyList()
-            // viewpager
-            val adapter = UserImagePagerAdapter(allVideos, onImageClick = { videoItem ->
-                // click listener callback
-            }, onPlayClick = { videoItem ->
-                if (!videoItem.link.isNullOrEmpty()) {
-                    playLocalVideo(videoItem.link)
-                } else {
-                    showErrorToast("Video not found")
-                }
-            })
-            binding.viewpager.adapter = adapter
-            setupViewPager()
+
+            // DYNAMIC REORDERING: Last -> First -> Second -> ... -> Last
+            reorderedVideos = reorderVideosDynamically(allVideos)
+
+            // Setup ViewPager with reordered videos
+            setupVideoViewPager()
         }
     }
 
+    /**
+     * Dynamically reorder videos: Last -> First -> Second -> ... -> Last
+     * Works with ANY number of videos (1, 2, 3, 4, 5, 8, 10, etc.)
+     */
+    private fun reorderVideosDynamically(originalVideos: List<VideoLink>): List<VideoLink> {
+        if (originalVideos.isEmpty()) return emptyList()
+
+        // For single video, show it only once
+        if (originalVideos.size == 1) {
+            return listOf(originalVideos[0])
+        }
+
+        val reorderedList = mutableListOf<VideoLink>()
+
+        // Add last video first
+        val lastVideo = originalVideos.last()
+        reorderedList.add(lastVideo)
+
+        // Add all videos except last
+        reorderedList.addAll(originalVideos.dropLast(1))
+
+        // Add last video again at the end
+        reorderedList.add(lastVideo)
+
+        return reorderedList
+    }
+
+    /**
+     * Setup ViewPager with reordered videos and auto-play
+     */
+    private fun setupVideoViewPager() {
+        // Create adapter with reordered videos
+        videoPagerAdapter = UserImagePagerAdapter(
+            displayVideos = reorderedVideos,
+            originalVideos = allVideos,
+            onImageClick = { videoItem ->
+                // Handle image click - navigate to full screen
+                navigateToFullScreenVideo(videoItem.link)
+            },
+            onFullScreenClick = { videoItem ->
+                // Handle full screen click
+                navigateToFullScreenVideo(videoItem.link)
+            },
+            onPlaybackStateChanged = { isPlaying ->
+//                // Update UI based on playback state
+//                updateUIBasedOnPlayback(isPlaying)
+            }
+        )
+
+        binding.viewpager.adapter = videoPagerAdapter
+        binding.viewpager.setCurrentItem(0, false)
+
+        // 🔥 IMPORTANT: Get internal RecyclerView for adapter to find ViewHolders
+        pagerRecyclerView = binding.viewpager.getChildAt(0) as? RecyclerView
+
+        // Setup dot indicators
+        setupViewPager()
+
+        // 🔥 Auto-play FIRST video
+        pagerRecyclerView?.post {
+            videoPagerAdapter?.playVideoAt(0, pagerRecyclerView!!)
+        }
+
+        // Log the order for debugging
+        logVideoOrder()
+    }
+
+    /**
+     * Update UI based on video playback state
+     */
+//    private fun updateUIBasedOnPlayback(isPlaying: Boolean) {
+//        when {
+//            isPlaying -> {
+//                // Video is playing - disable buttons to prevent conflicts
+//                binding.btnCompleted.isEnabled = false
+//                binding.btnAttempted.isEnabled = false
+//                binding.ivPlus.isEnabled = false
+//                binding.ivMinus.isEnabled = false
+//                binding.etCount.isEnabled = false
+//            }
+//            else -> {
+//                // Video is stopped - enable all controls
+//                binding.btnCompleted.isEnabled = true
+//                binding.btnAttempted.isEnabled = true
+//                binding.ivPlus.isEnabled = true
+//                binding.ivMinus.isEnabled = true
+//                binding.etCount.isEnabled = true
+//            }
+//        }
+//    }
+
+    /**
+     * Navigate to full screen video
+     */
+    private fun navigateToFullScreenVideo(videoUrl: String?) {
+        if (!videoUrl.isNullOrEmpty()) {
+            val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+                putExtra("fromWhere", "video")
+                putExtra("videoUrl", videoUrl)
+            }
+            startActivity(intent)
+        } else {
+            showErrorToast("Video URL not found")
+        }
+    }
+
+    /**
+     * Log the video order for debugging
+     */
+    private fun logVideoOrder() {
+        Log.d("FinalProgress", "Original videos (${allVideos.size}):")
+        allVideos.forEachIndexed { index, video ->
+            Log.d("FinalProgress", "  [$index]: ${video.link}")
+        }
+
+        Log.d("FinalProgress", "Reordered videos (${reorderedVideos.size}):")
+        reorderedVideos.forEachIndexed { index, video ->
+            val originalIndex = allVideos.indexOf(video)
+            Log.d("FinalProgress", "  [$index] -> original[$originalIndex]: ${video.link}")
+        }
+    }
 
     /**
      * Method to initialize click
      */
-
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
-                R.id.ivProgress -> {
+                R.id.ivProgress, R.id.ivClosePlayer -> {
                     requireActivity().finish()
-                }
-
-                R.id.ivClosePlayer -> {
-                    stopLocalVideo()
                 }
 
                 R.id.ivPlus -> {
@@ -136,78 +270,27 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
                 }
 
                 R.id.btnCompleted -> {
+                    if (binding.etCount.text.toString().trim().toInt() <= 0) {
+                        showErrorToast("Please add at least 1 rep to continue.")
+                        return@observe
+                    }
                     apiCall("completed")
                 }
 
                 R.id.btnAttempted -> {
+                    if (binding.etCount.text.toString().trim().toInt() <= 0) {
+                        showErrorToast("Please add at least 1 rep to continue.")
+                        return@observe
+                    }
                     apiCall("attempted")
                 }
-
-                R.id.ivMAx -> {
-                    if (allVideos.isNotEmpty()) {
-                        val currentItem = binding.viewpager.currentItem
-                        val videoUrl = allVideos[currentItem].link
-                        if (!videoUrl.isNullOrEmpty()) {
-                            val intent = Intent(requireContext(), CommonActivity::class.java)
-                            intent.putExtra("fromWhere", "video")
-                            intent.putExtra("videoUrl", videoUrl)
-                            startActivity(intent)
-                        } else {
-                            showErrorToast("Video URL not found")
-                        }
-                    }
-                }
-
             }
         }
-    }
-
-    @OptIn(UnstableApi::class)
-    private fun playLocalVideo(url: String) {
-        player?.stop()
-        player?.release()
-
-        binding.localPlayerView.visibility = View.VISIBLE
-        binding.ivClosePlayer.visibility = View.VISIBLE
-        binding.viewpager.visibility = View.INVISIBLE
-
-        val videoUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
-
-        val dataSourceFactory = DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-
-        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(videoUrl))
-
-        player = ExoPlayer.Builder(requireContext()).build().apply {
-            setMediaSource(mediaSource)
-            prepare()
-            playWhenReady = true
-            repeatMode = Player.REPEAT_MODE_ALL
-            addListener(object : Player.Listener {
-                override fun onPlayerError(error: PlaybackException) {
-                    super.onPlayerError(error)
-                    showErrorToast("Playback error: ${error.localizedMessage}")
-                }
-            })
-        }
-        binding.localPlayerView.player = player
-    }
-
-    private fun stopLocalVideo() {
-        player?.stop()
-        player?.release()
-        player = null
-        binding.localPlayerView.player = null
-        binding.localPlayerView.visibility = View.GONE
-        binding.ivClosePlayer.visibility = View.GONE
-        binding.viewpager.visibility = View.VISIBLE
     }
 
     /**
      * Method to api call
      */
-
     private fun apiCall(status: String) {
         val data = HashMap<String, Any>()
         if (!trackDetailId.isNullOrEmpty() && !stepId.isNullOrEmpty()) {
@@ -222,7 +305,6 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
             viewModel.userProgressApi(Constants.POST_PROGRESS, data)
         }
     }
-
 
     /** api response observer ***/
     private fun initObserver() {
@@ -261,38 +343,53 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
         }
     }
 
-
     /*** setup view pager ***/
     private fun setupViewPager() {
         val pageCount = binding.viewpager.adapter?.itemCount ?: 0
 
         if (pageCount <= 1) {
-            //  Only one image → show static dot
-            binding.staticDot.visibility = View.VISIBLE
+            // Single video - hide indicators completely
+            binding.staticDot.visibility = View.GONE
             binding.dotsIndicator.visibility = View.GONE
         } else {
-            //  Multiple images → use animated indicator
+            // Multiple videos - show animated indicator
             binding.staticDot.visibility = View.GONE
             binding.dotsIndicator.visibility = View.VISIBLE
-        }
-        binding.dotsIndicator.apply {
-            setSliderColor(
-                ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
-                ContextCompat.getColor(requireActivity(), R.color.white)
-            )
-            setSliderWidth(
-                resources.getDimension(com.intuit.sdp.R.dimen._8sdp),
-                resources.getDimension(com.intuit.sdp.R.dimen._36sdp)
-            )
-            setSliderHeight(resources.getDimension(com.intuit.sdp.R.dimen._8sdp))
-            setSlideMode(IndicatorSlideMode.SCALE)
-            setIndicatorStyle(IndicatorStyle.ROUND_RECT)
-            setPageSize(pageCount)
-            notifyDataChanged()
-            setupWithViewPager(binding.viewpager)
-        }
-    }
 
+            binding.dotsIndicator.apply {
+                setSliderColor(
+                    ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
+                    ContextCompat.getColor(requireActivity(), R.color.white)
+                )
+                setSliderWidth(
+                    resources.getDimension(com.intuit.sdp.R.dimen._8sdp),
+                    resources.getDimension(com.intuit.sdp.R.dimen._36sdp)
+                )
+                setSliderHeight(resources.getDimension(com.intuit.sdp.R.dimen._8sdp))
+                setSlideMode(IndicatorSlideMode.SCALE)
+                setIndicatorStyle(IndicatorStyle.ROUND_RECT)
+                setPageSize(pageCount)
+                notifyDataChanged()
+                setupWithViewPager(binding.viewpager)
+            }
+        }
+
+        // Add page change callback for auto-play on swipe
+        binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // Auto-play video when page changes
+                pagerRecyclerView?.post {
+                    videoPagerAdapter?.playVideoAt(position, pagerRecyclerView!!)
+                }
+
+                val currentVideo = reorderedVideos.getOrNull(position)
+                val originalIndex = allVideos.indexOf(currentVideo)
+                Log.d("FinalProgress", "Position $position → original index $originalIndex")
+            }
+        })
+    }
 
     /**
      * Initialize adapter
@@ -301,30 +398,10 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
         stepAdapter = SimpleRecyclerViewAdapter(R.layout.step_rv_item, BR.bean) { v, m, _ ->
             when (v?.id) {
                 R.id.clProgress -> {
-
+                    // Handle step item click if needed
                 }
             }
-
         }
         binding.rvStep.adapter = stepAdapter
     }
-
-    private var screenStartTime: Long = 0L
-
-    override fun onResume() {
-        super.onResume()
-        screenStartTime = System.currentTimeMillis()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        player?.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        player?.release()
-        player = null
-    }
-
 }

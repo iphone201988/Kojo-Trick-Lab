@@ -1,9 +1,15 @@
 package com.tech.kojo.ui.dashboard.notification
 
+import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,12 +20,12 @@ import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.base.SimpleRecyclerViewAdapter
 import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.GetNotificationData
-import com.tech.kojo.data.model.GetProfileResponse
 import com.tech.kojo.data.model.Notification
 import com.tech.kojo.data.model.NotificationData
 import com.tech.kojo.databinding.FragmentNotificationNewBinding
+import com.tech.kojo.databinding.ItemLayoutInnerNotificationBinding
 import com.tech.kojo.databinding.ItemLayoutNotificationBinding
-import com.tech.kojo.ui.dashboard.community.adapter.FeedItem
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
@@ -29,22 +35,77 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-
 @AndroidEntryPoint
-class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>(){
+class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
 
     private val viewModel: NotificationVm by viewModels()
 
     private lateinit var notificationAdapter: SimpleRecyclerViewAdapter<Notification, ItemLayoutNotificationBinding>
-    private var notificationList = ArrayList<Notification>()
 
-
+    // Pagination variables
+    private var currentPage = 1
+    private var totalPages = 1
     private var isLoading = false
     private var isLastPage = false
+    private var isRefreshing = false
 
-    private var currentPage = 1
-    private var isProgress = false
+    // Progress bar for pagination
+    private var progressBar: ProgressBar? = null
 
+
+    companion object {
+        var isSubscribed: Boolean?=false
+        @BindingAdapter("childNotificationAdapter")
+        @JvmStatic
+        fun childNotificationAdapter(view: RecyclerView, notification: List<NotificationData>?) {
+            val layoutManager = LinearLayoutManager(view.context)
+            view.layoutManager = layoutManager
+
+            val childNotificationAdapter =
+                SimpleRecyclerViewAdapter<NotificationData, ItemLayoutInnerNotificationBinding>(
+                    R.layout.item_layout_inner_notification, BR.bean
+                ) { v, m, _ ->
+                    when (v.id) {
+                        R.id.clMain -> {
+                            Log.d("NotificationClick", "Item clicked: ${m.type}")
+                            when (m.type) {
+                                "NEW_POST", "POST_LIKE", "POST_COMMENT" -> {
+                                    val intent = Intent(v.context, CommonActivity::class.java)
+                                    intent.putExtra("fromWhere", "communityDetail")
+                                    intent.putExtra("postId", m.data?.postId)
+                                    v.context.startActivity(intent)
+                                }
+                                "SESSION_REMINDER" -> {
+                                    // Handle session reminder
+                                }
+                                "CLIP_REVIEW" -> {
+                                    // Handle clip review
+                                }
+                                "NEW_VIDEO"->{
+
+                                }
+                                "NEW_TRICK" -> {
+                                    if (isSubscribed==false){
+                                        Toast.makeText(v.context,"You don't have any subscription",
+                                            Toast.LENGTH_SHORT).show()
+                                        return@SimpleRecyclerViewAdapter
+                                    }
+                                        val intent = Intent(v.context, CommonActivity::class.java)
+                                        intent.putExtra("fromWhere", "homeProgress")
+                                        intent.putExtra("trackDetailId", m.data?.trickDataId)
+                                        v.context.startActivity(intent)
+                                }
+                                else -> {
+                                    Log.e("childAdapter", "childNotificationAdapter: ${m.type} clicked")
+                                }
+                            }
+                        }
+                    }
+                }
+            view.adapter = childNotificationAdapter
+            childNotificationAdapter.list = notification
+        }
+    }
 
     override fun getLayoutResource(): Int {
         return R.layout.fragment_notification_new
@@ -55,34 +116,162 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>(){
     }
 
     override fun onCreateView(view: View) {
-        binding.clCommon.tvHeader.text = "Notification"
-        getNotificationList()
+        setupUI()
+        setupSwipeRefresh()
+        setupPagination()
         initAdapter()
-        // click
         initOnClick()
-        sharedPrefManager.setNotificationCount(0)
-        // pagination
-        pagination()
-
-        // refresh
-        binding.ssPullRefresh.setColorSchemeResources(
-            ContextCompat.getColor(requireContext(), R.color.colorPrimary)
-        )
-        binding.ssPullRefresh.setOnRefreshListener {
-            Handler().postDelayed({
-                binding.ssPullRefresh.isRefreshing = false
-                isProgress = true
-                getNotificationList()
-            }, 2000)
-        }
-
-        // observer
         initObserver()
+        isSubscribed = sharedPrefManager.getLoginData()?.isSubscription
+        // Initial load
+        loadFirstPage()
+
+        // Clear notification count
+        sharedPrefManager.setNotificationCount(0)
     }
 
+    private fun setupUI() {
+        binding.clCommon.tvHeader.text = "Notification"
+
+        // Add progress bar at the bottom of RecyclerView for pagination
+        addPaginationProgressBar()
+    }
+
+    private fun addPaginationProgressBar() {
+        // Create progress bar programmatically
+        progressBar = ProgressBar(requireContext()).apply {
+            layoutParams = RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT
+            )
+            visibility = View.GONE
+        }
+
+        // Add to your layout if needed, or handle in adapter
+    }
 
     /**
-     * Method to initialize click
+     * Setup swipe refresh layout
+     */
+    private fun setupSwipeRefresh() {
+        binding.ssPullRefresh.apply {
+            setColorSchemeResources(
+                ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+            )
+            setOnRefreshListener {
+                refreshData()
+            }
+        }
+    }
+
+    /**
+     * Refresh data - reset everything and load first page
+     */
+    private fun refreshData() {
+        // Reset pagination state
+        currentPage = 1
+        totalPages = 1
+        isLoading = false
+        isLastPage = false
+        isRefreshing = true
+
+        // Clear existing list
+        notificationAdapter.clearList()
+
+        // Load first page
+        loadFirstPage()
+
+        // Automatically hide refresh after timeout
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (binding.ssPullRefresh.isRefreshing) {
+                binding.ssPullRefresh.isRefreshing = false
+                isRefreshing = false
+            }
+        }, 5000)
+    }
+
+    /**
+     * Load first page of notifications
+     */
+    private fun loadFirstPage() {
+        currentPage = 1
+        val request = HashMap<String, Any>()
+        request["page"] = currentPage
+        viewModel.getNotificationApi(request, Constants.GET_NOTIFICATION)
+    }
+
+    /**
+     * Setup pagination scroll listener
+     */
+    private fun setupPagination() {
+        binding.rvNotification.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+
+                // Debug logging
+                Log.d("Pagination", "=== Pagination Debug ===")
+                Log.d("Pagination", "isLoading: $isLoading")
+                Log.d("Pagination", "isLastPage: $isLastPage")
+                Log.d("Pagination", "currentPage: $currentPage")
+                Log.d("Pagination", "totalPages: $totalPages")
+                Log.d("Pagination", "totalItemCount: $totalItemCount")
+                Log.d("Pagination", "lastVisibleItem: $lastVisibleItemPosition")
+
+                // Check if we need to load more
+                val isLastItemVisible = lastVisibleItemPosition == totalItemCount - 1
+                val hasMorePages = currentPage < totalPages
+                val shouldLoadMore = !isLoading && !isLastPage && isLastItemVisible && hasMorePages
+
+                Log.d("Pagination", "isLastItemVisible: $isLastItemVisible")
+                Log.d("Pagination", "hasMorePages: $hasMorePages")
+                Log.d("Pagination", "shouldLoadMore: $shouldLoadMore")
+
+                if (shouldLoadMore) {
+                    loadMoreItems()
+                }
+            }
+        })
+    }
+
+    /**
+     * Load more items for pagination
+     */
+    private fun loadMoreItems() {
+        isLoading = true
+        currentPage++
+
+        Log.d("Pagination", "Loading more items. Page: $currentPage")
+
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        viewModel.getNotificationApi(data, Constants.GET_NOTIFICATION)
+
+        // Show progress at the bottom
+        showLoadingProgress()
+    }
+
+    /**
+     * Show loading indicator at the bottom
+     */
+    private fun showLoadingProgress() {
+        progressBar?.visibility = View.VISIBLE
+    }
+
+    /**
+     * Hide loading indicator at the bottom
+     */
+    private fun hideLoadingProgress() {
+        progressBar?.visibility = View.GONE
+    }
+
+    /**
+     * Initialize click listeners
      */
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
@@ -90,71 +279,168 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>(){
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
             }
         }
     }
 
     /**
-     * handle observer
+     * Initialize adapter
      */
+    private fun initAdapter() {
+        notificationAdapter = SimpleRecyclerViewAdapter<Notification, ItemLayoutNotificationBinding>(
+                R.layout.item_layout_notification,
+                BR.bean
+            ) { v, m, pos ->
 
+        }
+
+        binding.rvNotification.adapter = notificationAdapter
+    }
+
+    /**
+     * Initialize observers
+     */
     private fun initObserver() {
-        viewModel.observeCommon.observe(viewLifecycleOwner) {
-            when (it?.status) {
+        viewModel.observeCommon.observe(viewLifecycleOwner) { response ->
+            when (response?.status) {
                 Status.LOADING -> {
-                    if (!isProgress) {
+                    // Only show loading dialog for first page and not during refresh
+                    if (currentPage == 1 && !isRefreshing) {
                         showLoading()
                     }
                 }
 
                 Status.SUCCESS -> {
-                    when (it.message) {
+                    when (response.message) {
                         "getNotificationApi" -> {
-                            runCatching {
-                                val jsonData = it.data?.toString().orEmpty()
-                                val model: GetNotificationData? = BindingUtils.parseJson(jsonData)
+                            // Parse the response data
+                            val jsonData = response.data?.toString().orEmpty()
+                            val model: GetNotificationData? = BindingUtils.parseJson(jsonData)
 
-                                if (model != null) {
-
-                                    val notifications = model.data.orEmpty()
-                                    val feedItems = groupNotificationsByDate(notifications)
-
-                                    isLoading = false
-                                    isLastPage = false
-                                    isProgress = true
-
-                                    if (currentPage == 1) {
-                                        notificationAdapter.setList(feedItems)
-                                    } else {
-                                        notificationAdapter.addToList(feedItems)
-                                    }
-
-                                    isLastPage = currentPage == model.pagination?.totalPages
-
-                                    binding.clEmpty.visibility =
-                                        if (notificationAdapter.list.isNotEmpty()) View.GONE else View.VISIBLE
-                                }
-
-                            }.onFailure { e ->
-                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
-                                showErrorToast(e.message.toString())
-                            }.also {
-                                hideLoading()
+                            if (model != null) {
+                                handleNotificationResponse(model)
+                            } else {
+                                handleParseError()
                             }
                         }
                     }
                 }
 
                 Status.ERROR -> {
-                    hideLoading()
-                    showErrorToast(it.message.toString())
+                    handleError(response.message.toString())
                 }
 
                 else -> {
-
+                    // Handle other states if needed
                 }
             }
+        }
+    }
+
+    /**
+     * Handle notification API response
+     */
+    private fun handleNotificationResponse(response: GetNotificationData) {
+        hideLoading()
+        hideLoadingProgress()
+
+        // Stop refresh if it's running
+        if (binding.ssPullRefresh.isRefreshing) {
+            binding.ssPullRefresh.isRefreshing = false
+        }
+
+        runCatching {
+            val notifications = response.data.orEmpty()
+            val groupedNotifications = groupNotificationsByDate(notifications)
+
+            // Update pagination info from API response with null safety
+            val currentPageFromResponse = response.page ?: 1
+            totalPages = response.totalPages ?: 1
+
+            Log.d("Pagination", "API Response - Current Page: $currentPageFromResponse, Total Pages: $totalPages")
+            Log.d("Pagination", "Received ${notifications.size} notifications")
+
+            // Update list based on page
+            if (currentPageFromResponse == 1) {
+                notificationAdapter.setList(groupedNotifications)
+                Log.d("Pagination", "Set new list with ${groupedNotifications.size} groups")
+            } else {
+                val startPosition = notificationAdapter.list.size
+                notificationAdapter.addToList(groupedNotifications)
+                Log.d("Pagination", "Added ${groupedNotifications.size} groups at position $startPosition")
+            }
+
+            // Update pagination state with proper null safety
+            isLoading = false
+            isLastPage = currentPageFromResponse >= totalPages
+
+            Log.d("Pagination", "After update - isLoading: $isLoading, isLastPage: $isLastPage")
+
+            // Show/hide empty view
+            binding.clEmpty.visibility =
+                if (notificationAdapter.list.isEmpty()) View.VISIBLE else View.GONE
+
+        }.onFailure { e ->
+            Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+            handleApiError(e)
+        }.also {
+            // Reset refresh flag
+            isRefreshing = false
+        }
+    }
+
+    /**
+     * Handle parse error
+     */
+    private fun handleParseError() {
+        Log.e("NotificationError", "Failed to parse notification data")
+        showErrorToast("Failed to parse notification data")
+
+        // Stop refresh if it's running
+        if (binding.ssPullRefresh.isRefreshing) {
+            binding.ssPullRefresh.isRefreshing = false
+        }
+
+        isRefreshing = false
+        isLoading = false
+        hideLoadingProgress()
+    }
+
+    /**
+     * Handle API error
+     */
+    private fun handleApiError(e: Throwable) {
+        showErrorToast(e.message.toString())
+
+        // Reset pagination state on error
+        if (currentPage > 1) {
+            currentPage--
+            isLoading = false
+        }
+
+        hideLoadingProgress()
+    }
+
+    /**
+     * Handle error
+     */
+    private fun handleError(message: String) {
+        hideLoading()
+        hideLoadingProgress()
+        showErrorToast(message)
+
+        // Stop refresh if it's running
+        if (binding.ssPullRefresh.isRefreshing) {
+            binding.ssPullRefresh.isRefreshing = false
+        }
+
+        // Reset states
+        isRefreshing = false
+        isLoading = false
+
+        // If error occurred while loading more, revert page count
+        if (currentPage > 1) {
+            currentPage--
         }
     }
 
@@ -162,9 +448,12 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>(){
         notifications: List<NotificationData>
     ): List<Notification> {
 
+        if (notifications.isEmpty()) {
+            return emptyList()
+        }
+
         val inputFormat = SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            Locale.getDefault()
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()
         ).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
@@ -176,34 +465,38 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>(){
             add(Calendar.DAY_OF_YEAR, -1)
         }
 
-        val grouped = notifications
-            .filterNotNull()
-            .groupBy { notification ->
-
-                val date = try {
-                    notification.createdAt?.let { inputFormat.parse(it) }
-                } catch (e: Exception) {
-                    null
-                }
-
-                if (date != null) {
-                    val cal = Calendar.getInstance().apply { time = date }
-
-                    when {
-                        isSameDay(cal, today) -> "Today"
-                        isSameDay(cal, yesterday) -> "Yesterday"
-                        else -> outputFormat.format(date)
-                    }
-                } else {
-                    ""
-                }
+        val grouped = notifications.filterNotNull().groupBy { notification ->
+            val date = try {
+                notification.createdAt?.let { inputFormat.parse(it) }
+            } catch (e: Exception) {
+                null
             }
+
+            if (date != null) {
+                val cal = Calendar.getInstance().apply { time = date }
+
+                when {
+                    isSameDay(cal, today) -> "Today"
+                    isSameDay(cal, yesterday) -> "Yesterday"
+                    else -> outputFormat.format(date)
+                }
+            } else {
+                "Unknown"
+            }
+        }
 
         return grouped.map { entry ->
             Notification(
                 date = entry.key,
                 list = entry.value
             )
+        }.sortedByDescending { notification ->
+            // Sort by date (most recent first)
+            when (notification.date) {
+                "Today" -> 3
+                "Yesterday" -> 2
+                else -> 1
+            }
         }
     }
 
@@ -212,52 +505,8 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>(){
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
-    /**
-     * home adapter handel pagination
-     */
-    private fun pagination() {
-        binding.rvNotification.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (!isLoading && !isLastPage) {
-                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
-                        loadMoreItems()
-                    }
-                }
-            }
-        })
-    }
-
-    /**
-     *  load more function call
-     **/
-    private fun loadMoreItems() {
-        isProgress = true
-        isLoading = true
-        currentPage++
-        val data = HashMap<String, Any>()
-        data["page"] = currentPage
-        viewModel.getNotificationApi(data, Constants.GET_POST)
-    }
-
-
-    private fun initAdapter() {
-        notificationAdapter =
-            SimpleRecyclerViewAdapter(R.layout.item_layout_notification, BR.bean) { v, m, pos ->
-
-            }
-        binding.rvNotification.adapter = notificationAdapter
-        notificationAdapter.list = notificationList
-        notificationAdapter.notifyDataSetChanged()
-    }
-
-    private fun getNotificationList(){
-        val request= HashMap<String, Any>()
-        request["page"]=1
-        viewModel.getNotificationApi(request, Constants.GET_NOTIFICATION)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        progressBar = null
     }
 }

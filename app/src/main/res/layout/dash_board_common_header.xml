@@ -35,9 +35,9 @@
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
             app:layout_constraintEnd_toEndOf="parent"
+            setNotificationIcon="@{vm.notificationCount}"
             android:onClick="@{v->vm.onClick(v)}"
             android:layout_marginEnd="@dimen/_18sdp"
-            setNotificationIcon="@{vm.notificationCount}"
             app:layout_constraintBottom_toBottomOf="@+id/ivBack"
             app:layout_constraintTop_toTopOf="@+id/ivBack"
             android:src="@drawable/ic_no_notifications"/>

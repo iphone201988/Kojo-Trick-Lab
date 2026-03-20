@@ -88,4 +88,23 @@ class PersonalBestsFragmentVM @Inject constructor(val apiHelper: ApiHelper): Bas
             }
         }
     }
+
+    // edit Profile api
+    fun updatePersonalBest(url: String, request: List<HashMap<String, Any>>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            observeCommon.postValue(Resource.loading(null))
+            runCatching {
+                val response = apiHelper.apiPostForRawBodyList(url, request)
+                if (response.isSuccessful) {
+                    observeCommon.postValue(Resource.success("updatePersonalBest", response.body()))
+                } else {
+                    val errorMsg = handleErrorResponse(response.errorBody(), response.code())
+                    observeCommon.postValue(Resource.error(errorMsg, null))
+                }
+            }.onFailure { e ->
+                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                observeCommon.postValue(Resource.error("${e.message}", null))
+            }
+        }
+    }
 }

@@ -93,16 +93,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                                     binding.ivCircle1.visibility = View.GONE
                                     binding.ivCircle.visibility = View.VISIBLE
                                     binding.ivProfile.visibility = View.VISIBLE
-
                                     val imageUrl = when {
-                                        profile.profilePicture?.startsWith("http") == true -> profile.profilePicture
-                                        profile.profilePicture != null -> Constants.BASE_URL_IMAGE + profile.profilePicture
-                                        else -> null
+                                        profile?.profilePicture.isNullOrEmpty() -> null
+                                        profile?.profilePicture?.startsWith("http") == true -> profile.profilePicture
+                                        else -> Constants.BASE_URL_IMAGE + profile?.profilePicture
                                     }
-                                    imageUrl?.let { url ->
-                                        Glide.with(requireContext()).load(url)
-                                            .placeholder(R.drawable.progress_animation_small)
-                                            .error(R.drawable.holder_dummy).into(binding.ivProfile)
+
+                                    if (imageUrl != null) {
+                                        Glide.with(requireContext())
+                                            .load(imageUrl)
+                                            .placeholder(R.drawable.holder_dummy)
+                                            .error(R.drawable.holder_dummy)
+                                            .into(binding.ivProfile)
+                                    } else {
+                                        binding.ivProfile.setImageResource(R.drawable.holder_dummy)
                                     }
 
                                     DashBoardActivity.changeImage.postValue(
@@ -187,16 +191,20 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             binding.ivCircle1.visibility = View.GONE
             binding.ivCircle.visibility = View.VISIBLE
             binding.ivProfile.visibility = View.VISIBLE
-
             val imageUrl = when {
-                currentUser.profilePicture?.startsWith("http") == true -> currentUser.profilePicture
-                currentUser.profilePicture != null -> Constants.BASE_URL_IMAGE + currentUser.profilePicture
-                else -> null
+                currentUser?.profilePicture.isNullOrEmpty() -> null
+                currentUser?.profilePicture?.startsWith("http") == true -> currentUser.profilePicture
+                else -> Constants.BASE_URL_IMAGE + currentUser?.profilePicture
             }
-            imageUrl?.let { url ->
-                Glide.with(requireContext()).load(url)
-                    .placeholder(R.drawable.progress_animation_small).error(R.drawable.holder_dummy)
+
+            if (imageUrl != null) {
+                Glide.with(requireContext())
+                    .load(imageUrl)
+                    .placeholder(R.drawable.holder_dummy)
+                    .error(R.drawable.holder_dummy)
                     .into(binding.ivProfile)
+            } else {
+                binding.ivProfile.setImageResource(R.drawable.holder_dummy)
             }
 
             if (!currentUser.instagramLink.isNullOrEmpty()) {
@@ -227,7 +235,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                     )
                 )
             }
-            chipStatus(list)
+            if(list.isNotEmpty()){
+                binding.tvSocialMediaLinks.visibility = View.VISIBLE
+                binding.chipGroupStatus.visibility = View.VISIBLE
+                chipStatus(list)
+            }
+            else{
+                binding.tvSocialMediaLinks.visibility = View.GONE
+                binding.chipGroupStatus.visibility = View.GONE
+            }
+
 
             DashBoardActivity.changeImage.postValue(
                 Resource.success(

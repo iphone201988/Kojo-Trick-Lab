@@ -38,6 +38,13 @@ interface ApiService {
         @Body data: HashMap<String, Any>
     ): Response<JsonObject>
 
+    @POST
+    suspend fun apiPostForRawBodyList(
+        @Header("Authorization") token: String,
+        @Url url: String,
+        @Body data: @JvmSuppressWildcards List<HashMap<String, Any>>
+    ): Response<JsonObject>
+
     @DELETE
     suspend fun apiPostForRawQuery(
         @Header("Authorization") token: String,

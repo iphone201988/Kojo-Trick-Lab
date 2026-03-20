@@ -122,6 +122,12 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                     requireActivity().finish()
                 }
 
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
+
                 R.id.tvViewAll -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
                     intent.putExtra("fromWhere", "allSession")
@@ -284,10 +290,6 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initView() {
-        val data = HashMap<String, Any>()
-        data["month"] = currentMonth
-        data["year"] = currentYear
-        viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
 
         // adapter - load calendar after API response
         // The calendar will be loaded in the observer after month API success
@@ -554,7 +556,7 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
             requireContext(), R.layout.add_session_bottom_item
         ) { view ->
             when (view?.id) {
-                R.id.ivSelectColor -> {
+                R.id.ivSelectColor,R.id.etSelectColorTag -> {
                     initDialog()
                 }
 
@@ -670,6 +672,10 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
 
     override fun onResume() {
         super.onResume()
+        val data = HashMap<String, Any>()
+        data["month"] = currentMonth
+        data["year"] = currentYear
+        viewModel.getSessionMonthApi(Constants.SESSION_PLANNER_MONTH, data)
         viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
     }
 }

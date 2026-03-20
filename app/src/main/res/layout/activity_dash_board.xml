@@ -275,6 +275,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Community"
+                    android:singleLine="true"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/_10ssp"
                     style="@style/TextView_600_SemiBold_Quicksand"

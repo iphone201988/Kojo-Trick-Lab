@@ -53,6 +53,7 @@
             android:paddingVertical="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:onClick="@{v->vm.onClick(v)}"
+            android:visibility="gone"
             android:background="@drawable/et_bg"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@id/tvTrack"

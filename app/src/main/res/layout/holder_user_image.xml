@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -11,31 +11,70 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
->
-
+        android:layout_height="match_parent">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivUser"
             videoThumbNail="@{bean.link}"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_200sdp"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/localPlayerView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:use_controller="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivVideoPlay"
             android:layout_width="@dimen/_38sdp"
             android:layout_height="@dimen/_38sdp"
+            android:src="@drawable/video_play"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/ivUser"
             app:layout_constraintEnd_toEndOf="@+id/ivUser"
             app:layout_constraintStart_toStartOf="@+id/ivUser"
-            app:layout_constraintTop_toTopOf="@+id/ivUser"
-            app:srcCompat="@drawable/video_play" />
+            app:layout_constraintTop_toTopOf="@+id/ivUser" />
 
+        <LinearLayout
+            android:id="@+id/ivFullscreen"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_margin="@dimen/_8sdp"
+            android:background="@drawable/yellow_bg"
+            android:backgroundTint="#80B0B0B0"
+            android:gravity="center"
+           app:layout_constraintTop_toTopOf="@id/ivUser"
+            app:layout_constraintEnd_toEndOf="@+id/ivUser">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/maximize"
+            android:tint="@color/blue"
+            android:visibility="visible"
+            />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivClosePlayer"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_margin="@dimen/_10sdp"
+            android:src="@drawable/baseline_cancel_24"
+            android:tint="#80B0B0B0"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/localPlayerView"
+            app:layout_constraintTop_toTopOf="@+id/localPlayerView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

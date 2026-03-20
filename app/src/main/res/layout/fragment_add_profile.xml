@@ -25,7 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_207sdp"
             android:onClick="@{v->vm.onClick(v)}"
-            android:src="@drawable/skin_first"
             android:scaleType="fitXY"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

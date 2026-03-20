@@ -21,6 +21,13 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService, priv
         return apiService.apiPostForRawBody(getTokenFromSPref(), url, request)
     }
 
+    override suspend fun apiPostForRawBodyList(
+        url: String,
+        request: List<HashMap<String, Any>>,
+    ): Response<JsonObject> {
+        return apiService.apiPostForRawBodyList(getTokenFromSPref(), url, request)
+    }
+
     override suspend fun apiPostForRawQuery(
         url: String,
         request: HashMap<String, Any>,

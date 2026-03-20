@@ -4,17 +4,30 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.media.ExifInterface
+import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.PopupWindow
 import androidx.annotation.RequiresApi
@@ -50,6 +63,8 @@ import com.tech.kojo.data.model.UserIdProfile
 import com.tech.kojo.databinding.ItemLayoutInnerNotificationBinding
 import com.tech.kojo.databinding.RvMyTrickInnerItemBinding
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -258,6 +273,21 @@ object BindingUtils {
     }
 
 
+    fun hasCameraPermission(context: Context): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            context, Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun createImageFile(context: Context): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", ".jpg", storageDir
+        )
+    }
+
+
     fun hasPermissions(context: Context?, permissions: Array<String>?): Boolean {
         if (context != null && permissions != null) {
             for (permission in permissions) {
@@ -296,6 +326,27 @@ object BindingUtils {
             View.VISIBLE
         } else {
             View.GONE
+        }
+    }
+
+    @BindingAdapter("hideIfCompleted")
+    @JvmStatic
+    fun hideIfCompleted(view: ConstraintLayout, status: String?) {
+        view.visibility = if (status == "completed") {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+    }
+
+    @BindingAdapter("showPersonalBestValue")
+    @JvmStatic
+    fun showPersonalBestValue(view: AppCompatTextView, value: Int?) {
+        if (value!=null){
+            view.text=value.toString()
+        }
+        else{
+            view.text ="0"
         }
     }
 
@@ -388,37 +439,6 @@ object BindingUtils {
     }
 
 
-    @BindingAdapter("childNotificationAdapter")
-    @JvmStatic
-    fun childNotificationAdapter(view: RecyclerView, notification: List<NotificationData>?) {
-
-        // Create and set a LayoutManager for the inner RecyclerView
-        val layoutManager = LinearLayoutManager(view.context)
-        view.layoutManager = layoutManager
-        view.context
-        val notificationAdapter =
-            SimpleRecyclerViewAdapter<NotificationData, ItemLayoutInnerNotificationBinding>(
-                R.layout.item_layout_inner_notification, BR.bean
-            ) { v, m, pos ->
-                when (v.id) {
-                    R.id.clMain -> {
-                        when (m.type) {
-                            "NEW_POST" -> {
-
-                            }
-
-                            "NEW_VIDEO" -> {
-
-                            }
-                        }
-                    }
-                }
-            }
-        view.adapter = notificationAdapter
-        notificationAdapter.list = notification
-        notificationAdapter.notifyDataSetChanged()
-
-    }
 
     inline fun <reified T> parseJson(json: String): T? {
         return try {
@@ -703,6 +723,45 @@ object BindingUtils {
         }
     }
 
+    @BindingAdapter("titleCaseFormattedWithSpace")
+    @JvmStatic
+    fun titleCaseFormattedWithSpace(textView: AppCompatTextView, text: String?) {
+
+        if (text.isNullOrBlank()) {
+            textView.text = "-"
+            return
+        }
+
+        val formatted = text
+            .replace("_", " ")
+            .replace(Regex("([a-z])([A-Z])"), "$1 $2")
+            .lowercase()
+            .split(" ")
+            .joinToString(" ") { word ->
+                word.replaceFirstChar { it.uppercase() }
+            }
+
+        textView.text = formatted
+    }
+
+    @BindingAdapter("setTextCapitalizedPersonalBest")
+    @JvmStatic
+    fun setTextCapitalizedPersonalBest(view: AppCompatTextView, text: String?) {
+
+        if (text.isNullOrBlank()) {
+            view.text = "-"
+            return
+        }
+
+        // Add space before uppercase letters (camelCase → words)
+        val formatted = text
+            .replace(Regex("([a-z])([A-Z])"), "$1 $2")
+            .replaceFirstChar { it.uppercase() }
+
+        // Add colon at end
+        view.text = "$formatted :"
+    }
+
     @BindingAdapter("formatDateForCombo")
     @JvmStatic
     fun formatDateForCombo(textView: AppCompatTextView, isoDate: String?) {
@@ -813,5 +872,193 @@ object BindingUtils {
             .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } }
     }
 
+
+    /** Compress and Rotate Image **/
+    fun compressImage(imageUri: Uri, context: Context): Uri? {
+        return try {
+            val bitmap = decodeSampledBitmapFromUri(
+                imageUri, context
+            ) // Decode with proper sampling
+            val rotatedBitmap =
+                bitmap?.let { rotateImageIfRequired(context, it, imageUri) } // Fix orientation
+
+            val outputStream = ByteArrayOutputStream()
+            rotatedBitmap?.compress(
+                Bitmap.CompressFormat.JPEG, 50, outputStream
+            ) // Compress to 50% quality
+            val byteArray = outputStream.toByteArray()
+            val file = File(context.cacheDir, "compressed_${System.currentTimeMillis()}.jpg")
+            file.writeBytes(byteArray)
+
+            Uri.fromFile(file)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    // Decode Bitmap
+    private fun decodeSampledBitmapFromUri(
+        imageUri: Uri,
+        context: Context,
+    ): Bitmap? {
+        return try {
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            context.contentResolver.openInputStream(imageUri)?.use {
+                BitmapFactory.decodeStream(it, null, options)
+            }
+            options.inSampleSize = calculateInSampleSize(options)
+            options.inJustDecodeBounds = false
+            context.contentResolver.openInputStream(imageUri)?.use {
+                BitmapFactory.decodeStream(it, null, options)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    // Calculate its sample size
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+    ): Int {
+
+        val (height: Int, width: Int) = options.run { outHeight to outWidth }
+        var inSampleSize = 1
+
+        if (height > 800 || width > 800) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+            while (halfHeight / inSampleSize >= 800 && halfWidth / inSampleSize >= 800) {
+                inSampleSize *= 2
+            }
+        }
+
+        return inSampleSize
+    }
+
+    /** Fix Image Orientation: Rotate Landscape to Portrait Only **/
+    private fun rotateImageIfRequired(context: Context, bitmap: Bitmap, imageUri: Uri): Bitmap {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(imageUri)
+            val exif = ExifInterface(inputStream!!)
+            val orientation = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL
+            )
+            inputStream.close()
+
+            val rotationAngle = when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                else -> 0
+            }
+
+            if (rotationAngle != 0) {
+                val matrix = Matrix()
+                matrix.postRotate(rotationAngle.toFloat())
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            } else {
+                bitmap
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            bitmap
+        }
+    }
+
+
+    @BindingAdapter("setStatusText")
+    @JvmStatic
+    fun setStatusText(textView: AppCompatTextView, type: String?) {
+        if (type != null) {
+            when (type) {
+                "attempted" -> {
+                    textView.text= "In Progress"
+                    textView.setTextColor(ContextCompat.getColor(textView.context, R.color.colorPrimary))
+                }
+
+                "completed" -> {
+                   textView.text ="Completed"
+                    textView.setTextColor(ContextCompat.getColor(textView.context, R.color.green_color))
+                }
+
+                "pending" -> {
+                    textView.text="Pending"
+                    textView.setTextColor(ContextCompat.getColor(textView.context, R.color.blue))
+                }
+            }
+        }
+    }
+
+    @BindingAdapter("setStatusIcon")
+    @JvmStatic
+    fun setStatusIcon(imageView: AppCompatImageView, type: String?) {
+        if (type != null) {
+            when (type) {
+                "attempted" -> {
+                    imageView.setImageResource(R.drawable.progress_icon)
+                }
+
+                "completed" -> {
+                    imageView.setImageResource(R.drawable.completed_icon)
+                }
+
+                "pending" -> {
+                    imageView.setImageResource(R.drawable.hugeicons_play)
+                }
+            }
+        }
+    }
+
+    @BindingAdapter("setBackgroundTint")
+    @JvmStatic
+    fun setBackgroundTint(imageView: LinearLayout, type: String?) {
+        if (type != null) {
+            when (type) {
+                "attempted" -> {
+                    imageView.backgroundTintList = ContextCompat.getColorStateList(imageView.context, R.color.colorPrimary)
+                }
+
+                "completed" -> {
+                    imageView.backgroundTintList = ContextCompat.getColorStateList(imageView.context, R.color.green_color)
+                }
+
+                "pending" -> {
+                    imageView.backgroundTintList = ContextCompat.getColorStateList(imageView.context, R.color.blue)
+                }
+            }
+        }
+    }
+
+    @BindingAdapter("setSpannableUnderlineBlue")
+    @JvmStatic
+    fun setSpannableUnderlineBlue(view: AppCompatTextView, text: String?) {
+        if (text.isNullOrEmpty()) {
+            view.text = "-"
+            return
+        }
+
+        val spannable = SpannableString(text)
+
+        // Underline
+        spannable.setSpan(
+            UnderlineSpan(),
+            0,
+            text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // Blue color (URL style)
+        spannable.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(view.context, android.R.color.holo_blue_dark)),
+            0,
+            text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        view.text = spannable
+    }
 
 }

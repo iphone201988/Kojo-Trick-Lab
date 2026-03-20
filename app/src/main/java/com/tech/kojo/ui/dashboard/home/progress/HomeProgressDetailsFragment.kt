@@ -3,21 +3,18 @@ package com.tech.kojo.ui.dashboard.home.progress
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
-import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.viewModels
-import androidx.media3.common.MediaItem
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.google.gson.JsonObject
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -26,19 +23,22 @@ import com.tech.kojo.base.SimpleRecyclerViewAdapter
 import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.HomeProgressApiResponse
 import com.tech.kojo.data.model.HomeProgressStep
+import com.tech.kojo.data.model.Prerequisites
 import com.tech.kojo.data.model.VideoLink
 import com.tech.kojo.databinding.FragmentHomeProgressDetailsBinding
 import com.tech.kojo.databinding.HomeProgressItemBinding
+import com.tech.kojo.databinding.PrerequistesRvItemBinding
+import com.tech.kojo.databinding.StepRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.ui.dashboard.tracker.progression_details.UserImagePagerAdapter
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showSuccessToast
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBinding>() {
@@ -47,221 +47,212 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
     private var trackDetailId: String? = null
     private var diveName: String? = null
     private var allVideos: List<VideoLink> = emptyList()
-    private var player: ExoPlayer? = null
+    private var reorderedVideos: List<VideoLink> = emptyList()
+    private var videoPagerAdapter: UserImagePagerAdapter? = null
 
-    override fun getLayoutResource(): Int {
-        return R.layout.fragment_home_progress_details
-    }
+    private var pagerRecyclerView: RecyclerView? = null
+    private lateinit var stepAdapter: SimpleRecyclerViewAdapter<Prerequisites, PrerequistesRvItemBinding>
 
+    override fun getLayoutResource(): Int = R.layout.fragment_home_progress_details
 
-    override fun getViewModel(): BaseViewModel {
-        return viewModel
-    }
+    override fun getViewModel(): BaseViewModel = viewModel
 
     override fun onCreateView(view: View) {
-        // adapter
         initProgressionDetailsAdapter()
-        // click
+        initStepAdapter()
         initOnClick()
-
-        // observer
         initObserver()
+        setupSwipeGestures()
     }
 
     override fun onResume() {
         super.onResume()
-        //view
         initView()
+        pagerRecyclerView?.post {
+            videoPagerAdapter?.playVideoAt(binding.viewpager.currentItem, pagerRecyclerView!!)
+        }
     }
 
-    /**
-     * Method to initialize view
-     */
-    private fun initView() {
-        // get argument
-        trackDetailId = arguments?.getString("trackDetailId")
+    override fun onPause() {
+        super.onPause()
+        videoPagerAdapter?.releaseAllPlayers(pagerRecyclerView!!)
+    }
 
-        //  API call
+    override fun onDestroy() {
+        super.onDestroy()
+        videoPagerAdapter?.releaseAllPlayers(pagerRecyclerView!!)
+    }
+
+    private fun initView() {
+        trackDetailId = arguments?.getString("trackDetailId")
         trackDetailId?.let { id ->
             val data = HashMap<String, Any>()
             viewModel.getTrickDataByIdApi(data, Constants.TRICKS_DATA + "/$id")
-        } ?: run {
-            showErrorToast("Something went wrong!")
-        }
+        } ?: showErrorToast("Something went wrong!")
     }
 
-
-    /** api response observer ***/
     private fun initObserver() {
         viewModel.observeCommon.observe(viewLifecycleOwner) {
             when (it?.status) {
-                Status.LOADING -> {
-                    showLoading()
-                }
-
-                Status.SUCCESS -> {
-                    when (it.message) {
-                        "getTrickDataByIdApi" -> {
-                            runCatching {
-                                val jsonData = it.data?.toString().orEmpty()
-                                val model: HomeProgressApiResponse? =
-                                    BindingUtils.parseJson(jsonData)
-                                if (model != null) {
-                                    diveName = model.data?.name
-                                    val home = model.data
-                                    binding.tvTrack.text = home?.description.orEmpty()
-                                    binding.tvPhill.text = home?.name.orEmpty()
-                                    binding.tvSkip.text = home?.name.orEmpty()
-                                    // Safe list
-                                    val safeList = home?.steps ?: emptyList()
-                                    homeProgressionDetailsAdapter.list = safeList
-
-                                    // view pager data set
-                                    allVideos =
-                                        home?.steps?.flatMap { it?.videoLinks ?: emptyList() }
-                                            ?.filterNotNull() ?: emptyList()
-                                    // Setup ViewPager
-                                    val adapter = UserImagePagerAdapter(allVideos, onImageClick = { videoItem ->
-                                        // Optional: click on image logic if different from play
-                                    }, onPlayClick = { videoItem ->
-                                        if (!videoItem.link.isNullOrEmpty()) {
-                                            playLocalVideo(videoItem.link)
-                                        } else {
-                                            showErrorToast("Video not found")
-                                        }
-                                    })
-
-                                    binding.viewpager.adapter = adapter
-
-                                    // dot indicators
-                                    setupViewPager()
-
-
-                                }
-                            }.onFailure { e ->
-                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
-                                showErrorToast(e.message.toString())
-                            }.also {
-                                hideLoading()
-                            }
-                        }
-
-                    }
-                }
-
-                Status.ERROR -> {
-                    hideLoading()
-                    showErrorToast(it.message.toString())
-                }
-
-                else -> {
-                }
+                Status.LOADING -> showLoading()
+                Status.SUCCESS -> handleSuccessResponse(it)
+                Status.ERROR -> handleErrorResponse(it)
+                else -> {}
             }
         }
     }
 
+    private fun handleSuccessResponse(it: Resource<JsonObject>) {
+        when (it.message) {
+            "getTrickDataByIdApi" -> {
+                runCatching {
+                    val jsonData = it.data?.toString().orEmpty()
+                    val model: HomeProgressApiResponse? = BindingUtils.parseJson(jsonData)
+                    model?.data?.let { homeData ->
+                        diveName = homeData.name
+                        homeData.description?.takeIf { it.isNotBlank() }?.let {
+                            binding.tvTrack.text = it
+                            binding.tvTrack.visibility = View.VISIBLE
+                        } ?: run {
+                            binding.tvTrack.visibility = View.GONE
+                        }
+                        binding.tvSkip.text = homeData.name.orEmpty()
+                        (homeData.prerequisites ?: emptyList()).also { list ->
+                            stepAdapter.list = list
 
-    /**
-     * Method to initialize click
-     */
+                            val isVisible = list.isNotEmpty()
+                            binding.rvStep.visibility = if (isVisible) View.VISIBLE else View.GONE
+                            binding.tvTricker.visibility = if (isVisible) View.VISIBLE else View.GONE
+                        }
+                        homeProgressionDetailsAdapter.list = homeData.steps ?: emptyList()
+
+                        allVideos = homeData.steps?.flatMap { it?.videoLinks ?: emptyList() }
+                            ?.filterNotNull() ?: emptyList()
+
+                        reorderedVideos = reorderVideosDynamically(allVideos)
+                        setupVideoViewPager()
+                    }
+                }.onFailure { e ->
+                    Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                    showErrorToast(e.message.toString())
+                }.also { hideLoading() }
+            }
+        }
+    }
+
+    private fun handleErrorResponse(it: Resource<JsonObject>) {
+        hideLoading()
+        showErrorToast(it.message.toString())
+    }
+
+    private fun reorderVideosDynamically(originalVideos: List<VideoLink>): List<VideoLink> {
+        if (originalVideos.isEmpty()) return emptyList()
+        if (originalVideos.size == 1) return listOf(originalVideos[0])
+
+        val reorderedList = mutableListOf<VideoLink>()
+        reorderedList.add(originalVideos.last())
+        reorderedList.addAll(originalVideos.dropLast(1))
+        reorderedList.add(originalVideos.last())
+        return reorderedList
+    }
+
+    private fun setupVideoViewPager() {
+        videoPagerAdapter = UserImagePagerAdapter(
+            displayVideos = reorderedVideos,
+            originalVideos = allVideos,
+            onImageClick = {},
+            onFullScreenClick = { videoItem ->
+                videoItem.link?.let { url ->
+                    val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+                        putExtra("fromWhere", "video")
+                        putExtra("videoUrl", url)
+                    }
+                    startActivity(intent)
+                }
+            },
+            onPlaybackStateChanged = { isPlaying ->
+                binding.btnDownload.isEnabled = !isPlaying
+            })
+
+        binding.viewpager.adapter = videoPagerAdapter
+        binding.viewpager.setCurrentItem(0, false)
+
+        // 🔥 IMPORTANT: get internal RecyclerView
+        pagerRecyclerView = binding.viewpager.getChildAt(0) as RecyclerView
+
+        setupViewPager()
+
+        // 🔥 Auto play FIRST video
+        pagerRecyclerView?.post {
+            videoPagerAdapter?.playVideoAt(0, pagerRecyclerView!!)
+        }
+
+        logVideoOrder()
+    }
+
+    private fun logVideoOrder() {
+        Log.d("VideoOrder", "Original videos (${allVideos.size}):")
+        allVideos.forEachIndexed { index, video ->
+            Log.d("VideoOrder", "  [$index]: ${video.link}")
+        }
+        Log.d("VideoOrder", "Reordered videos (${reorderedVideos.size}):")
+        reorderedVideos.forEachIndexed { index, video ->
+            val originalIndex = allVideos.indexOf(video)
+            Log.d("VideoOrder", "  [$index] -> original[$originalIndex]: ${video.link}")
+        }
+    }
+
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
-                R.id.ivProgress -> {
-                    requireActivity().finish()
-                }
-
-                R.id.ivClosePlayer -> {
-                    stopLocalVideo()
-                }
-
-                R.id.btnDownload -> {
-                    if (allVideos.isNotEmpty()) {
-                        val currentItem = binding.viewpager.currentItem
-                        val videoUrl = allVideos[currentItem].link
-                        if (!videoUrl.isNullOrEmpty()) {
-                            downloadVideo(videoUrl)
-                        } else {
-                            showErrorToast("Video URL not found")
-                        }
-                    } else {
-                        showErrorToast("No videos available to download")
-                    }
-                }
-
-                R.id.ivMAx -> {
-                    if (allVideos.isNotEmpty()) {
-                        val currentItem = binding.viewpager.currentItem
-                        val videoUrl = allVideos[currentItem].link
-                        if (!videoUrl.isNullOrEmpty()) {
-                            val intent = Intent(requireContext(), CommonActivity::class.java)
-                            intent.putExtra("fromWhere", "video")
-                            intent.putExtra("videoUrl", videoUrl)
-                            startActivity(intent)
-                        } else {
-                            showErrorToast("Video URL not found")
-                        }
-                    }
-
-                }
+                R.id.ivProgress, R.id.ivClosePlayer -> requireActivity().finish()
+                R.id.btnDownload -> downloadCurrentVideo()
+//                R.id.ivMAx -> openCurrentVideoFullScreen()
             }
-
         }
     }
 
-    @OptIn(UnstableApi::class)
-    private fun playLocalVideo(url: String) {
-        player?.stop()
-        player?.release()
+    private fun downloadCurrentVideo() {
+        val currentPosition = binding.viewpager.currentItem
+        val videoUrl = reorderedVideos.getOrNull(currentPosition)?.link
 
-        binding.localPlayerView.visibility = View.VISIBLE
-        binding.ivClosePlayer.visibility = View.VISIBLE
-        binding.viewpager.visibility = View.INVISIBLE
-
-        val videoUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
-
-        val dataSourceFactory = DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
-
-        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(videoUrl))
-
-        player = ExoPlayer.Builder(requireContext()).build().apply {
-            setMediaSource(mediaSource)
-            prepare()
-            playWhenReady = true
-            repeatMode = Player.REPEAT_MODE_ALL
-            addListener(object : Player.Listener {
-                override fun onPlayerError(error: PlaybackException) {
-                    super.onPlayerError(error)
-                    showErrorToast("Playback error: ${error.localizedMessage}")
-                }
-            })
+        if (!videoUrl.isNullOrEmpty()) {
+            downloadVideo(videoUrl)
+        } else {
+            showErrorToast("Video URL not found")
         }
-        binding.localPlayerView.player = player
     }
 
-    private fun stopLocalVideo() {
-        player?.stop()
-        player?.release()
-        player = null
-        binding.localPlayerView.player = null
-        binding.localPlayerView.visibility = View.GONE
-        binding.ivClosePlayer.visibility = View.GONE
-        binding.viewpager.visibility = View.VISIBLE
-    }
+//    private fun openCurrentVideoFullScreen() {
+//        val currentPosition = binding.viewpager.currentItem
+//        val videoUrl = reorderedVideos.getOrNull(currentPosition)?.link
+//
+//        if (!videoUrl.isNullOrEmpty()) {
+//            val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+//                putExtra("fromWhere", "video")
+//                putExtra(
+//                    "videoUrl",
+//                    if (videoUrl.startsWith("http")) videoUrl else Constants.BASE_URL_IMAGE + videoUrl
+//                )
+//            }
+//            startActivity(intent)
+//        } else {
+//            showErrorToast("Video URL not found")
+//        }
+//    }
 
     private fun downloadVideo(url: String) {
         try {
             val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
-            val request = DownloadManager.Request(fullUrl.toUri())
-            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-            request.setTitle("Downloading Video")
-            request.setDescription("Downloading video file...")
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4"
-            )
+            val request = DownloadManager.Request(fullUrl.toUri()).apply {
+                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                setTitle("Downloading Video")
+                setDescription("Downloading video file...")
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4"
+                )
+            }
 
             val downloadManager =
                 requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -273,8 +264,6 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
         }
     }
 
-
-    /*** setup view pager ***/
     private fun setupViewPager() {
         val pageCount = binding.viewpager.adapter?.itemCount ?: 0
 
@@ -295,37 +284,120 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
             setupWithViewPager(binding.viewpager)
         }
 
+        binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                pagerRecyclerView?.post {
+                    videoPagerAdapter?.playVideoAt(position, pagerRecyclerView!!)
+                }
+
+                val currentVideo = reorderedVideos.getOrNull(position)
+                val originalIndex = allVideos.indexOf(currentVideo)
+
+                Log.d("ViewPager", "Position $position → original index $originalIndex")
+            }
+        })
+    }
+
+    private fun setupSwipeGestures() {
+        val gestureDetector = GestureDetectorCompat(
+            requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDown(e: MotionEvent): Boolean = true
+
+                override fun onFling(
+                    e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float
+                ): Boolean {
+                    try {
+                        val x1 = e1?.x ?: 0f
+                        val x2 = e2.x
+                        val y1 = e1?.y ?: 0f
+                        val y2 = e2.y
+
+                        val diffX = x2 - x1
+                        val diffY = y2 - y1
+
+                        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 100 && Math.abs(
+                                velocityX
+                            ) > 100
+                        ) {
+                            if (diffX > 0) {
+                                handleRightSwipe()
+                                return true
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    return false
+                }
+            })
+
+        binding.root.setOnTouchListener { v, event ->
+            val handled = gestureDetector.onTouchEvent(event)
+            if (event.action == MotionEvent.ACTION_UP) v.performClick()
+            handled
+        }
+
+        binding.rvHomeProgressionDetails.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            false
+        }
+    }
+
+    private fun handleRightSwipe() {
+        if (homeProgressionDetailsAdapter.list.isNotEmpty()) {
+            navigateToItem(homeProgressionDetailsAdapter.list.first())
+        } else {
+            showErrorToast("No items available")
+        }
+    }
+
+    private fun navigateToItem(item: HomeProgressStep) {
+        val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+            putExtra("fromWhere", "finalProgress")
+            putExtra("progressData", item)
+            putExtra("trackDetailId", trackDetailId)
+            putExtra("diveName", diveName)
+        }
+        startActivity(intent)
+        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
+    private fun initProgressionDetailsAdapter() {
+        homeProgressionDetailsAdapter = SimpleRecyclerViewAdapter(
+            R.layout.home_progress_item, BR.bean
+        ) { v, m, _ ->
+            when (v?.id) {
+                R.id.clProgress -> {
+                    val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+                        putExtra("fromWhere", "finalProgress")
+                        putExtra("progressData", m)
+                        putExtra("trackDetailId", trackDetailId)
+                        putExtra("diveName", diveName)
+                    }
+                    startActivity(intent)
+                }
+            }
+        }
+        binding.rvHomeProgressionDetails.adapter = homeProgressionDetailsAdapter
     }
 
     /**
      * Initialize adapter
      */
-    private fun initProgressionDetailsAdapter() {
-        homeProgressionDetailsAdapter =
-            SimpleRecyclerViewAdapter(R.layout.home_progress_item, BR.bean) { v, m, _ ->
-                when (v?.id) {
-                    R.id.clProgress -> {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "finalProgress")
-                        intent.putExtra("progressData", m)
-                        intent.putExtra("trackDetailId", trackDetailId)
-                        intent.putExtra("diveName", diveName)
-                        startActivity(intent)
-                    }
+    private fun initStepAdapter() {
+        stepAdapter = SimpleRecyclerViewAdapter(R.layout.prerequistes_rv_item, BR.bean) { v, m, _ ->
+            when (v?.id) {
+                R.id.tvJump -> {
+                    val intent = Intent(requireContext(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "homeProgress")
+                    intent.putExtra("trackDetailId", trackDetailId)
+                    startActivity(intent)
                 }
-
             }
-        binding.rvHomeProgressionDetails.adapter = homeProgressionDetailsAdapter
-    }
-
-    override fun onPause() {
-        super.onPause()
-        player?.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        player?.release()
-        player = null
+        }
+        binding.rvStep.adapter = stepAdapter
     }
 }

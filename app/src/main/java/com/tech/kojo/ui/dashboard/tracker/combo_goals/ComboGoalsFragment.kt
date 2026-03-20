@@ -64,7 +64,11 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
                 R.id.btnAddNew ,R.id.btnAddNew2 -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
                     intent.putExtra("fromWhere", "addComboGals")
@@ -143,7 +147,7 @@ class ComboGoalsFragment : BaseFragment<FragmentComboGoalsBinding>() {
                                     }
                                     comboGoalAdapter.notifyItemChanged(position)
 
-                                    showSuccessToast(it.message.toString())
+                                    showSuccessToast(model.message.toString())
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

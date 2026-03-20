@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.add_review_post_session
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -10,6 +11,7 @@ import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.CreateSessionApiResponse
 import com.tech.kojo.data.model.NextSessionData
 import com.tech.kojo.databinding.FragmentAddReviewPostSessionBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
@@ -60,7 +62,11 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
                 R.id.btnSaveSession -> {
                     val data = HashMap<String, Any>()
                     if (nextData != null) {

@@ -151,6 +151,20 @@
 
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivCommunityImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_150sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:scaleType="centerCrop"
+                        setImageFromUrl="@{bean.imageLink}"
+                        android:visibility="@{type == 3 ? View.VISIBLE : (type == 2 ? View.INVISIBLE : View.GONE)}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/profileImage"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+                 />
+
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivVideo"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_150sdp"
@@ -197,6 +211,15 @@
                             android:layout_height="wrap_content"
                             android:keepScreenOn="true"
                             app:use_controller="true" />
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivMaximize"
+                            android:layout_width="@dimen/_24sdp"
+                            android:layout_height="@dimen/_24sdp"
+                            android:layout_gravity="top|end"
+                            android:layout_margin="@dimen/_8sdp"
+                            android:onClick="@{v->vm.onClick(v)}"
+                            android:src="@drawable/maximize"
+                            app:tint="@color/white" />
 
 
                     </androidx.cardview.widget.CardView>
@@ -215,7 +238,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/ivVideo" />
+                        app:layout_constraintTop_toBottomOf="@id/ivCommunityImage" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvDescription"

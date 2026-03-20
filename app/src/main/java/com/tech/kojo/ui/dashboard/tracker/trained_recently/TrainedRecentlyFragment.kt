@@ -74,6 +74,12 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                     requireActivity().finish()
                 }
 
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
+
                 R.id.tvProgress -> {
                     binding.check = 1
                     val list = trainedRecentlyList
@@ -133,9 +139,8 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                                 val list = trainedRecentlyList
                                 trainedRecentAdapter.list = list
                                 updateEmptyState(list)
-
                             }
-
+                            hideLoading()
                         }
                     }
                 }
@@ -161,6 +166,7 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                     R.id.iv1, R.id.tvName, R.id.tvDesc -> {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "progressionDetails")
+                        intent.putExtra("status",m.status)
                         intent.putExtra("progressId", m._id)
                         startActivity(intent)
                     }
@@ -169,6 +175,7 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
                         if (m._id != null) {
                             val data = HashMap<String, Any>()
                             data["trickDataId"] = m._id
+                            trainedRecentlyList.remove(m)
                             viewModel.deleteApi(Constants.DELETE_USER_PROGRESS, data)
                         }
                     }

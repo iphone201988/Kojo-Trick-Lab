@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.tracker.add_combo
 
+import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -10,6 +11,7 @@ import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.data.api.Constants
 import com.tech.kojo.databinding.FragmentAddComboBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
@@ -50,7 +52,11 @@ class AddComboFragment : BaseFragment<FragmentAddComboBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
                 R.id.btnSave -> {
                     val comboText = binding.etCombo.text.toString().trim()
                     if (comboText.isNotEmpty()) {

@@ -32,19 +32,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivClosePlayer"
-            android:layout_width="@dimen/_28sdp"
-            android:layout_height="@dimen/_28sdp"
-            android:layout_margin="@dimen/_10sdp"
-            android:elevation="@dimen/_2sdp"
-            android:onClick="@{v->vm.onClick(v)}"
-            android:src="@drawable/baseline_cancel_24"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/localPlayerView"
-            app:layout_constraintTop_toTopOf="@+id/localPlayerView"
-            app:tint="@color/white" />
-
 
         <FrameLayout
             android:id="@+id/flSubscription"
@@ -72,13 +59,26 @@
                 android:background="@drawable/dot_background" />
         </FrameLayout>
 
-
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivClosePlayer"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:src="@drawable/back"
+            android:background="@drawable/yellow_bg"
+            android:tint="@color/blue"
+            android:backgroundTint="#80B0B0B0"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:padding="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/viewpager"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSkip"
             style="@style/TextView_700_Bold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:paddingHorizontal="@dimen/_12sdp"
@@ -86,7 +86,7 @@
             android:text="Dive Roll"
             android:textColor="@color/white"
             android:textSize="@dimen/_11ssp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivClosePlayer"
             app:layout_constraintTop_toTopOf="@+id/viewpager" />
 
 
@@ -97,6 +97,7 @@
             android:scaleType="centerCrop"
             android:padding="@dimen/_10sdp"
             android:onClick="@{v->vm.onClick(v)}"
+            android:visibility="gone"
             android:layout_marginEnd="@dimen/_10sdp"
             android:src="@drawable/close_icon"
             android:tint="@color/colorPrimary"
@@ -115,6 +116,7 @@
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="centerCrop"
             android:src="@drawable/maximize"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/flSubscription"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -128,7 +130,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="Dive Prep"
+            android:text=""
             android:textColor="@color/blue"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -144,6 +146,7 @@
             android:layout_marginStart="@dimen/_18sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:text="Key Points:"
+            android:visibility="invisible"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDive" />

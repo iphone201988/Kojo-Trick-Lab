@@ -1,12 +1,17 @@
 package com.tech.kojo.ui.dashboard.community.community_detail
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.util.Log
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.Glide
 import com.tech.kojo.BR
 import com.tech.kojo.R
@@ -20,8 +25,10 @@ import com.tech.kojo.data.model.GetCommentsApiResponse
 import com.tech.kojo.data.model.LikedApiResponse
 import com.tech.kojo.data.model.PinnedApiResponse
 import com.tech.kojo.data.model.PostData
+import com.tech.kojo.data.model.PostDetailModel
 import com.tech.kojo.databinding.FragmentCommunityDetailBinding
 import com.tech.kojo.databinding.ItemLayoutCommentsBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
@@ -120,6 +127,14 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                         showSuccessToast("Video not found")
                     }
                 }
+
+                R.id.ivMaximize -> {
+                    player?.pause()
+                    val intent = Intent(requireContext(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "video")
+                    intent.putExtra("videoUrl", videoLink)
+                    startActivity(intent)
+                }
             }
         }
     }
@@ -127,11 +142,16 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
     /**
      * play video if video compressed
      */
+    @OptIn(UnstableApi::class)
     private fun showVideo(path: String) {
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(path))
+
         player = ExoPlayer.Builder(requireActivity()).build().also {
             binding.playerView.player = it
-            val mediaItem = MediaItem.fromUri(path)
-            it.setMediaItem(mediaItem)
+            it.setMediaSource(mediaSource)
             it.prepare()
             it.playWhenReady = true
         }
@@ -148,7 +168,12 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
             binding.bean = communityData
             isPinned = communityData.isPinned
             postId = communityData._id
-            binding.type = if (communityData.postType == "text") 1 else 2
+            binding.type = when (communityData.postType) {
+                "text" -> 1
+                "video" -> 2
+                "image" -> 3
+                else -> 0
+            }
 
             if (isPinned == true) {
                 binding.ivPinIcon.imageTintList = ColorStateList.valueOf(
@@ -164,7 +189,16 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
             // api call
             val data = HashMap<String, Any>()
             data["page"] = currentPage
-            viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data)
+            viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data,true)
+        }
+        else{
+            val postId = arguments?.getString("postId")
+
+            if (postId!=null){
+                val request = HashMap<String, Any>()
+                request["postId"]=postId
+                viewModel.getPostDetailApi(Constants.POST_DETAIL,request)
+            }
         }
         // adapter
         initAdapter()
@@ -234,7 +268,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                     val data = HashMap<String, Any>()
                                     data["page"] = currentPage
                                     viewModel.getCommentsApi(
-                                        Constants.GET_COMMENTS + "/${communityID}", data
+                                        Constants.GET_COMMENTS + "/${communityID}", data,false
                                     )
 
                                 }
@@ -263,6 +297,47 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 showErrorToast(e.message.toString())
                             }.also {
                                 hideLoading()
+                            }
+                        }
+                        "getPostDetailApi"->{
+                            runCatching {
+                                val jsonData = it.data?.toString().orEmpty()
+                                val model : PostDetailModel?=BindingUtils.parseJson(jsonData)
+                                if (model!=null){
+                                    if (model.data!=null){
+                                        binding.tvLikes.text = "${model.data.totalLikes}"
+                                        binding.bean = model.data
+                                        isPinned = model.data.isPinned
+                                        postId = model.data._id
+                                        binding.type = when (model.data.postType) {
+                                            "text" -> 1
+                                            "video" -> 2
+                                            "image" -> 3
+                                            else -> 0
+                                        }
+
+                                        if (isPinned == true) {
+                                            binding.ivPinIcon.imageTintList = ColorStateList.valueOf(
+                                                ContextCompat.getColor(requireContext(), R.color.blue)
+                                            )
+                                        } else {
+                                            binding.ivPinIcon.imageTintList = ColorStateList.valueOf(
+                                                ContextCompat.getColor(requireContext(), R.color.blue_40)
+                                            )
+                                        }
+                                        communityID = model.data._id
+                                        videoLink = model.data.videoLink
+                                    }
+                                }
+
+                            }.onFailure {
+                                Log.e("apiErrorOccurred", "Error: ${it.message}", it)
+                                showErrorToast(it.message.toString())
+                            }.also {
+                                // api call
+                                val data = HashMap<String, Any>()
+                                data["page"] = currentPage
+                                viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data,false)
                             }
                         }
 

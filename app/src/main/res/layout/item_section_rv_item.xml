@@ -45,7 +45,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivVideoImage"
-                videoThumbNail="@{bean.videoUrl}"
+                videoThumbNail="@{bean.thumbnailUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_140sdp"
                 android:scaleType="centerCrop"

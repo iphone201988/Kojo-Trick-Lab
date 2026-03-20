@@ -87,22 +87,52 @@
                 app:layout_constraintTop_toBottomOf="@+id/view">
 
 
-                <androidx.appcompat.widget.AppCompatEditText
+<!--                <androidx.appcompat.widget.AppCompatEditText-->
+<!--                    android:id="@+id/tvGoal"-->
+<!--                    style="@style/TextView_700_Bold_Quicksand"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="center|start"-->
+<!--                    android:paddingEnd="@dimen/_18sdp"-->
+<!--                    android:backgroundTint="@color/transparent"-->
+<!--                    android:text="@{bean.goal}"-->
+<!--                    android:maxLines="2"-->
+<!--                    android:ellipsize="end"-->
+<!--                    android:textColor="@color/colorPrimary"-->
+<!--                    android:textSize="@dimen/_11ssp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvGoal"
                     style="@style/TextView_700_Bold_Quicksand"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center|start"
                     android:paddingEnd="@dimen/_18sdp"
-                    android:backgroundTint="@color/transparent"
                     android:text="@{bean.goal}"
-                    android:maxLines="2"
-                    android:ellipsize="end"
+                    app:setExpandableText="@{bean}"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_11ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Tdr → Shuriken Cutter → Raiz → C9 Hyper → Wrap 9 → Hook → Snapuswipe" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvShowMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextView_400_Regular"
+                    android:text="Show More"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    android:visibility="gone"
+                    android:paddingVertical="@dimen/_3sdp"
+                    android:paddingHorizontal="@dimen/_6sdp"
+                    android:textSize="@dimen/_8ssp"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvGoal" />
 
 
                 <View
@@ -113,7 +143,7 @@
                     android:background="@color/blue_20"
                     app:layout_constraintEnd_toEndOf="@+id/tvGoal"
                     app:layout_constraintStart_toStartOf="@+id/tvGoal"
-                    app:layout_constraintTop_toBottomOf="@+id/tvGoal" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvShowMore" />
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout

@@ -20,6 +20,7 @@ import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.GetPersonalBestModel
 import com.tech.kojo.data.model.GetPersonalBestModelData
 import com.tech.kojo.data.model.GetProfileResponse
+import com.tech.kojo.data.model.PersonalBest
 import com.tech.kojo.databinding.AddFavouriteTrickBottomSheetBinding
 import com.tech.kojo.databinding.DeleteOrLogoutDialogItemBinding
 import com.tech.kojo.databinding.FragmentMyStarBinding
@@ -29,6 +30,7 @@ import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BaseCustomBottomSheet
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.titleCaseFormattedWithSpace
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
@@ -38,14 +40,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
     private val viewModel: MyStarFragmentVM by viewModels()
-    private var skin: String? = null
     private lateinit var updateBottomSheet: BaseCustomBottomSheet<AddFavouriteTrickBottomSheetBinding>
     private var commonDialog: BaseCustomDialog<PersonalDialogItemBinding>? = null
     private lateinit var commonAdapter: SimpleRecyclerViewAdapter<String, UnPinLayoutBinding>
     private var isPrivate: Boolean? = false
     private lateinit var updateProfileStatusDialog: BaseCustomDialog<DeleteOrLogoutDialogItemBinding>
+    private var personalBestList = ArrayList<PersonalBest>()
 
-    private var personalBestList = ArrayList<GetPersonalBestModelData>()
+    private var favTrick:String?=null
+    private var bestTrick:String?=null
 
     override fun getLayoutResource(): Int {
 
@@ -74,12 +77,18 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
-                R.id.btnSeeAll -> {
-                    val intent = Intent(requireContext(), CommonActivity::class.java)
-                    intent.putExtra("fromWhere", "personalBests")
-                    intent.putExtra("personalBestList", personalBestList)
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
                     startActivity(intent)
+                }
+                R.id.btnSeeAll -> {
+                    if (personalBestList!=null) {
+                        val intent = Intent(requireContext(), CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "personalBests")
+                        intent.putExtra("personalBestList", personalBestList)
+                        startActivity(intent)
+                    }
                 }
 
                 R.id.ivEditBg -> {
@@ -121,11 +130,16 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
                                     var profile = model.user
                                     sharedPrefManager.setLoginData(profile)
                                     binding.bean = model
+                                    favTrick = profile?.favouriteTrick
+                                    bestTrick = profile?.bestTrick
                                     isPrivate = profile?.isPrivate
                                     binding.ivCircle1.visibility = View.GONE
                                     binding.ivCircle.visibility = View.VISIBLE
                                     binding.ivProfile.visibility = View.VISIBLE
-
+                                    personalBestList = profile?.personalBest as ArrayList<PersonalBest>
+                                    // Find and display top personal best
+                                    val topPersonalBest = findTopPersonalBest(personalBestList)
+                                    updateTopPersonalBestDisplay(topPersonalBest)
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
@@ -135,26 +149,26 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
                             }
                         }
 
-                        "getPersonalBest" -> {
-                            runCatching {
-                                val jsonData = it.data?.toString().orEmpty()
-                                val model: GetPersonalBestModel? = BindingUtils.parseJson(jsonData)
-                                if (model != null) {
-                                    if (!model.personalBests.isNullOrEmpty()) {
-                                        personalBestList = model.personalBests as ArrayList<GetPersonalBestModelData>
-
-                                        // Find and display top personal best
-                                        val topPersonalBest = findTopPersonalBest(personalBestList)
-                                        updateTopPersonalBestDisplay(topPersonalBest)
-                                    }
-                                }
-                            }.onFailure { e ->
-                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
-                                showErrorToast(e.message.toString())
-                            }.also {
-                                viewModel.getProfileApi(Constants.GET_PROFILE)
-                            }
-                        }
+//                        "getPersonalBest" -> {
+//                            runCatching {
+//                                val jsonData = it.data?.toString().orEmpty()
+//                                val model: GetPersonalBestModel? = BindingUtils.parseJson(jsonData)
+//                                if (model != null) {
+//                                    if (!model.personalBests.isNullOrEmpty()) {
+//                                        personalBestList = model.personalBests as ArrayList<GetPersonalBestModelData>
+//
+//                                        // Find and display top personal best
+//                                        val topPersonalBest = findTopPersonalBest(personalBestList)
+//                                        updateTopPersonalBestDisplay(topPersonalBest)
+//                                    }
+//                                }
+//                            }.onFailure { e ->
+//                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+//                                showErrorToast(e.message.toString())
+//                            }.also {
+//                                viewModel.getProfileApi(Constants.GET_PROFILE)
+//                            }
+//                        }
 
                         "editProfileApi" -> {
                             runCatching {
@@ -188,22 +202,21 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
     /**
      * Find the top personal best (highest value, latest if tie)
      */
-    private fun findTopPersonalBest(personalBests: List<GetPersonalBestModelData>?): GetPersonalBestModelData? {
+    private fun findTopPersonalBest(personalBests: List<PersonalBest>?): PersonalBest? {
         if (personalBests.isNullOrEmpty()) return null
 
-        return personalBests.maxWith(compareBy<GetPersonalBestModelData> { it.value ?: 0 }
-            .thenByDescending { it.createdAt })
+        return personalBests.maxByOrNull { it.count ?: 0 }
     }
 
     /**
      * Update UI with top personal best
      */
-    private fun updateTopPersonalBestDisplay(topPersonalBest: GetPersonalBestModelData?) {
+    private fun updateTopPersonalBestDisplay(topPersonalBest: PersonalBest?) {
         if (topPersonalBest != null) {
-            val trickName = topPersonalBest.trickVaultId?.name ?: "Unknown Trick"
-            val value = topPersonalBest.value ?: 0
-            BindingUtils.setTextCapitalized(binding.tvKick,trickName)
-            binding.tvReps.text ="$value reps"
+            val trickName = topPersonalBest.name ?: "Unknown Trick"
+            val value = topPersonalBest.count ?: 0
+            titleCaseFormattedWithSpace(binding.tvKick,trickName)
+            binding.tvReps.text = "$value reps"
 
         }
     }
@@ -245,6 +258,11 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
         }
         updateBottomSheet.behavior.isDraggable = true
         updateBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            if (type == 2) {
+                updateBottomSheet.binding.tvTitle.text = "Update Best Trick:"
+            } else {
+                updateBottomSheet.binding.tvTitle.text = "Update Favourite Trick:"
+        }
         updateBottomSheet.show()
 
     }
@@ -319,10 +337,7 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
             val end = start + status.length
 
             spannable.setSpan(
-                StyleSpan(Typeface.BOLD),
-                start,
-                end,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
             spannable.setSpan(
@@ -334,14 +349,20 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
 
             tvSure.text = spannable
             btnDeleteComment.text = "Change"
-            btnDeleteComment.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorPrimary))
+            btnDeleteComment.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorPrimary
+                )
+            )
         }
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
-        viewModel.getPersonalBest(Constants.GET_PERSONAL_BEST)
+//        viewModel.getPersonalBest(Constants.GET_PERSONAL_BEST)
+        viewModel.getProfileApi(Constants.GET_PROFILE)
     }
 
 }

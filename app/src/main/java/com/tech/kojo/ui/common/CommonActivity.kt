@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.common
 
+import android.app.Person
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -20,6 +21,7 @@ import com.tech.kojo.data.model.HomeProgressStep
 import com.tech.kojo.data.model.HomeTrickVault
 import com.tech.kojo.data.model.NextSessionData
 import com.tech.kojo.data.model.PastSessionData
+import com.tech.kojo.data.model.PersonalBest
 import com.tech.kojo.data.model.PostData
 import com.tech.kojo.databinding.ActivityCommonBinding
 import com.tech.kojo.utils.BindingUtils
@@ -99,8 +101,10 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
 
                     "progressionDetails" -> {
                         val progressId = intent.getStringExtra("progressId")
+                        val status = intent.getStringExtra("status")
                         val bundle = Bundle()
                         bundle.putString("trackDetailId", progressId)
+                        bundle.putString("status",status)
                         graph.setStartDestination(R.id.fragmentProgressionDetails)
                         navController.setGraph(graph, bundle)
                     }
@@ -171,10 +175,12 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                     }
 
                     "personalBests" -> {
-                        val personalBestList = intent.getParcelableArrayListExtra<GetPersonalBestModelData>("personalBestList")
-                        val bundle = Bundle()
-                        bundle.putParcelableArrayList("personalBestList", personalBestList)
 
+                        val personalBestList = intent.getParcelableArrayListExtra<PersonalBest>("personalBestList")
+
+                        val bundle = Bundle()
+//                        bundle.putParcelable("personalBest", personalBestModel)
+                        bundle.putParcelableArrayList("personalBestList", personalBestList)
                         graph.setStartDestination(R.id.fragmentPersonalBests)
                         navController.setGraph(graph, bundle)
                     }
@@ -246,8 +252,10 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
 
                     "communityDetail" -> {
                         val communityData = intent.getParcelableExtra<PostData>("communityData")
+                        val postId = intent.getStringExtra("postId")
                         val bundle = Bundle()
                         bundle.putParcelable("communityData", communityData)
+                        bundle.putString("postId", postId)
                         graph.setStartDestination(R.id.fragmentCommunityDetail)
                         navController.setGraph(graph, bundle)
                     }
@@ -310,6 +318,14 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         val bundle = Bundle()
                         bundle.putString("videoUrl", videoUrl)
                         graph.setStartDestination(R.id.fragmentVideo)
+                        navController.setGraph(graph, bundle)
+                    }
+
+                    "videoVimeo" -> {
+                        val videoUrl = intent.getStringExtra("videoUrl")
+                        val bundle = Bundle()
+                        bundle.putString("videoUrl", videoUrl)
+                        graph.setStartDestination(R.id.fragmentVideoVimeo)
                         navController.setGraph(graph, bundle)
                     }
 

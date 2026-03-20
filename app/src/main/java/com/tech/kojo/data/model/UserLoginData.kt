@@ -60,7 +60,7 @@ data class LoginUser(
     val name: String?,
     val newVideoAlert: Boolean?,
     val notificationAlert: Boolean?,
-    val personalBest: PersonalBest?,
+    val personalBest: List<PersonalBest?>?,
     val profilePicture: String?,
     val sesionReminderAlert: Boolean?,
     val skin: String?,
@@ -80,8 +80,8 @@ data class LoginUser(
     val trickingNickname: String?,
     val youtubeLink: String?,
     val isPrivate: Boolean?,
+    val isSubscription: Boolean?,
 )
-
 data class SocialLinkedAccount(
     val _id: String?,
     val id: String?,
@@ -143,11 +143,23 @@ data class ProfileUser(
     val youtubeLink: String?
 )
 
+//@Parcelize
+//data class PersonalBest(
+//    val _id: String?,
+//    val corks: Int?,
+//    val gainerSwitch: Int?,
+//    val grandmasterSwipes: Int?,
+//    val popFulls: Int?,
+//    val takFulls: Int?,
+//    val wrapFulls: Int?
+//): Parcelable
+
+@Parcelize
 data class PersonalBest(
     val _id: String?,
-    val corks: Any?,
-    val gainerSwitch: Any?
-)
+    val count: Int?,
+    val name: String?
+): Parcelable
 
 
 data class ProfileStatVisibility(
@@ -216,7 +228,8 @@ data class PostData(
     val updatedAt: String?,
     val userData: UserIdProfile?,
     val userId: String?,
-    val videoLink: String?
+    val videoLink: String?,
+    val __v: Int?,
 ) : Parcelable
 
 
@@ -228,13 +241,15 @@ data class AddCommentApiResponse(
     val comment: Comment?, val message: String?, val success: Boolean?
 )
 
+@Parcelize
 data class Comment(
-    val createdAt: String?, val message: String?, val user: User?, val userId: String?
-)
+    val _id: String?,val createdAt: String?, val message: String?, val user: User?, val userId: String?
+): Parcelable
 
+@Parcelize
 data class User(
     val _id: String?, val email: String?, val name: String?, val profilePicture: String?
-)
+): Parcelable
 
 
 /**
@@ -285,12 +300,16 @@ data class HomeProgressData(
     val description: String?,
     val image: String?,
     val name: String?,
+    val prerequisites:List<Prerequisites?>?,
     val steps: List<HomeProgressStep?>?,
     val trickVaultId: String?,
     val typeId: String?,
     val updatedAt: String?,
     val userId: String?
 )
+
+@Parcelize
+data class Prerequisites(val name:String?,val _id: String?): Parcelable
 
 @Parcelize
 data class HomeProgressStep(
@@ -655,7 +674,7 @@ data class CommentsData(
 
 @Parcelize
 data class UserIdProfile(
-    val _id: String?, val email: String?, val name: String?, val profilePicture: String?
+    val _id: String?, val email: String?, val name: String?, val profilePicture: String?,val isPrivate: Boolean?
 ): Parcelable
 
 /**
@@ -722,26 +741,39 @@ data class CommentsDataX(
  */
 
 data class GetOtherUserProfile(
-    val `data`: OtherUserData?, val success: Boolean?
+    val `data`: OtherUserData?, val success: Boolean?,val message: String?
 )
 
 data class OtherUserData(
     val _id: String?,
     val bestTrick: String?,
     val country: String?,
+    val dreamTrick: String?,
     val favouriteTrick: String?,
+    val instagramLink: String?,
     val mostPracticedTrick: String?,
     val name: String?,
+    val isPrivate: Boolean?,
     val personalBest: OtherPersonalBest?,
     val profilePicture: String?,
+    val signatureTrick: String?,
+    val skin: String?,
+    val tiktockLink: String?,
     val timeSubscribed: String?,
     val timeTricking: String?,
     val trickingLevel: Int?,
-    val trickingNickname: String?
+    val trickingNickname: String?,
+    val youtubeLink: String?
 )
 
 data class OtherPersonalBest(
-    val _id: String?, val corks: Any?, val gainerSwitch: Any?
+    val _id: String?,
+    val corks: Any?,
+    val gainerSwitch: Any?,
+    val grandmasterSwipes: Any?,
+    val popFulls: Any?,
+    val takFulls: Any?,
+    val wrapFulls: Any?
 )
 
 /**
@@ -755,12 +787,18 @@ data class GetVideoCategoryData(
 data class CategoryData(
     val __v: Int?,
     val _id: String?,
-    val categoryId: String?,
+    val categoryId: CategoryModel?,
     val createdAt: String?,
     val imageUrl: String?,
     val title: String?,
     val updatedAt: String?,
     val videoCount: Int?
+)
+
+data class CategoryModel(
+    val _id: String?,
+    val imageUrl: String?,
+    val title: String?
 )
 
 /**
@@ -788,7 +826,10 @@ data class TopicCategoryData(
 data class GetNotificationData(
     val `data`: List<NotificationData>?,
     val pagination: Pagination?,
-    val success: Boolean?
+    val success: Boolean?,
+    val page: Int?,
+    val totalUnread: Int?,
+    val totalPages: Int?,
 )
 
 data class NotificationData(
@@ -807,6 +848,7 @@ data class NotificationData(
 data class NotificationInnerData(
     val deepLink: String?,
     val postId: String?,
+    val commenterId: String?,
     val trickDataId: String?,
     val trickVaultId: String?,
     val userId: String?
@@ -840,3 +882,17 @@ data class CreatePersonalBestModel(
     val personalBest: GetPersonalBestModelData?,
     val success: Boolean?
 )
+
+
+data class PersonalBestModel(
+    val message: String?,
+    val personalBest: List<PersonalBest?>?,
+    val success: Boolean?
+)
+
+data class PostDetailModel(
+    val `data`: PostData?,
+    val message: String?,
+    val success: Boolean?
+)
+

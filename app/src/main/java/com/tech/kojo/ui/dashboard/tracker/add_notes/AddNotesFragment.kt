@@ -1,5 +1,6 @@
 package com.tech.kojo.ui.dashboard.tracker.add_notes
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -10,6 +11,7 @@ import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.GetComboData
 import com.tech.kojo.data.model.UpdateNotesApiResponse
 import com.tech.kojo.databinding.FragmentAddNotesBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
@@ -22,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
     private val viewModel: AddNotesFragmentVM by viewModels()
     private var goalId: String? = null
+    private var comboData: GetComboData?=null
     override fun getLayoutResource(): Int {
 
         return R.layout.fragment_add_notes
@@ -45,7 +48,7 @@ class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
      * Method to initialize view
      */
     private fun initView() {
-        val comboData = arguments?.getParcelable<GetComboData>("comboData")
+        comboData = arguments?.getParcelable<GetComboData>("comboData")
         if (comboData != null) {
             binding.bean = comboData
             goalId = comboData?._id
@@ -67,14 +70,21 @@ class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-//                R.id.tvShowMore->{
-//                    comboData?.isExpanded?.let { it1 -> comboData?.isExpanded = !it1 }
-//                    binding.invalidateAll()
-//                    // 🔥 Force scroll re-measure after expansion
-//                    binding.root.post {
-//                        binding.root.requestLayout()
-//                    }
-//                }
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
+                R.id.tvShowMore->{
+                    if (comboData!=null) {
+                        comboData?.isExpanded?.let { it1 -> comboData?.isExpanded = !it1 }
+                        binding.invalidateAll()
+                        // 🔥 Force scroll re-measure after expansion
+                        binding.root.post {
+                            binding.root.requestLayout()
+                        }
+                    }
+                }
 
                 R.id.btnSave -> {
                     val notesText = binding.etEmail.text.toString().trim()
@@ -110,7 +120,7 @@ class AddNotesFragment : BaseFragment<FragmentAddNotesBinding>() {
                                 val model: UpdateNotesApiResponse? =
                                     BindingUtils.parseJson(jsonData)
                                 if (model != null) {
-                                    showSuccessToast(it.message.toString())
+                                    showSuccessToast("Note added successfully")
                                     requireActivity().finish()
                                 }
                             }.onFailure { e ->

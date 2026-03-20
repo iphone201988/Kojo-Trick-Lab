@@ -2,7 +2,7 @@ package com.tech.kojo.data.model
 
 
 data class PersonalData(
-    val title: String, var value: String,
+    val title: String, var value: Int,  val parentId: String?, val fieldName: String
 )
 
 

@@ -69,7 +69,6 @@
                 android:layout_height="@dimen/_180sdp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/empty_combo"
-
                 android:layout_marginBottom="@dimen/_43sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

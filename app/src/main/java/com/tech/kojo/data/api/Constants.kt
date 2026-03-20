@@ -36,6 +36,7 @@ object Constants {
     const val GET_POST ="post"
     const val POST_LIKE ="post/like"
     const val POST_COMMENT ="post/comment"
+    const val POST_DETAIL ="post/getPost"
     const val GET_COMMENTS ="post/comments"
     const val POST_PIN ="post/pin"
     const val POST_CREATE ="post/create"
@@ -75,7 +76,8 @@ object Constants {
     const val GET_NOTIFICATION="notification"
 
     // personal best
-    const val GET_PERSONAL_BEST ="personal-best"
+    const val UPDATE_PERSONAL_BEST ="auth/update-personalBest"
+    const val UPDATE_VIDEO_VIEW ="video-data/update-video-view"
 
 
 

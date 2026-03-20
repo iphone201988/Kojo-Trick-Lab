@@ -6,7 +6,7 @@
 
         <variable
             name="bean"
-            type="com.tech.kojo.data.model.HomeType" />
+            type="com.tech.kojo.data.model.Prerequisites" />
 
         <variable
             name="pos"
@@ -15,28 +15,25 @@
         <variable
             name="callback"
             type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
-
-        <import type="android.view.View" />
     </data>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clForward"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="1dp"
         android:layout_height="wrap_content"
-        android:onClick="@{v->callback.onItemClick(v,bean,pos)}">
+       >
 
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvProgress"
-            style="@style/TextView_600_SemiBold"
+            android:id="@+id/tvJump"
+            style="@style/TextView_400_Regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_6sdp"
-            android:background="@{bean.check?@drawable/yellow_bg:@drawable/bg_stock_blue}"
-            android:paddingHorizontal="@dimen/_12sdp"
-            android:paddingVertical="@dimen/_5sdp"
-            setTextCapitalized='@{bean.name+" Tricks"}'
-            android:textColor="@{bean.check?@color/white:@color/blue}"
+            android:layout_marginStart="@dimen/_10sdp"
+            setSpannableUnderlineBlue='@{bean.name}'
+            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
+            android:textColor="@android:color/holo_blue_dark"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

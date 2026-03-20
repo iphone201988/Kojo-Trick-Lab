@@ -295,7 +295,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_3sdp"
-            android:text="@{bean.user.favouriteTrick}"
+            android:text='@{bean.user.favouriteTrick != null &amp;&amp; !bean.user.favouriteTrick.isEmpty() ? bean.user.favouriteTrick : "-"}'
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             android:maxLines="1"
@@ -322,7 +322,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_3sdp"
-            android:text="@{bean.user.bestTrick}"
+            android:text='@{bean.user.bestTrick != null &amp;&amp; !bean.user.bestTrick.isEmpty() ? bean.user.bestTrick : "-"}'
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             android:maxLines="1"

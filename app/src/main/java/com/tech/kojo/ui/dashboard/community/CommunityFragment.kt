@@ -35,6 +35,7 @@ import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.log
 
 
 @AndroidEntryPoint
@@ -68,13 +69,19 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
         // data set
         val loginData = sharedPrefManager.getLoginData()
         val imageUrl = when {
+            loginData?.profilePicture.isNullOrEmpty() -> null
             loginData?.profilePicture?.startsWith("http") == true -> loginData.profilePicture
-            loginData?.profilePicture != null -> Constants.BASE_URL_IMAGE + loginData.profilePicture
-            else -> null
+            else -> Constants.BASE_URL_IMAGE + loginData?.profilePicture
         }
-        imageUrl?.let { url ->
-            Glide.with(requireActivity()).load(url).placeholder(R.drawable.holder_dummy)
-                .error(R.drawable.holder_dummy).into(binding.profileImage)
+
+        if (imageUrl != null) {
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.holder_dummy)
+                .error(R.drawable.holder_dummy)
+                .into(binding.profileImage)
+        } else {
+            binding.profileImage.setImageResource(R.drawable.holder_dummy)
         }
     }
 

@@ -9,12 +9,16 @@ import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.tech.kojo.R
@@ -24,6 +28,7 @@ import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.UploadProfileApiResponse
 import com.tech.kojo.databinding.FragmentCreatePostBinding
 import com.tech.kojo.databinding.WarningDialogItemBinding
+import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
@@ -99,7 +104,11 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-
+                R.id.ivNotification->{
+                    val intent = Intent(requireActivity(), CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "notificationNew")
+                    startActivity(intent)
+                }
                 R.id.btnPost -> {
                     val email = binding.etTitle.text.toString().trim()
                     val description = binding.etDescription.text.toString().trim()
@@ -138,11 +147,16 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
     /**
      * play video if video compressed
      */
+    @OptIn(UnstableApi::class)
     private fun showVideo(path: String) {
+        val dataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(path))
+
         player = ExoPlayer.Builder(requireActivity()).build().also {
             binding.playerView.player = it
-            val mediaItem = MediaItem.fromUri(path)
-            it.setMediaItem(mediaItem)
+            it.setMediaSource(mediaSource)
             it.prepare()
             it.playWhenReady = true
         }

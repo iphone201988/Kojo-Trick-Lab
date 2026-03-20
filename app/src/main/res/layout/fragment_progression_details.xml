@@ -8,6 +8,9 @@
         <variable
             name="vm"
             type="com.tech.kojo.ui.dashboard.tracker.progression_details.ProgressionDetailsFragmentVM" />
+        <variable
+            name="status"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,21 +45,34 @@
                 app:vpi_slider_normal_color="@color/colorPrimary" />
         </FrameLayout>
 
-
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivClosePlayer"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:src="@drawable/back"
+            android:background="@drawable/yellow_bg"
+            android:tint="@color/blue"
+            android:backgroundTint="#80B0B0B0"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:padding="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/viewpager"/>
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSkip"
             style="@style/TextView_700_Bold_Quicksand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:paddingHorizontal="@dimen/_12sdp"
             android:paddingVertical="@dimen/_4sdp"
-            android:text="Dive Roll"
+            android:text=""
             android:textColor="@color/white"
             android:textSize="@dimen/_11ssp"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivClosePlayer"
             app:layout_constraintTop_toTopOf="@+id/viewpager" />
 
 
@@ -68,6 +84,7 @@
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="centerCrop"
             android:src="@drawable/close_icon"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/tvSkip"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvSkip"
@@ -83,7 +100,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="The Dive Roll is a crucial pre-requisite to all forward flipping techniques, and a good skill to have for bailing safety."
+            android:text=""
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_18sdp"
             android:layout_marginTop="@dimen/_4sdp"
-            android:text="Tricker:"
+            android:text="Prerequisites :"
+            android:visibility="invisible"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTrack" />
@@ -111,10 +129,23 @@
             android:layout_marginStart="@dimen/_4sdp"
             android:text="Phill Gibbs"
             android:textColor="@color/blue"
+            android:visibility="gone"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintBottom_toBottomOf="@+id/tvTricker"
             app:layout_constraintStart_toEndOf="@+id/tvTricker"
             app:layout_constraintTop_toTopOf="@+id/tvTricker" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvStep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/tvTricker"
+            tools:itemCount="5"
+            tools:listitem="@layout/step_rv_item" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -128,7 +159,7 @@
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTricker" />
+            app:layout_constraintTop_toBottomOf="@+id/rvStep" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvLeft"
@@ -203,25 +234,38 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <!-- Grey styled background -->
-            <com.tech.kojo.utils.GoldenButtonView
+            <LinearLayout
+                android:id="@+id/clComplete"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:buttonColor="@color/grey_DDDDDD" />
+                android:layout_height="@dimen/_38sdp"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:background="@drawable/bg_stock_grey"
+                setBackgroundTint="@{status}"
+                android:orientation="horizontal"
+                android:gravity="center">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnMarkCompleted"
-                style="@style/TextView_600_SemiBold_Quicksand"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:backgroundTint="@null"
-                android:gravity="center"
-                android:onClick="@{v->vm.onClick(v)}"
-                android:text="@string/mark_completed"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_15ssp" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivIcon"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    setStatusIcon="@{status}"/>
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/btnMarkCompleted"
+                    style="@style/TextView_600_SemiBold_Quicksand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:gravity="center"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    app:setStatusText="@{status}"
+                    android:textSize="@dimen/_15ssp"
+                    app:layout_constraintStart_toEndOf="@id/ivIcon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </LinearLayout>
         </FrameLayout>
 
 

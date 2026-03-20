@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="475dp" />
+            app:layout_constraintGuide_begin="@dimen/_475sdp" />
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline1"
             android:layout_width="wrap_content"
@@ -47,6 +47,7 @@
             android:id="@+id/ivHeader"
             android:layout_width="@dimen/_130sdp"
             android:layout_height="@dimen/_22sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:src="@drawable/only_logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

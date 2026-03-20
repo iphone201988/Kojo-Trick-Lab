@@ -8,6 +8,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.RecyclerView
 import com.tech.kojo.R
 import com.tech.kojo.data.model.PostData
+import com.tech.kojo.databinding.ItemImagePostBinding
 import com.tech.kojo.databinding.ItemLoadingBinding
 import com.tech.kojo.databinding.ItemTextPostBinding
 import com.tech.kojo.databinding.ItemVideoPostBinding
@@ -22,6 +23,7 @@ class MultiViewAdapter(
 
     companion object {
         private const val TYPE_VIDEO = 1
+        private const val TYPE_IMAGE = 3
         private const val TYPE_TEXT = 0
         private const val TYPE_LOADER = 2
     }
@@ -32,6 +34,7 @@ class MultiViewAdapter(
         return when (val item = listItem[position]) {
             is FeedItem.Post -> when (item.post.postType) {
                 "video" -> TYPE_VIDEO
+                "image"->TYPE_IMAGE
                 "text" -> TYPE_TEXT
                 else -> TYPE_TEXT
             }
@@ -64,6 +67,16 @@ class MultiViewAdapter(
                 VideoPostViewHolder(binding)
             }
 
+            TYPE_IMAGE -> {
+                val binding: ItemImagePostBinding = DataBindingUtil.inflate(
+                    inflater,
+                    R.layout.item_image_post,
+                    parent,
+                    false
+                )
+                ImagePostViewHolder(binding)
+            }
+
             TYPE_LOADER -> {
                 val binding: ItemLoadingBinding = DataBindingUtil.inflate(
                     inflater,
@@ -85,6 +98,7 @@ class MultiViewAdapter(
                 when (holder) {
                     is TextPostViewHolder -> holder.bind(item.post, listener, position)
                     is VideoPostViewHolder -> holder.bind(item.post, listener, position, position == playingPosition, player)
+                    is ImagePostViewHolder -> holder.bind(item.post, listener, position)
                 }
             }
 
@@ -206,6 +220,30 @@ class MultiViewAdapter(
 
             binding.ivMaximize.setOnClickListener {
                 listener.onItemClick(item, binding.ivMaximize.id, position)
+            }
+
+            binding.executePendingBindings()
+        }
+    }
+
+
+    inner class ImagePostViewHolder(val binding: ItemImagePostBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: PostData?, listener: OnItemClickListener, position: Int) {
+
+            binding.bean = item
+            binding.ivLike.setOnClickListener {
+                listener.onItemClick(item, binding.ivLike.id, position)
+            }
+
+            binding.ivPinIcon.setOnClickListener {
+                listener.onItemClick(item, binding.ivPinIcon.id, position)
+            }
+
+
+            binding.cardView.setOnClickListener {
+                listener.onItemClick(item, binding.cardView.id, position)
             }
 
             binding.executePendingBindings()
