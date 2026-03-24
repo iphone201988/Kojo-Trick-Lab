@@ -12,10 +12,8 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.recyclerview.widget.RecyclerView
-import com.tech.kojo.R
 import com.tech.kojo.data.model.VideoLink
 import com.tech.kojo.databinding.HolderUserImageBinding
-import com.tech.kojo.utils.showErrorToast
 
 @OptIn(UnstableApi::class)
 class UserImagePagerAdapter(
@@ -82,9 +80,14 @@ class UserImagePagerAdapter(
             isPlaying = false
         }
 
+        @androidx.annotation.OptIn(UnstableApi::class)
         private fun showPlayerView() {
             binding.localPlayerView.player = player
             binding.localPlayerView.visibility = View.VISIBLE
+            binding.localPlayerView.setShowFastForwardButton(false)
+            binding.localPlayerView.setShowNextButton(false)
+            binding.localPlayerView.setShowRewindButton(false)
+            binding.localPlayerView.setShowPreviousButton(false)
             binding.ivUser.visibility = View.INVISIBLE
             binding.ivVideoPlay.visibility = View.GONE
             // Fullscreen button remains visible when video is playing
@@ -156,6 +159,7 @@ class UserImagePagerAdapter(
                                     onPlaybackStateChanged?.invoke(true)
                                     Log.d("VideoPlayer", "Video ready at position $adapterPosition")
                                 }
+
                                 Player.STATE_ENDED -> {
                                     Log.d("VideoPlayer", "Video ended at position $adapterPosition")
                                     stopVideo()
@@ -174,6 +178,10 @@ class UserImagePagerAdapter(
                 // Setup UI - fullscreen button is always visible
                 binding.localPlayerView.player = player
                 binding.localPlayerView.visibility = View.VISIBLE
+                binding.localPlayerView.setShowFastForwardButton(false)
+                binding.localPlayerView.setShowNextButton(false)
+                binding.localPlayerView.setShowRewindButton(false)
+                binding.localPlayerView.setShowPreviousButton(false)
                 binding.ivUser.visibility = View.INVISIBLE
                 binding.ivVideoPlay.visibility = View.GONE
                 binding.ivFullscreen.visibility = View.VISIBLE  // Fullscreen always visible
@@ -281,8 +289,7 @@ class UserImagePagerAdapter(
         }
 
         // Auto-play new video
-        val newHolder = recyclerView.findViewHolderForAdapterPosition(position)
-                as? ImageViewHolder
+        val newHolder = recyclerView.findViewHolderForAdapterPosition(position) as? ImageViewHolder
         newHolder?.autoPlayVideo()
 
         currentPlayingPosition = position
@@ -302,8 +309,8 @@ class UserImagePagerAdapter(
      */
     fun resumeCurrentVideo(recyclerView: RecyclerView) {
         if (currentPlayingPosition != -1) {
-            val holder = recyclerView.findViewHolderForAdapterPosition(currentPlayingPosition)
-                    as? ImageViewHolder
+            val holder =
+                recyclerView.findViewHolderForAdapterPosition(currentPlayingPosition) as? ImageViewHolder
             holder?.resumeVideo()
         }
     }
@@ -313,8 +320,7 @@ class UserImagePagerAdapter(
      */
     fun releaseAllPlayers(recyclerView: RecyclerView) {
         for (i in 0 until itemCount) {
-            val holder = recyclerView.findViewHolderForAdapterPosition(i)
-                    as? ImageViewHolder
+            val holder = recyclerView.findViewHolderForAdapterPosition(i) as? ImageViewHolder
             holder?.stopVideo()
             holder?.releasePlayer()
         }

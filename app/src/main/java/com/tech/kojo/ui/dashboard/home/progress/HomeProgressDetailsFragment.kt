@@ -171,7 +171,7 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                 }
             },
             onPlaybackStateChanged = { isPlaying ->
-                binding.btnDownload.isEnabled = !isPlaying
+//                binding.btnDownload.isEnabled = !isPlaying
             })
 
         binding.viewpager.adapter = videoPagerAdapter

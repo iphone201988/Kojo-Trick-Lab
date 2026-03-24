@@ -99,13 +99,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         initOnClick()
         // observer
         initObserver()
-        // api call
-        val data = HashMap<String, Any>()
-        if (args.topicId.isNotEmpty() && args.videoId.isNotEmpty()) {
-            topicId = args.topicId
-            userVideoId = args.videoId
-            viewModel.getVideoById(Constants.GET_VIDEO_ID + "/${userVideoId}", data)
-        }
     }
 
     private fun setupCastListener() {
@@ -171,6 +164,15 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // api call
+        val data = HashMap<String, Any>()
+        data["isViewed"]=false
+        if (args.topicId.isNotEmpty() && args.videoId.isNotEmpty()) {
+            topicId = args.topicId
+            userVideoId = args.videoId
+            viewModel.getVideoById(Constants.GET_VIDEO_ID + "/${userVideoId}", data)
+        }
+
         mSessionManagerListener?.let {
             mCastContext?.sessionManager?.addSessionManagerListener(it, CastSession::class.java)
         }
@@ -203,6 +205,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                     if (!videoUrl.isNullOrEmpty()) {
                         val intent = Intent(requireContext(), CommonActivity::class.java)
                         intent.putExtra("fromWhere", "videoVimeo")
+                        intent.putExtra("videoId",userVideoId)
                         intent.putExtra("videoUrl", videoUrl)
                         startActivity(intent)
                     }
@@ -477,6 +480,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                             topicId = m.topicId._id
                             userVideoId = m._id
                             val data = HashMap<String, Any>()
+                            data["isViewed"]=false
                             viewModel.getVideoById(Constants.GET_VIDEO_ID + "/${m._id}", data)
                         }
                     }
@@ -630,4 +634,5 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
             commentsBottomSheet.binding.tvCommentsCounts.text = filteredCommentData.size.toString()
         }
     }
+
 }

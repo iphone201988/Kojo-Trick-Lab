@@ -211,7 +211,9 @@ object BindingUtils {
     @JvmStatic
     fun videoThumbNail(image: ShapeableImageView, url: String?) {
         if (url != null) {
-            Glide.with(image.context).asBitmap().load(Constants.BASE_URL_IMAGE + url)
+            val cleanUrl = (Constants.BASE_URL_IMAGE + url)
+                .replace(" ", "")
+            Glide.with(image.context).asBitmap().load(cleanUrl)
                 .apply(RequestOptions().frame(1_000_000)).into(image)
         } else {
 

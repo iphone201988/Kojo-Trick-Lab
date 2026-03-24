@@ -70,7 +70,7 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:src="@drawable/back"
             android:background="@drawable/yellow_bg"
-            android:tint="@color/blue"
+            android:tint="@color/colorPrimary"
             android:backgroundTint="#80B0B0B0"
             android:onClick="@{v->vm.onClick(v)}"
             android:padding="@dimen/_5sdp"

@@ -66,6 +66,10 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
         // Create ExoPlayer instance
         player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
             binding.playerView.player = exoPlayer
+//            binding.playerView.setShowFastForwardButton(false)
+//            binding.playerView.setShowNextButton(false)
+//            binding.playerView.setShowRewindButton(false)
+//            binding.playerView.setShowPreviousButton(false)
 
             // Create a DataSource factory that allows redirects
             val dataSourceFactory = DefaultHttpDataSource.Factory()

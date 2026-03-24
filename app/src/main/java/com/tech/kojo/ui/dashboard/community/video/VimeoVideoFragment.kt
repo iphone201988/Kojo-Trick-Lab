@@ -17,7 +17,12 @@ import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.data.api.Constants
+import com.tech.kojo.data.model.GetVideoByIdResponse
+import com.tech.kojo.data.model.UpdateVideoCountModel
 import com.tech.kojo.databinding.FragmentVimeoVideoBinding
+import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Status
+import com.tech.kojo.utils.showErrorToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,12 +44,51 @@ class VimeoVideoFragment : BaseFragment<FragmentVimeoVideoBinding>() {
         initWebView()
         loadVimeoVideo()
         initOnClick()
+        val videoId = arguments?.getString("videoId")
+        if (videoId!=null){
+            val request = HashMap<String, Any>()
+            request["timeTaken"]=200
+            request["isViewed"]=true
+            viewModel.updateVideoViewStatus("${Constants.UPDATE_VIDEO_VIEW}/$videoId",request)
+        }
+        initObserver()
     }
 
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
                 R.id.ivBack -> requireActivity().finish()
+            }
+        }
+    }
+
+    private fun initObserver(){
+        viewModel.observeCommon.observe(viewLifecycleOwner){
+            when(it?.status){
+                Status.LOADING -> {}
+                Status.SUCCESS -> {
+                    when(it.message){
+                        "updateVideoViewStatus"->{
+                                runCatching {
+                                    val model =
+                                        BindingUtils.parseJson<UpdateVideoCountModel>(it.data.toString())
+                                    if (model?.success == true && model.data != null) {
+                                        Log.d("video count updated","Video Count Updated")
+                                    }
+                                }.onFailure { e ->
+                                    showErrorToast(e.message.toString())
+                                }.also {
+                                }
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+
+                }
             }
         }
     }

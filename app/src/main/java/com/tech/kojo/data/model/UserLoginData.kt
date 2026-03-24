@@ -896,3 +896,20 @@ data class PostDetailModel(
     val success: Boolean?
 )
 
+data class UpdateVideoCountModel(
+    val `data`: UpdateVideoCountData?,
+    val message: String?,
+    val success: Boolean?
+)
+
+data class UpdateVideoCountData(
+    val __v: Int?,
+    val _id: String?,
+    val createdAt: String?,
+    val isViewed: Boolean?,
+    val timeTaken: Int?,
+    val updatedAt: String?,
+    val userId: String?,
+    val videoId: String?
+)
+

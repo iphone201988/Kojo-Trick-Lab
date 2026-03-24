@@ -64,14 +64,13 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: LibraryVideoResponse? = BindingUtils.parseJson(jsonData)
-                                val library = model?.data?.topics
                                 sharedPrefManager.setNotificationCount(model?.notifications)
                                 DashBoardActivity.notificationObserver.postValue(
                                     Resource.success(
                                         "notificationObserver", true
                                     )
                                 )
-                                if (!library.isNullOrEmpty()) {
+                                if (model?.data != null) {
                                     val sections = model.let { buildSections(it) }
                                     if (sections.isNotEmpty()) {
                                         sectionAdapter.setList(sections)
@@ -153,9 +152,9 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
                 section: LibrarySection.SeriesRow, sectionPosition: Int
             ) {
                 val intent = Intent(requireContext(), CommonActivity::class.java)
-                intent.putExtra("fromWhere", "allVideo")
-                intent.putExtra("videoTopicId", section.id)
-                intent.putExtra("videoTitle", section.title)
+                intent.putExtra("fromWhere", "series")
+                intent.putExtra("categoryId", section.id)
+                intent.putExtra("title", section.title)
                 startActivity(intent)
             }
         })
@@ -171,6 +170,7 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
 
     private fun buildSections(model: LibraryVideoResponse): List<LibrarySection> {
         val list = mutableListOf<LibrarySection>()
+
         model.data?.topics?.forEach { topic ->
             list.add(
                 LibrarySection.Topic(
@@ -181,16 +181,14 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
 
         model.data?.series?.let { series ->
             if (series.isNotEmpty()) {
-
-                series.forEach { item ->
-                    list.add(
-                        LibrarySection.SeriesRow(
-                            id = item._id,
-                            title = item.title,
-                            seriesList = listOf(item)
-                        )
+                // Group all series into one "Series" section at the end
+                list.add(
+                    LibrarySection.SeriesRow(
+                        id = series.firstOrNull()?.categoryId ?: "",
+                        title = "Series",
+                        seriesList = series
                     )
-                }
+                )
             }
         }
 

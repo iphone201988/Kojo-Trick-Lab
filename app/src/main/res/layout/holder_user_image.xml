@@ -29,6 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:visibility="gone"
+            app:show_buffering="always"
             app:use_controller="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +61,7 @@
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:src="@drawable/maximize"
-            android:tint="@color/blue"
+            android:tint="@color/colorPrimary"
             android:visibility="visible"
             />
         </LinearLayout>
