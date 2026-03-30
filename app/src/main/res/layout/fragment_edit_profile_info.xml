@@ -34,27 +34,66 @@
 
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/etTricking"
+                android:id="@+id/etUserName"
                 style="@style/EditText"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_38sdp"
                 android:layout_marginHorizontal="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:background="@drawable/et_bg"
                 android:gravity="start"
-                android:hint="@string/tricking_nickname"
+                android:hint="@string/username"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
-                android:nextFocusForward="@+id/etSignature"
+                android:maxLength="25"
+                android:nextFocusForward="@+id/etTricking"
                 android:onClick="@{v->vm.onClick(v)}"
                 android:paddingStart="@dimen/_15sdp"
-                android:text="@{bean.trickingNickname}"
+                android:text="@{bean.name}"
                 android:textSize="@dimen/_11ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/clCommon" />
 
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/etEmail"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="Email"
+                android:enabled="false"
+                android:alpha="0.7"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="@{bean.email}"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etUserName"
+                app:layout_constraintStart_toStartOf="@+id/etUserName"
+                app:layout_constraintTop_toBottomOf="@+id/etUserName" />
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/etTricking"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:background="@drawable/et_bg"
+                android:gravity="start"
+                android:hint="@string/tricking_nickname"
+                android:onClick="@{v->vm.onClick(v)}"
+                android:maxLength="25"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusForward="@+id/etSignature"
+                android:paddingStart="@dimen/_15sdp"
+                android:text="@{bean.trickingNickname}"
+                android:textSize="@dimen/_11ssp"
+                app:layout_constraintEnd_toEndOf="@+id/etUserName"
+                app:layout_constraintStart_toStartOf="@+id/etUserName"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etCountry"
                 style="@style/EditText"
@@ -125,6 +164,7 @@
                 android:gravity="start"
                 android:hint="@string/signature_trick"
                 android:imeOptions="actionNext"
+                android:maxLength="25"
                 android:inputType="textPersonName"
                 android:nextFocusForward="@id/etDream"
                 android:onClick="@{v->vm.onClick(v)}"
@@ -145,6 +185,7 @@
                 android:gravity="start"
                 android:hint="@string/dream_trick"
                 android:imeOptions="actionNext"
+                android:maxLength="25"
                 android:inputType="textPersonName"
                 android:nextFocusForward="@id/etInstagram"
                 android:onClick="@{v->vm.onClick(v)}"
@@ -219,10 +260,10 @@
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_44sdp"
-                android:layout_marginTop="@dimen/_95sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                app:layout_constraintTop_toBottomOf="@id/etYouTube"
                 app:layout_constraintEnd_toEndOf="@+id/etYouTube"
-                app:layout_constraintStart_toStartOf="@+id/etYouTube"
-                app:layout_constraintTop_toBottomOf="@+id/etYouTube">
+                app:layout_constraintStart_toStartOf="@+id/etYouTube">
 
                 <com.tech.kojo.utils.GoldenButtonView
                     android:layout_width="match_parent"

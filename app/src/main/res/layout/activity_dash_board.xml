@@ -121,6 +121,7 @@
             android:id="@+id/ivSearch"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/ivNotification"
             android:layout_marginEnd="@dimen/_6sdp"
             app:layout_constraintTop_toTopOf="@+id/ivTopLogo"

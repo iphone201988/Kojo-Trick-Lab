@@ -31,7 +31,7 @@ class OnBoardingActivity : BaseActivity<ActivityOnBoardingBinding>() {
         initView()
         // click
         initOnClick()
-
+        sharedPrefManager.setLoggedIn(false)
 
         // adapter
         val adapter = OnBoardingPagerAdapter(this@OnBoardingActivity)

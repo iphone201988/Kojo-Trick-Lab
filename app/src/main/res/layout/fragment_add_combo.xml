@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.tracker.add_combo.AddComboFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.combo_goals.add_combo.AddComboFragmentVM" />
     </data>
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.dashboard.tracker.add_combo.AddComboFragment">
+        tools:context=".ui.dashboard.tracker.combo_goals.add_combo.AddComboFragment">
 
 
         <include

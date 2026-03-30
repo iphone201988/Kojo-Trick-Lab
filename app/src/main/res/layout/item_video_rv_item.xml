@@ -35,17 +35,19 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDesc"
                 style="@style/TextView_700_Bold"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:gravity="center"
+                android:gravity="start"
+                android:maxLines="2"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_14ssp"
                 android:shadowColor="@color/black"
                 android:shadowDx="3"
                 android:shadowDy="3"
                 android:shadowRadius="4"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

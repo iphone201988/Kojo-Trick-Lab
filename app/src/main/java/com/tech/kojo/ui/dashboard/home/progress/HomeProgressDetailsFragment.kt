@@ -1,17 +1,16 @@
 package com.tech.kojo.ui.dashboard.home.progress
 
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.os.Environment
+import android.media.MediaMetadataRetriever
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.JsonObject
@@ -25,12 +24,12 @@ import com.tech.kojo.data.model.HomeProgressApiResponse
 import com.tech.kojo.data.model.HomeProgressStep
 import com.tech.kojo.data.model.Prerequisites
 import com.tech.kojo.data.model.VideoLink
+import com.tech.kojo.data.room_module.DownloadVideoData
 import com.tech.kojo.databinding.FragmentHomeProgressDetailsBinding
 import com.tech.kojo.databinding.HomeProgressItemBinding
 import com.tech.kojo.databinding.PrerequistesRvItemBinding
-import com.tech.kojo.databinding.StepRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
-import com.tech.kojo.ui.dashboard.tracker.progression_details.UserImagePagerAdapter
+import com.tech.kojo.ui.dashboard.tracker.my_trick.progression_details.UserImagePagerAdapter
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
@@ -39,6 +38,12 @@ import com.tech.kojo.utils.showSuccessToast
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 @AndroidEntryPoint
 class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBinding>() {
@@ -53,6 +58,8 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
     private var pagerRecyclerView: RecyclerView? = null
     private lateinit var stepAdapter: SimpleRecyclerViewAdapter<Prerequisites, PrerequistesRvItemBinding>
 
+    private var downloadedVideos = ArrayList<DownloadVideoData>()
+
     override fun getLayoutResource(): Int = R.layout.fragment_home_progress_details
 
     override fun getViewModel(): BaseViewModel = viewModel
@@ -60,9 +67,12 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
     override fun onCreateView(view: View) {
         initProgressionDetailsAdapter()
         initStepAdapter()
+        viewModel.getAllVideos()
+        observeDownloadedVideo()
         initOnClick()
         initObserver()
-        setupSwipeGestures()
+      //  setupSwipeGestures()
+
     }
 
     override fun onResume() {
@@ -206,7 +216,8 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
                 R.id.ivProgress, R.id.ivClosePlayer -> requireActivity().finish()
-                R.id.btnDownload -> downloadCurrentVideo()
+                R.id.btnDownload,R.id.ivDownload ->
+                    downloadCurrentVideo()
 //                R.id.ivMAx -> openCurrentVideoFullScreen()
             }
         }
@@ -214,14 +225,19 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
 
     private fun downloadCurrentVideo() {
         val currentPosition = binding.viewpager.currentItem
-        val videoUrl = reorderedVideos.getOrNull(currentPosition)?.link
+        val video = reorderedVideos.getOrNull(currentPosition)
 
-        if (!videoUrl.isNullOrEmpty()) {
-            downloadVideo(videoUrl)
+        if (video != null) {
+            if (downloadedVideos.any { it.thumbnailUrl == video.thumbnail }) {
+                showErrorToast("Video already downloaded")
+                return
+            }
+            downloadAndSaveVideo(video, currentPosition)
         } else {
             showErrorToast("Video URL not found")
         }
     }
+
 
 //    private fun openCurrentVideoFullScreen() {
 //        val currentPosition = binding.viewpager.currentItem
@@ -241,29 +257,28 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
 //        }
 //    }
 
-    private fun downloadVideo(url: String) {
-        try {
-            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
-            val request = DownloadManager.Request(fullUrl.toUri()).apply {
-                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                setTitle("Downloading Video")
-                setDescription("Downloading video file...")
-                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setDestinationInExternalPublicDir(
-                    Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4"
-                )
-            }
-
-            val downloadManager =
-                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            downloadManager.enqueue(request)
-            showSuccessToast("Download started...")
-        } catch (e: Exception) {
-            Log.e("DownloadError", "Error: ${e.message}", e)
-            showErrorToast("Download failed: ${e.message}")
-        }
-    }
-
+    //    private fun downloadVideo(url: String) {
+//        try {
+//            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
+//            val request = DownloadManager.Request(fullUrl.toUri()).apply {
+//                setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+//                setTitle("Downloading Video")
+//                setDescription("Downloading video file...")
+//                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+//                setDestinationInExternalPublicDir(
+//                    Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4"
+//                )
+//            }
+//
+//            val downloadManager =
+//                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//            downloadManager.enqueue(request)
+//            showSuccessToast("Download started...")
+//        } catch (e: Exception) {
+//            Log.e("DownloadError", "Error: ${e.message}", e)
+//            showErrorToast("Download failed: ${e.message}")
+//        }
+//    }
     private fun setupViewPager() {
         val pageCount = binding.viewpager.adapter?.itemCount ?: 0
 
@@ -295,6 +310,8 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
 
                 val currentVideo = reorderedVideos.getOrNull(position)
                 val originalIndex = allVideos.indexOf(currentVideo)
+                // Update download button state for current video
+                updateDownloadButtonState(currentVideo)
 
                 Log.d("ViewPager", "Position $position → original index $originalIndex")
             }
@@ -393,11 +410,183 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
                 R.id.tvJump -> {
                     val intent = Intent(requireContext(), CommonActivity::class.java)
                     intent.putExtra("fromWhere", "homeProgress")
-                    intent.putExtra("trackDetailId", trackDetailId)
+                    intent.putExtra("trackDetailId", m._id)
                     startActivity(intent)
                 }
             }
         }
         binding.rvStep.adapter = stepAdapter
+    }
+
+    ///// download video
+    private fun downloadAndSaveVideo(video: VideoLink, position: Int) {
+        showLoading()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val videoUrl = if (video.link?.startsWith("http") == true) video.link else Constants.BASE_URL_IMAGE + video.link
+                Log.d("VideoDownload", "Downloading from: $videoUrl")
+
+                val localPath = requireContext().downloadVideo(
+                    url = videoUrl ?: "",
+                    fileName = "${video._id ?: System.currentTimeMillis()}.mp4"
+                )
+
+                if (localPath == null) {
+                    throw Exception("Download failed, localPath is null")
+                }
+
+                // Find step title for this video link
+                val stepTitle = homeProgressionDetailsAdapter.list.find { step ->
+                    step.videoLinks?.any { it?.thumbnail == video.thumbnail } == true
+                }?.title
+
+                val downloadVideo = DownloadVideoData(
+                    _id = video._id,
+                    createdAt = System.currentTimeMillis().toString(),
+                    thumbnailUrl = video.thumbnail,
+                    title = stepTitle ?: "Video $position",
+                    videoDownload = true,
+                    localPath = localPath
+                )
+
+                viewModel.insertVideo(downloadVideo)
+
+                launch(Dispatchers.Main) {
+                    hideLoading()
+                    showSuccessToast("Video downloaded successfully")
+                    viewModel.getAllVideos()
+                }
+
+            } catch (e: Exception) {
+                Log.e("VideoDownloadError", e.message ?: "Unknown error", e)
+
+                launch(Dispatchers.Main) {
+                    hideLoading()
+                    showErrorToast("Video download failed. Please try again.")
+                }
+            }
+        }
+    }
+
+
+    fun Context.downloadVideo(url: String, fileName: String): String? {
+        var currentUrl = url
+        var connection: HttpURLConnection? = null
+        val file = File(filesDir, fileName)
+        if (file.exists()) file.delete()
+
+        try {
+            var redirects = 0
+            val maxRedirects = 5
+
+            while (redirects < maxRedirects) {
+                val urlObj = URL(currentUrl)
+                connection = urlObj.openConnection() as HttpURLConnection
+                connection.connectTimeout = 15000
+                connection.readTimeout = 15000
+                connection.instanceFollowRedirects = true
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0")
+
+                val status = connection.responseCode
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                    status == HttpURLConnection.HTTP_MOVED_PERM ||
+                    status == HttpURLConnection.HTTP_SEE_OTHER ||
+                    status == 307 || status == 308) {
+
+                    var newUrl = connection.getHeaderField("Location")
+                    if (newUrl == null) break
+
+                    if (newUrl.startsWith("/")) {
+                        newUrl = urlObj.protocol + "://" + urlObj.host + (if (urlObj.port != -1) ":" + urlObj.port else "") + newUrl
+                    }
+
+                    Log.d("VideoDownload", "Redirected ($status) to: $newUrl")
+                    currentUrl = newUrl
+                    redirects++
+                    connection.disconnect()
+                    continue
+                }
+                break
+            }
+
+            if (connection?.responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("VideoDownload", "Server returned HTTP ${connection?.responseCode}")
+                return null
+            }
+
+            val input = connection.inputStream
+            val output = FileOutputStream(file)
+            input.use { inp ->
+                output.use { outp ->
+                    inp.copyTo(outp)
+                }
+            }
+
+            Log.d("VideoDownload", "Downloaded file size: ${file.length()} bytes")
+            if (file.length() == 0L) {
+                file.delete()
+                return null
+            }
+
+            return file.absolutePath
+        } catch (e: Exception) {
+            Log.e("VideoDownload", "Error downloading: ${e.message}")
+            if (file.exists()) file.delete()
+            return null
+        } finally {
+            connection?.disconnect()
+        }
+    }
+    private fun observeDownloadedVideo() {
+        viewModel.observeVideo.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+//                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getDownloadVideo" -> {
+                            runCatching {
+                                downloadedVideos = it.data as ArrayList<DownloadVideoData>
+                                // Update download button state for current video
+                                val currentPosition = binding.viewpager.currentItem
+                                val currentVideo = reorderedVideos.getOrNull(currentPosition)
+                                updateDownloadButtonState(currentVideo)
+
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(
+                                    e.localizedMessage ?: getString(R.string.something_went_wrong)
+                                )
+                            }.also {
+//                                hideLoading()
+                            }
+                        }
+
+                    }
+                }
+
+                Status.ERROR -> {
+//                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
+
+    private fun updateDownloadButtonState(currentVideo: VideoLink?) {
+        val isDownloaded = currentVideo != null && downloadedVideos.any { it.thumbnailUrl == currentVideo.thumbnail }
+        // Optionally change the icon/background to indicate download status
+        if (isDownloaded) {
+            binding.ivLoad.setImageResource(R.drawable.ic_download_complete) // Add a downloaded icon
+            // Or show a checkmark, disable the button, etc.
+        } else {
+            binding.ivLoad.setImageResource(R.drawable.ic_cloud_download) // Your default download icon
+        }
     }
 }

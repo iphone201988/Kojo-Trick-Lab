@@ -7,14 +7,14 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.subscription.SubscriptionVM" />
+            type="com.tech.kojo.ui.dashboard.profile_options.subscription.SubscriptionVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.dashboard.stat_visibility.StatVisibilityFragment">
+        tools:context=".ui.dashboard.profile_options.stat_visibility.StatVisibilityFragment">
 
 
         <include

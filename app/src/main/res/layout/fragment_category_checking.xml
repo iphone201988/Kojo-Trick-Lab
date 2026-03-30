@@ -7,13 +7,13 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.tracker.category.CategoryCheckingFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.tricking_milestones.category.CategoryCheckingFragmentVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.dashboard.tracker.category.CategoryCheckingFragment">
+        tools:context=".ui.dashboard.tracker.tricking_milestones.category.CategoryCheckingFragment">
 
 
         <include

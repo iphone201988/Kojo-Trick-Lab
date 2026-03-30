@@ -1,6 +1,10 @@
 package com.tech.kojo.ui.dashboard.community
 
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.os.Handler
 import android.util.Log
 import android.view.View
@@ -14,6 +18,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -34,8 +39,9 @@ import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
+import com.tech.kojo.utils.showInfoToast
+import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.log
 
 
 @AndroidEntryPoint
@@ -147,10 +153,19 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                                 val model: LikedApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
                                     val updatedLikes = model.likesCount ?: 0
+                                    var isLiked = false
+                                    // Toggle logic
+                                    if (model.message!!.contains("Post unliked")){
+                                        isLiked = false
+                                    }
+                                    else{
+                                        isLiked = true
+                                    }
                                     val list = communityAdapter.getList()
                                     val item = list[postPosition]
                                     if (item is FeedItem.Post) {
                                         item.post.totalLikes = updatedLikes
+                                        item.post.isLiked = isLiked
                                         communityAdapter.notifyItemChanged(postPosition)
                                     }
 
@@ -184,6 +199,18 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
 
                             }.also {
                                 hideLoading()
+                            }
+                        }
+                        "postDeleteApi" -> {
+                            hideLoading()
+                            showSuccessToast("Post deleted successfully")
+                            if (postPosition != -1 && postPosition < communityAdapter.getList().size) {
+                                communityAdapter.getList().removeAt(postPosition)
+                                communityAdapter.notifyItemRemoved(postPosition)
+                                communityAdapter.notifyItemRangeChanged(postPosition, communityAdapter.itemCount)
+                                if (communityAdapter.getList().isEmpty()) {
+                                    binding.clEmpty.visibility = View.VISIBLE
+                                }
                             }
                         }
                     }
@@ -223,7 +250,15 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
             Handler().postDelayed({
                 binding.ssPullRefresh.isRefreshing = false
                 isProgress = true
-                getApi(isPopular)
+                if (binding.check==3){
+                    val data = HashMap<String, Any>()
+                    data["pinned"] = true
+                    viewModel.getPostApi(data, Constants.GET_POST)
+                }
+                else{
+                    getApi(isPopular)
+                }
+
             }, 2000)
         }
     }
@@ -346,6 +381,24 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                         intent.putExtra("communityData", item)
                         startActivity(intent)
                     }
+                        R.id.profileImage->{
+                            val loggedInUserId = sharedPrefManager.getLoginData()?._id
+                            val clickedUserId = item?.userData?._id
+
+                            if (clickedUserId.isNullOrEmpty() || item?.userData?._id==null) {
+                                showInfoToast("User not available")
+                                return
+                            }
+
+                            if (clickedUserId != loggedInUserId) {
+                                val intent = Intent(requireContext(), CommonActivity::class.java)
+                                intent.putExtra("userId", clickedUserId)
+                                intent.putExtra("fromWhere", "userProfile")
+                                startActivity(intent)
+                            } else {
+                                showInfoToast("You can't open your own profile")
+                            }
+                        }
 
                     R.id.ivVideo -> {
                         playInLine(item, position)
@@ -369,6 +422,14 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                         val data = HashMap<String, Any>()
                         data["postId"] = item?._id.toString()
                         viewModel.postPinApi(Constants.POST_PIN, data)
+                    }
+                    R.id.tvdelete->{
+                        val loginData = sharedPrefManager.getLoginData()
+                        if (item?.userData?._id == loginData?._id) {
+                            viewModel.postDeleteApi("${Constants.DELETE_POST}/${item?._id}")
+                        } else {
+                            showInfoToast("You can only delete your own posts")
+                        }
                     }
                 }
             }

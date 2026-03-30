@@ -16,6 +16,7 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
         const val TOKEN = "token"
         const val ON_BOARDING = "onboarding"
         const val NOTIFICATION_COUNT="notification_count"
+        const val IS_LOGGED_IN="is_logged_in"
     }
 
     fun setLoginData(isFirst: LoginUser?) {
@@ -64,6 +65,14 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
 
     fun getNotificationCount(): Int {
         return sharedPreferences.getInt(KEY.NOTIFICATION_COUNT, 0)
+    }
+
+    fun setLoggedIn(type: Boolean?) {
+        sharedPreferences.saveValue(KEY.IS_LOGGED_IN, type)
+    }
+
+    fun getLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean(KEY.IS_LOGGED_IN, false)
     }
 
 

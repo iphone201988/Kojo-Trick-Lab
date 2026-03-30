@@ -7,14 +7,14 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.community.video.VideoFragmentVM" />
+            type="com.tech.kojo.ui.video.VideoFragmentVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.dashboard.community.video.VimeoVideoFragment">
+        tools:context=".ui.video.VimeoVideoFragment">
 
         <WebView
             android:id="@+id/webView"

@@ -11,12 +11,12 @@
 
     <fragment
         android:id="@+id/fragmentTrainedRecently"
-        android:name="com.tech.kojo.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.my_trick.trained_recently.TrainedRecentlyFragment"
         tools:layout="@layout/fragment_trained_recently" />
 
     <fragment
         android:id="@+id/fragmentProgressionDetails"
-        android:name="com.tech.kojo.ui.dashboard.tracker.progression_details.ProgressionDetailsFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.my_trick.progression_details.ProgressionDetailsFragment"
         tools:layout="@layout/fragment_progression_details" />
 
     <fragment
@@ -27,12 +27,12 @@
 
     <fragment
         android:id="@+id/fragmentAddCombo"
-        android:name="com.tech.kojo.ui.dashboard.tracker.add_combo.AddComboFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.combo_goals.add_combo.AddComboFragment"
         tools:layout="@layout/fragment_add_combo" />
 
     <fragment
         android:id="@+id/fragmentAddNotes"
-        android:name="com.tech.kojo.ui.dashboard.tracker.add_notes.AddNotesFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.combo_goals.add_notes.AddNotesFragment"
         tools:layout="@layout/fragment_add_notes" />
 
 
@@ -75,7 +75,7 @@
 
     <fragment
         android:id="@+id/fragmentCategoryChecking"
-        android:name="com.tech.kojo.ui.dashboard.tracker.category.CategoryCheckingFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.tricking_milestones.category.CategoryCheckingFragment"
         tools:layout="@layout/fragment_category_checking" />
 
     <fragment
@@ -86,7 +86,7 @@
 
     <fragment
         android:id="@+id/fragmentPersonalBests"
-        android:name="com.tech.kojo.ui.dashboard.tracker.personal_bests.PersonalBestsFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.my_star.personal_bests.PersonalBestsFragment"
         tools:layout="@layout/fragment_personal_bests" />
 
 
@@ -148,24 +148,24 @@
 
     <fragment
         android:id="@+id/fragmentNotification"
-        android:name="com.tech.kojo.ui.notification.NotificationFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile_options.notification.NotificationFragment"
         tools:layout="@layout/fragment_notification" />
 
     <fragment
         android:id="@+id/fragmentChangePassword"
-        android:name="com.tech.kojo.ui.dashboard.change_password.ChangePasswordFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile_options.change_password.ChangePasswordFragment"
         tools:layout="@layout/fragment_change_password" />
 
 
     <fragment
         android:id="@+id/fragmentStatVisibility"
-        android:name="com.tech.kojo.ui.dashboard.stat_visibility.StatVisibilityFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile_options.stat_visibility.StatVisibilityFragment"
         tools:layout="@layout/fragment_stat_visibility" />
 
 
     <fragment
         android:id="@+id/fragmentSubscription"
-        android:name="com.tech.kojo.ui.dashboard.subscription.SubscriptionFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile_options.subscription.SubscriptionFragment"
         tools:layout="@layout/fragment_subscription" />
 
     <fragment
@@ -197,19 +197,19 @@
 
     <fragment
         android:id="@+id/fragmentSessionDetails"
-        android:name="com.tech.kojo.ui.dashboard.session_detail.SessionDetailFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.session_detail.SessionDetailFragment"
         tools:layout="@layout/fragment_session_detail" />
 
 
     <fragment
         android:id="@+id/fragmentPastSession"
-        android:name="com.tech.kojo.ui.dashboard.past_session_detail.PastSessionDetailFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.past_session_detail.PastSessionDetailFragment"
         tools:layout="@layout/fragment_past_session_detail" />
 
 
     <fragment
         android:id="@+id/fragmentAddReviewSession"
-        android:name="com.tech.kojo.ui.dashboard.add_review_post_session.AddReviewPostSessionFragment"
+        android:name="com.tech.kojo.ui.dashboard.tracker.session_planner.add_review_post_session.AddReviewPostSessionFragment"
         tools:layout="@layout/fragment_add_review_post_session" />
 
 
@@ -226,12 +226,12 @@
 
     <fragment
         android:id="@+id/fragmentVideo"
-        android:name="com.tech.kojo.ui.dashboard.community.video.VideoFragment"
+        android:name="com.tech.kojo.ui.video.VideoFragment"
         tools:layout="@layout/fragment_video" />
 
     <fragment
         android:id="@+id/fragmentVideoVimeo"
-        android:name="com.tech.kojo.ui.dashboard.community.video.VimeoVideoFragment"
+        android:name="com.tech.kojo.ui.video.VimeoVideoFragment"
         tools:layout="@layout/fragment_vimeo_video" />
 
     <fragment
@@ -252,5 +252,10 @@
 
 
     </fragment>
+
+    <fragment
+        android:id="@+id/fragmentDownloadVideoFragment"
+        android:name="com.tech.kojo.ui.dashboard.profile_options.download_video.DownloadVideoFragment"
+        tools:layout="@layout/fragment_download_video" />
 
 </navigation>

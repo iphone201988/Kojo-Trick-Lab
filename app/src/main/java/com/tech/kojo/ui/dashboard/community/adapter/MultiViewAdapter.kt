@@ -12,6 +12,7 @@ import com.tech.kojo.databinding.ItemImagePostBinding
 import com.tech.kojo.databinding.ItemLoadingBinding
 import com.tech.kojo.databinding.ItemTextPostBinding
 import com.tech.kojo.databinding.ItemVideoPostBinding
+import com.zerobranch.layout.SwipeLayout
 
 class MultiViewAdapter(
     private val listener: OnItemClickListener
@@ -20,7 +21,7 @@ class MultiViewAdapter(
     private val listItem: MutableList<FeedItem> = mutableListOf()
     private var playingPosition: Int = -1
     private var player: ExoPlayer? = null
-
+    var swipeLayout: SwipeLayout? = null
     companion object {
         private const val TYPE_VIDEO = 1
         private const val TYPE_IMAGE = 3
@@ -165,9 +166,25 @@ class MultiViewAdapter(
         fun bind(item: PostData?, listener: OnItemClickListener, position: Int) {
 
             binding.bean = item
-
+                binding.swipeLayout.setOnActionsListener(object :
+                    SwipeLayout.SwipeActionsListener {
+                    override fun onOpen(direction: Int, isContinuous: Boolean) {
+                        if (direction == SwipeLayout.LEFT) {
+                            if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
+                                swipeLayout?.close(true)
+                            }
+                            swipeLayout = binding.swipeLayout
+                        }
+                    }
+                    override fun onClose() {
+                        if (swipeLayout == binding.swipeLayout) swipeLayout = null
+                    }
+                })
             binding.cardView.setOnClickListener {
                 listener.onItemClick(item, binding.cardView.id, position)
+            }
+            binding.profileImage.setOnClickListener {
+                listener.onItemClick(item,binding.profileImage.id,position)
             }
 
             binding.ivLike.setOnClickListener {
@@ -175,6 +192,9 @@ class MultiViewAdapter(
             }
             binding.ivPinIcon.setOnClickListener {
                 listener.onItemClick(item, binding.ivPinIcon.id, position)
+            }
+            binding.tvdelete.setOnClickListener {
+                listener.onItemClick(item, binding.tvdelete.id, position)
             }
 
 
@@ -188,7 +208,20 @@ class MultiViewAdapter(
         fun bind(item: PostData?, listener: OnItemClickListener, position: Int, isPlaying: Boolean, player: ExoPlayer?) {
 
             binding.bean = item
-
+            binding.swipeLayout.setOnActionsListener(object :
+                SwipeLayout.SwipeActionsListener {
+                override fun onOpen(direction: Int, isContinuous: Boolean) {
+                    if (direction == SwipeLayout.LEFT) {
+                        if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
+                            swipeLayout?.close(true)
+                        }
+                        swipeLayout = binding.swipeLayout
+                    }
+                }
+                override fun onClose() {
+                    if (swipeLayout == binding.swipeLayout) swipeLayout = null
+                }
+            })
             if (isPlaying && player != null) {
                 binding.cardVideoPlayer.visibility = View.VISIBLE
                 binding.ivVideo.visibility = View.GONE
@@ -204,7 +237,9 @@ class MultiViewAdapter(
             binding.ivVideo.setOnClickListener {
                 listener.onItemClick(item, binding.ivVideo.id, position)
             }
-
+            binding.profileImage.setOnClickListener {
+                listener.onItemClick(item,binding.profileImage.id,position)
+            }
             binding.ivLike.setOnClickListener {
                 listener.onItemClick(item, binding.ivLike.id, position)
             }
@@ -221,6 +256,9 @@ class MultiViewAdapter(
             binding.ivMaximize.setOnClickListener {
                 listener.onItemClick(item, binding.ivMaximize.id, position)
             }
+            binding.tvdelete.setOnClickListener {
+                listener.onItemClick(item, binding.tvdelete.id, position)
+            }
 
             binding.executePendingBindings()
         }
@@ -233,6 +271,20 @@ class MultiViewAdapter(
         fun bind(item: PostData?, listener: OnItemClickListener, position: Int) {
 
             binding.bean = item
+            binding.swipeLayout.setOnActionsListener(object :
+                SwipeLayout.SwipeActionsListener {
+                override fun onOpen(direction: Int, isContinuous: Boolean) {
+                    if (direction == SwipeLayout.LEFT) {
+                        if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
+                            swipeLayout?.close(true)
+                        }
+                        swipeLayout = binding.swipeLayout
+                    }
+                }
+                override fun onClose() {
+                    if (swipeLayout == binding.swipeLayout) swipeLayout = null
+                }
+            })
             binding.ivLike.setOnClickListener {
                 listener.onItemClick(item, binding.ivLike.id, position)
             }
@@ -240,10 +292,15 @@ class MultiViewAdapter(
             binding.ivPinIcon.setOnClickListener {
                 listener.onItemClick(item, binding.ivPinIcon.id, position)
             }
-
+            binding.profileImage.setOnClickListener {
+                listener.onItemClick(item,binding.profileImage.id,position)
+            }
 
             binding.cardView.setOnClickListener {
                 listener.onItemClick(item, binding.cardView.id, position)
+            }
+            binding.tvdelete.setOnClickListener {
+                listener.onItemClick(item, binding.tvdelete.id, position)
             }
 
             binding.executePendingBindings()

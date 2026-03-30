@@ -152,7 +152,7 @@
                         style="@style/TextView_500_Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="(Max 10 seconds)"
+                        android:text="(Max 30 seconds)"
                         android:textColor="@color/view_line"
                         android:textSize="@dimen/_12ssp"
                         app:layout_constraintEnd_toEndOf="parent"

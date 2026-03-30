@@ -219,7 +219,7 @@ data class PostData(
     val description: String?,
     val imageLink: String?,
     val isCommented: Boolean?,
-    val isLiked: Boolean?,
+    var isLiked: Boolean?,
     var isPinned: Boolean?,
     val postType: String?,
     val title: String?,
@@ -332,7 +332,7 @@ data class Progress(
 
 @Parcelize
 data class VideoLink(
-    val _id: String?, val link: String?, val type: String?
+    val _id: String?, val link: String?, val type: String?,val thumbnail:String?
 ) : Parcelable
 
 
@@ -754,7 +754,7 @@ data class OtherUserData(
     val mostPracticedTrick: String?,
     val name: String?,
     val isPrivate: Boolean?,
-    val personalBest: OtherPersonalBest?,
+    val personalBest: List<OtherPersonalBest?>?,
     val profilePicture: String?,
     val signatureTrick: String?,
     val skin: String?,
@@ -767,13 +767,16 @@ data class OtherUserData(
 )
 
 data class OtherPersonalBest(
+//    val _id: String?,
+//    val corks: Any?,
+//    val gainerSwitch: Any?,
+//    val grandmasterSwipes: Any?,
+//    val popFulls: Any?,
+//    val takFulls: Any?,
+//    val wrapFulls: Any?
     val _id: String?,
-    val corks: Any?,
-    val gainerSwitch: Any?,
-    val grandmasterSwipes: Any?,
-    val popFulls: Any?,
-    val takFulls: Any?,
-    val wrapFulls: Any?
+    val count: Int?,
+    val name: String?
 )
 
 /**
@@ -787,7 +790,8 @@ data class GetVideoCategoryData(
 data class CategoryData(
     val __v: Int?,
     val _id: String?,
-    val categoryId: CategoryModel?,
+//    val categoryId: CategoryModel?,
+    val categoryId: String?,
     val createdAt: String?,
     val imageUrl: String?,
     val title: String?,

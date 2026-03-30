@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.tracker.trained_recently.TrainedRecentlyFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.my_trick.trained_recently.TrainedRecentlyFragmentVM" />
 
         <variable
             name="check"
@@ -18,7 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.dashboard.tracker.trained_recently.TrainedRecentlyFragment">
+        tools:context=".ui.dashboard.tracker.my_trick.trained_recently.TrainedRecentlyFragment">
 
         <include
             android:id="@+id/clCommon"

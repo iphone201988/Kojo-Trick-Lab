@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.session_detail.SessionDetailVm" />
+            type="com.tech.kojo.ui.dashboard.tracker.session_planner.session_detail.SessionDetailVm" />
 
         <variable
             name="bean"
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.dashboard.session_detail.SessionDetailFragment">
+        tools:context=".ui.dashboard.tracker.session_planner.session_detail.SessionDetailFragment">
 
 
         <include

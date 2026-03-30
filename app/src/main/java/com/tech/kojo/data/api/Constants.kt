@@ -40,6 +40,7 @@ object Constants {
     const val GET_COMMENTS ="post/comments"
     const val POST_PIN ="post/pin"
     const val POST_CREATE ="post/create"
+    const val DELETE_POST = "post"
 
     // combo
     const val GET_COMBO_GOALS ="combo-goals"

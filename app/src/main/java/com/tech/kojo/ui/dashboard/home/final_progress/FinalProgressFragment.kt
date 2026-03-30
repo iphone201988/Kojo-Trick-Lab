@@ -21,7 +21,7 @@ import com.tech.kojo.data.model.VideoLink
 import com.tech.kojo.databinding.FragmentFinalProgressBinding
 import com.tech.kojo.databinding.StepRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
-import com.tech.kojo.ui.dashboard.tracker.progression_details.UserImagePagerAdapter
+import com.tech.kojo.ui.dashboard.tracker.my_trick.progression_details.UserImagePagerAdapter
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast

@@ -43,8 +43,22 @@
             app:layout_constraintTop_toBottomOf="@+id/tvNotification" />
 
 
+<!--        <androidx.appcompat.widget.AppCompatTextView-->
+<!--            android:id="@+id/tvVideoSettings"-->
+<!--            style="@style/TextView_700_Bold_Quicksand"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:paddingVertical="@dimen/_5sdp"-->
+<!--            android:layout_marginTop="@dimen/_4sdp"-->
+<!--            android:onClick="@{v->callback.onViewClick(v)}"-->
+<!--            android:gravity="center"-->
+<!--            android:text="Video Settings"-->
+<!--            android:textSize="@dimen/_12ssp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/viewNotification" />  -->
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvVideoSettings"
+            android:id="@+id/tvDownloads"
             style="@style/TextView_700_Bold_Quicksand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,7 +66,7 @@
             android:layout_marginTop="@dimen/_4sdp"
             android:onClick="@{v->callback.onViewClick(v)}"
             android:gravity="center"
-            android:text="Video Settings"
+            android:text="Downloads"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +78,7 @@
             android:layout_height="2dp"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
-            app:layout_constraintTop_toBottomOf="@+id/tvVideoSettings" />
+            app:layout_constraintTop_toBottomOf="@+id/tvDownloads" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -126,6 +140,7 @@
             android:onClick="@{v->callback.onViewClick(v)}"
             android:gravity="center"
             android:text="Clip Review"
+            android:visibility="gone"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -135,6 +150,7 @@
             android:id="@+id/viewClipReview"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:visibility="gone"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@color/blue_20"
             app:layout_constraintTop_toBottomOf="@+id/tvClipReview" />

@@ -193,7 +193,7 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
 
                         retriever.release()
 
-                        if (durationMs > 10_000) {
+                        if (durationMs > 30_000) {
                             warningDialogItem(1)  // your alert popup
                             return@registerForActivityResult
                         }

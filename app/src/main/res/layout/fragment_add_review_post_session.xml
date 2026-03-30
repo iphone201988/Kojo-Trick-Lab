@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.add_review_post_session.AddReviewPostSessionVm" />
+            type="com.tech.kojo.ui.dashboard.tracker.session_planner.add_review_post_session.AddReviewPostSessionVm" />
 
         <variable
             name="bean"
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.dashboard.add_review_post_session.AddReviewPostSessionFragment">
+        tools:context=".ui.dashboard.tracker.session_planner.add_review_post_session.AddReviewPostSessionFragment">
 
         <include
             android:id="@+id/clCommon"

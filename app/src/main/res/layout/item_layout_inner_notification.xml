@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/blue"
-            setTimeAgo="@{bean.updatedAt}"
+            setTimeAgo="@{bean.createdAt}"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/title"

@@ -10,9 +10,9 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseActivity
@@ -38,6 +39,7 @@ import com.tech.kojo.databinding.DialogSettingsBinding
 import com.tech.kojo.databinding.RvCategoryItemBinding
 import com.tech.kojo.ui.auth.AuthActivity
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.common.CommonActivity.Companion.observeActivity
 import com.tech.kojo.ui.dashboard.community.CommunityFragment
 import com.tech.kojo.ui.dashboard.home.HomeFragment
 import com.tech.kojo.ui.dashboard.library.LibraryFragment
@@ -45,13 +47,12 @@ import com.tech.kojo.ui.dashboard.profile.ProfileFragment
 import com.tech.kojo.ui.dashboard.tracker.TrackerFragment
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
-import com.tech.kojo.utils.Resource
+import com.tech.kojo.utils.NotificationPayload
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.event.SingleRequestEvent
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.compareTo
 
 @AndroidEntryPoint
 class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
@@ -61,9 +62,11 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     private lateinit var categoryAdapter: SimpleRecyclerViewAdapter<TopicCategoryData, RvCategoryItemBinding>
     private lateinit var deleteOrLogoutDialogItem: BaseCustomDialog<DeleteOrLogoutDialogItemBinding>
     private var PERMISSION_REQUEST_CODE = 16
+    private var isSubscribed: Boolean? = false
 
     companion object {
         var changeImage = SingleRequestEvent<Boolean>()
+        var changeUserName = SingleRequestEvent<Boolean>()
         var notificationObserver = SingleRequestEvent<Boolean>()
     }
 
@@ -83,6 +86,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                 getNotificationPermission()
             }
         }
+        sharedPrefManager.setLoggedIn(true)
         // view
         initView()
         // setup bottom sheet
@@ -95,7 +99,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         // observer
         initObserver()
         val currentUser = sharedPrefManager.getLoginData()
-        if (currentUser!=null){
+        if (currentUser != null) {
             binding.tvUpload.text = currentUser.name
             binding.ivCircle.visibility = View.VISIBLE
             binding.ivProfile.visibility = View.VISIBLE
@@ -108,15 +112,14 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             }
 
             if (imageUrl != null) {
-                Glide.with(this@DashBoardActivity)
-                    .load(imageUrl)
-                    .placeholder(R.drawable.holder_dummy)
-                    .error(R.drawable.holder_dummy)
+                Glide.with(this@DashBoardActivity).load(imageUrl)
+                    .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
                     .into(binding.ivProfile)
             } else {
                 binding.ivProfile.setImageResource(R.drawable.holder_dummy)
             }
         }
+        notificationIntent()
     }
 
     /**
@@ -138,11 +141,8 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         }
 
         if (imageUrl != null) {
-            Glide.with(this@DashBoardActivity)
-                .load(imageUrl)
-                .placeholder(R.drawable.holder_dummy)
-                .error(R.drawable.holder_dummy)
-                .into(binding.profileImage)
+            Glide.with(this@DashBoardActivity).load(imageUrl).placeholder(R.drawable.holder_dummy)
+                .error(R.drawable.holder_dummy).into(binding.profileImage)
         } else {
             binding.profileImage.setImageResource(R.drawable.holder_dummy)
         }
@@ -157,6 +157,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             when (it?.status) {
                 Status.LOADING -> {
                 }
+
                 Status.SUCCESS -> {
                     // data set
                     val data = sharedPrefManager.getLoginData()
@@ -168,15 +169,11 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                         }
 
                         if (imageUrl != null) {
-                            Glide.with(this@DashBoardActivity)
-                                .load(imageUrl)
-                                .placeholder(R.drawable.holder_dummy)
-                                .error(R.drawable.holder_dummy)
+                            Glide.with(this@DashBoardActivity).load(imageUrl)
+                                .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
                                 .into(binding.profileImage)
-                            Glide.with(this@DashBoardActivity)
-                                .load(imageUrl)
-                                .placeholder(R.drawable.holder_dummy)
-                                .error(R.drawable.holder_dummy)
+                            Glide.with(this@DashBoardActivity).load(imageUrl)
+                                .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
                                 .into(binding.ivProfile)
                         } else {
                             binding.profileImage.setImageResource(R.drawable.holder_dummy)
@@ -184,31 +181,89 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                         }
                     }
                 }
+
                 Status.ERROR -> {
                 }
+
                 else -> {
                 }
             }
         }
-        notificationObserver.observe(this@DashBoardActivity){
+        changeUserName.observe(this@DashBoardActivity) {
             when (it?.status) {
                 Status.LOADING -> {
                 }
+
                 Status.SUCCESS -> {
-                    if (sharedPrefManager.getNotificationCount()>0){
-                        binding.ivNotification.setImageResource(R.drawable.notification)
+                    // data set
+                    val data = sharedPrefManager.getLoginData()
+                    if (data != null) {
+                        binding.tvUpload.text = data.name
                     }
-                    else{
+                }
+
+                Status.ERROR -> {
+                }
+
+                else -> {
+                }
+            }
+        }
+        notificationObserver.observe(this@DashBoardActivity) {
+            when (it?.status) {
+                Status.LOADING -> {
+                }
+
+                Status.SUCCESS -> {
+                    if (sharedPrefManager.getNotificationCount() > 0) {
+                        binding.ivNotification.setImageResource(R.drawable.notification)
+                    } else {
                         binding.ivNotification.setImageResource(R.drawable.ic_no_notifications)
                     }
                 }
+
                 Status.ERROR -> {
                 }
+
                 else -> {
+                }
+            }
+        }
+        observeActivity.observe(this@DashBoardActivity) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "checkInternet" -> {
+                            runCatching {
+                                val intent = Intent(this, CommonActivity::class.java)
+                                intent.putExtra("fromWhere", "downloadedVideo")
+                                startActivity(intent)
+
+                            }.onFailure { e ->
+
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                }
+
+                else -> {
+
                 }
             }
         }
     }
+
     /**
      * click handel
      */
@@ -335,11 +390,20 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
      * dialog initialize
      */
     private fun initDialog() {
-        commonDialog = BaseCustomDialog(this@DashBoardActivity, R.style.DialogDashboard,R.layout.dialog_settings) {
+        commonDialog = BaseCustomDialog(
+            this@DashBoardActivity, R.style.DialogDashboard, R.layout.dialog_settings
+        ) {
             when (it?.id) {
                 R.id.tvNotification -> {
                     val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
                     intent.putExtra("fromWhere", "notification")
+                    startActivity(intent)
+                    commonDialog.dismiss()
+                }
+
+                R.id.tvDownloads -> {
+                    val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                    intent.putExtra("fromWhere", "downloadedVideo")
                     startActivity(intent)
                     commonDialog.dismiss()
                 }
@@ -392,8 +456,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             attributes = params
 
             setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
     }
@@ -409,8 +472,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     private fun initMenuDialog(categoryList: List<TopicCategoryData>) {
 
         menuDialog = BaseCustomDialog(
-            this@DashBoardActivity,R.style.DialogDashboard,
-            R.layout.dailog_video_menu
+            this@DashBoardActivity, R.style.DialogDashboard, R.layout.dailog_video_menu
         ) { }
 
         menuDialog.setCancelable(true)
@@ -429,8 +491,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
             attributes = params
 
             setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
 
@@ -448,12 +509,17 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
         categoryAdapter = SimpleRecyclerViewAdapter(R.layout.rv_category_item, BR.bean) { v, m, _ ->
             when (v?.id) {
                 R.id.clCategory -> {
-                    val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
-                    intent.putExtra("categoryId", m._id)
-                    intent.putExtra("title", m.title)
-                    intent.putExtra("fromWhere", "series")
-                    startActivity(intent)
-                    menuDialog.dismiss()
+                    if (m.title=="All"){
+                        menuDialog.dismiss()
+                    }
+                    else {
+                        val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                        intent.putExtra("categoryId", m._id)
+                        intent.putExtra("title", m.title)
+                        intent.putExtra("fromWhere", "series")
+                        startActivity(intent)
+                        menuDialog.dismiss()
+                    }
                 }
             }
         }
@@ -518,7 +584,10 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: GetTopicCategoryData? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true && model.data?.isNotEmpty() == true) {
-                                    initMenuDialog(model.data as List<TopicCategoryData>)
+                                    val allTopicData = TopicCategoryData(null,null,null,null,"All",null)
+                                    val list = model.data as MutableList<TopicCategoryData>
+                                    list.add(0, allTopicData)
+                                    initMenuDialog(list)
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
@@ -648,6 +717,58 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
             else -> {
                 binding.navHome.performClick()
+            }
+        }
+    }
+
+    private fun notificationIntent() {
+        isSubscribed = sharedPrefManager.getLoginData()?.isSubscription
+        intent?.extras?.let { extras ->
+            val jsonString: String? = extras.getString("NOTIFICATION_DATA")
+            Log.e("push data", "notificationIntent: $jsonString")
+            if (!jsonString.isNullOrEmpty()) {
+
+                val payload = Gson().fromJson(jsonString, NotificationPayload::class.java)
+
+                when (payload.type) {
+                    "NEW_POST", "POST_LIKE", "POST_COMMENT" -> {
+                        val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "communityDetail")
+                        intent.putExtra("postId", payload.postId)
+                        startActivity(intent)
+                    }
+
+                    "SESSION_REMINDER" -> {
+                        // Handle session reminder
+                    }
+
+                    "CLIP_REVIEW" -> {
+                        // Handle clip review
+                    }
+
+                    "NEW_VIDEO" -> {
+
+                    }
+
+                    "NEW_TRICK" -> {
+                        if (isSubscribed == false) {
+                            Toast.makeText(
+                                this, "You don't have any subscription", Toast.LENGTH_SHORT
+                            ).show()
+                            return
+                        }
+                        val intent = Intent(this, CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "homeProgress")
+                        intent.putExtra("trackDetailId", payload.trickDataId)
+                        startActivity(intent)
+                    }
+
+                    else -> {
+                        val intent = Intent(this, CommonActivity::class.java)
+                        intent.putExtra("fromWhere", "notificationNew")
+                        startActivity(intent)
+                    }
+                }
             }
         }
     }

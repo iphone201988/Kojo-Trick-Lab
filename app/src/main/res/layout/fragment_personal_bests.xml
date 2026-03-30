@@ -7,14 +7,14 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.tracker.personal_bests.PersonalBestsFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.my_star.personal_bests.PersonalBestsFragmentVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
-        tools:context=".ui.dashboard.tracker.personal_bests.PersonalBestsFragment">
+        tools:context=".ui.dashboard.tracker.my_star.personal_bests.PersonalBestsFragment">
 
         <include
             android:id="@+id/clCommon"

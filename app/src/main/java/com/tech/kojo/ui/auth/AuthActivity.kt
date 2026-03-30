@@ -32,6 +32,7 @@ class AuthActivity : BaseActivity<ActivityAuthBinding>() {
     override fun onCreateView() {
         BindingUtils.statusBarStyleWhite(this)
         initView()
+        sharedPrefManager.setLoggedIn(false)
         val from = intent.getStringExtra("open")
         navController.graph =
             navController.navInflater.inflate(R.navigation.auth_section_navigation).apply {

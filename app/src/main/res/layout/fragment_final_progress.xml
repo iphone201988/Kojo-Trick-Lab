@@ -10,12 +10,22 @@
             type="com.tech.kojo.ui.dashboard.home.final_progress.FinalProgressFragmentVM" />
     </data>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_color"
         tools:context=".ui.dashboard.home.final_progress.FinalProgressFragment">
-
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btnAttempted"
+            android:paddingBottom="@dimen/_15sdp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
@@ -76,16 +86,21 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSkip"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:onClick="@{v->vm.onClick(v)}"
             android:paddingHorizontal="@dimen/_12sdp"
             android:paddingVertical="@dimen/_4sdp"
+            android:gravity="start"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="Dive Roll"
             android:textColor="@color/white"
             android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivClosePlayer"
             app:layout_constraintTop_toTopOf="@+id/viewpager" />
 
@@ -159,6 +174,7 @@
             android:layout_marginHorizontal="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/tvKeyPoints"
@@ -233,12 +249,15 @@
             app:layout_constraintEnd_toStartOf="@+id/ivPlus"
             app:layout_constraintStart_toEndOf="@+id/ivMinus"
             app:layout_constraintTop_toTopOf="@+id/ivMinus" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnAttempted"
             style="@style/TextView_600_SemiBold_Quicksand"
             android:layout_width="0dp"
             android:layout_height="@dimen/_38sdp"
+            android:layout_marginStart="@dimen/_18sdp"
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_22ssp"
             android:background="@drawable/bg_gradiant"
@@ -249,7 +268,7 @@
             android:textSize="@dimen/_15ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnCompleted"
-            app:layout_constraintStart_toStartOf="@+id/ivMinus" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnCompleted"
@@ -257,6 +276,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/_38sdp"
             android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
             android:background="@drawable/btn_bg"
             android:backgroundTint="@color/colorPrimary"
             android:gravity="center"
@@ -265,7 +285,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintBottom_toBottomOf="@+id/btnAttempted"
-            app:layout_constraintEnd_toEndOf="@+id/ivPlus"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnAttempted"
             app:layout_constraintTop_toTopOf="@+id/btnAttempted" />
 

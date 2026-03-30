@@ -23,11 +23,7 @@ open class BaseViewModel : ViewModel() {
             }
         }
         // Trigger logout if 401 OR JWT missing
-        if (code == 401 || message.contains("jwt must be provided", ignoreCase = true) || message.contains(
-                "Invalid algorithm",
-                ignoreCase = true
-            )
-        ) {
+        if (code == 401) {
             onUnAuth.postValue(401)
         }
         return message.ifEmpty { errorBody?.toString() ?: "Unknown error" }

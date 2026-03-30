@@ -68,6 +68,7 @@
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
                 android:layout_marginEnd="@dimen/_18sdp"
+                android:visibility="gone"
                 android:src="@drawable/search_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/ivBack"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -78,6 +79,7 @@
 
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="@dimen/_18sdp"
@@ -109,6 +111,7 @@
                         android:layout_width="@dimen/_30sdp"
                         android:layout_height="@dimen/_30sdp"
                         android:scaleType="centerCrop"
+                        android:onClick="@{v->vm.onClick(v)}"
                         android:src="@drawable/holder_dummy"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -231,7 +234,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:singleLine="true"
                         android:text="@{bean.title}"
                         android:textColor="@color/blue"
                         android:textSize="@dimen/_13ssp"
@@ -283,7 +285,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_5sdp"
-                            android:text="Responses"
+                            android:text="Add response"
                             android:textColor="@color/blue"
                             android:textSize="@dimen/_8ssp"
                             app:layout_constraintBottom_toBottomOf="@id/chatIcon"
@@ -328,7 +330,7 @@
                         android:layout_marginEnd="-3dp"
                         android:onClick="@{v -> vm.onClick(v)}"
                         android:padding="@dimen/_5sdp"
-                        android:src="@drawable/iv_heart"
+                        android:src="@drawable/iv_heart_unfilled"
                         app:layout_constraintBottom_toBottomOf="@id/addResponse"
                         app:layout_constraintEnd_toStartOf="@id/tvLikes"
                         app:layout_constraintTop_toTopOf="@id/addResponse" />
@@ -368,6 +370,7 @@
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginStart="@dimen/_10sdp"
+                android:src="@drawable/holder_dummy"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

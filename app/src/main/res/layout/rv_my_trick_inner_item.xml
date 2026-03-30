@@ -18,13 +18,10 @@
             type="com.tech.kojo.base.SimpleRecyclerViewAdapter.SimpleCallback" />
     </data>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/_3sdp">
-
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv2"
             style="@style/TextView_600_SemiBold_Quicksand"
@@ -34,6 +31,10 @@
             android:paddingHorizontal="@dimen/_9sdp"
             android:paddingVertical="@dimen/_4sdp"
             android:text="@{bean.name}"
+            android:shadowColor="@color/black"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="4"
             android:gravity="center"
             tool:text="gdffgfgdgddfgdfggdgdfgg"
             android:textColor="@color/white"

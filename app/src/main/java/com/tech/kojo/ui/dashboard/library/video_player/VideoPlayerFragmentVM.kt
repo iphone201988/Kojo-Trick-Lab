@@ -7,6 +7,8 @@ import com.tech.kojo.data.api.ApiHelper
 import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.event.SingleRequestEvent
 import com.google.gson.JsonObject
+import com.tech.kojo.data.room_module.DownloadVideoData
+import com.tech.kojo.ui.dashboard.profile_options.download_video.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,9 +16,11 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class VideoPlayerFragmentVM @Inject constructor(private val apiHelper: ApiHelper) :
+class VideoPlayerFragmentVM @Inject constructor(private val apiHelper: ApiHelper,private val repository: VideoRepository) :
     BaseViewModel() {
     val observeCommon = SingleRequestEvent<JsonObject>()
+
+    val observeVideo = SingleRequestEvent<List<DownloadVideoData>>()
 
     // get Video By Id api
     fun getVideoById(url: String, request: HashMap<String, Any>) {
@@ -91,6 +95,19 @@ class VideoPlayerFragmentVM @Inject constructor(private val apiHelper: ApiHelper
                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                 observeCommon.postValue(Resource.error("${e.message}", null))
             }
+        }
+    }
+
+    fun insertVideo(video: DownloadVideoData) {
+        viewModelScope.launch {
+            repository.insertVideo(video)
+        }
+    }
+
+    fun getAllVideos() {
+        viewModelScope.launch {
+            val list = repository.getAllVideos()
+            observeVideo.postValue(Resource.success("getDownloadVideo", list))
         }
     }
 }

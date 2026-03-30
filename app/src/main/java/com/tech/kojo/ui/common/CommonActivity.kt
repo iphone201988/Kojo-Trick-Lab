@@ -1,10 +1,8 @@
 package com.tech.kojo.ui.common
 
-import android.app.Person
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -16,7 +14,6 @@ import com.tech.kojo.R
 import com.tech.kojo.base.BaseActivity
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.data.model.GetComboData
-import com.tech.kojo.data.model.GetPersonalBestModelData
 import com.tech.kojo.data.model.HomeProgressStep
 import com.tech.kojo.data.model.HomeTrickVault
 import com.tech.kojo.data.model.NextSessionData
@@ -25,6 +22,8 @@ import com.tech.kojo.data.model.PersonalBest
 import com.tech.kojo.data.model.PostData
 import com.tech.kojo.databinding.ActivityCommonBinding
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Status
+import com.tech.kojo.utils.event.SingleRequestEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -33,6 +32,10 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
     private val viewModel: CommonActivityVM by viewModels()
     private val navController: NavController by lazy {
         (supportFragmentManager.findFragmentById(R.id.mainNavigationHost) as NavHostFragment).navController
+    }
+
+    companion object {
+        val observeActivity = SingleRequestEvent<Boolean>()
     }
 
     override fun getLayoutResource(): Int {
@@ -48,6 +51,9 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
         setupSystemUI()
         // navigation
         setupNavigation()
+        // observer
+        initObserver()
+        sharedPrefManager.setLoggedIn(true)
     }
 
     /**
@@ -104,7 +110,7 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         val status = intent.getStringExtra("status")
                         val bundle = Bundle()
                         bundle.putString("trackDetailId", progressId)
-                        bundle.putString("status",status)
+                        bundle.putString("status", status)
                         graph.setStartDestination(R.id.fragmentProgressionDetails)
                         navController.setGraph(graph, bundle)
                     }
@@ -176,7 +182,8 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
 
                     "personalBests" -> {
 
-                        val personalBestList = intent.getParcelableArrayListExtra<PersonalBest>("personalBestList")
+                        val personalBestList =
+                            intent.getParcelableArrayListExtra<PersonalBest>("personalBestList")
 
                         val bundle = Bundle()
 //                        bundle.putParcelable("personalBest", personalBestModel)
@@ -315,8 +322,10 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
 
                     "video" -> {
                         val videoUrl = intent.getStringExtra("videoUrl")
+                        val videoPath = intent.getStringExtra("videoPath")
                         val bundle = Bundle()
                         bundle.putString("videoUrl", videoUrl)
+                        bundle.putString("videoPath", videoPath)
                         graph.setStartDestination(R.id.fragmentVideo)
                         navController.setGraph(graph, bundle)
                     }
@@ -326,7 +335,7 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         val videoId = intent.getStringExtra("videoId")
                         val bundle = Bundle()
                         bundle.putString("videoUrl", videoUrl)
-                        bundle.putString("videoId",videoId)
+                        bundle.putString("videoId", videoId)
                         graph.setStartDestination(R.id.fragmentVideoVimeo)
                         navController.setGraph(graph, bundle)
                     }
@@ -341,11 +350,51 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                         navController.setGraph(graph, bundle)
                     }
 
+                    "downloadedVideo" -> {
+                        val bundle = Bundle()
+                        graph.setStartDestination(R.id.fragmentDownloadVideoFragment)
+                        navController.setGraph(graph, bundle)
+                    }
+
 
                     else -> {
                         graph.setStartDestination(R.id.fragmentMyTrick)
                         navController.setGraph(graph, null)
                     }
+                }
+            }
+        }
+    }
+
+    private fun initObserver() {
+        observeActivity.observe(this) {
+            when (it?.status) {
+                Status.LOADING -> {
+                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "checkInternet" -> {
+                            runCatching {
+                                navController.navigate(R.id.fragmentDownloadVideoFragment)
+
+                            }.onFailure { e ->
+
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                }
+
+                else -> {
+
                 }
             }
         }

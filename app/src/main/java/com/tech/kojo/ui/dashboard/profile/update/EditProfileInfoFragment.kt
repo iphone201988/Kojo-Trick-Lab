@@ -13,8 +13,10 @@ import com.tech.kojo.data.model.GetProfileResponse
 import com.tech.kojo.databinding.FragmentEditProfileInfoBinding
 import com.tech.kojo.databinding.PersonalDialogItemBinding
 import com.tech.kojo.databinding.UnPinLayoutBinding
+import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.BaseCustomDialog
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showSuccessToast
@@ -60,6 +62,7 @@ class EditProfileInfoFragment : BaseFragment<FragmentEditProfileInfoBinding>() {
                 }
 
                 R.id.btnUpdate -> {
+                    val userName = binding.etUserName.text.toString().trim()
                     val name = binding.etTricking.text.toString().trim()
                     val country = binding.etCountry.text.toString().trim()
                     val time = binding.etTime.text.toString().trim()
@@ -69,6 +72,9 @@ class EditProfileInfoFragment : BaseFragment<FragmentEditProfileInfoBinding>() {
                     val tiktok = binding.etTikTok.text.toString().trim()
                     val youtube = binding.etYouTube.text.toString().trim()
                     val data = HashMap<String, Any>()
+                    if (userName.isNotEmpty()) {
+                        data["name"] = userName
+                    }
                     if (name.isNotEmpty()) {
                         data["trickingNickname"] = name
                     }
@@ -99,7 +105,7 @@ class EditProfileInfoFragment : BaseFragment<FragmentEditProfileInfoBinding>() {
 
                 R.id.etCountry -> {
                     val picker = CountryPicker.newInstance(
-                        "Select Country", Theme.DARK
+                        "Select Country", Theme.LIGHT
                     ) // dialog title and theme
                     picker.setListener(object : CountryPickerListener {
                         override fun onSelectCountry(
@@ -141,6 +147,11 @@ class EditProfileInfoFragment : BaseFragment<FragmentEditProfileInfoBinding>() {
                                     val profile = model.user
                                     sharedPrefManager.setLoginData(profile)
                                     showSuccessToast(model.message.toString())
+                                    DashBoardActivity.changeUserName.postValue(
+                                        Resource.success(
+                                            "changeUserName", true
+                                        )
+                                    )
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

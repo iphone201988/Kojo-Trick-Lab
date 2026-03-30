@@ -49,10 +49,12 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/createPost"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_38sdp"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:background="@drawable/et_bg"
+                android:onClick="@{v -> vm.onClick(v)}"
                 app:layout_constraintBottom_toBottomOf="@id/profileImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/profileImage"
@@ -70,19 +72,18 @@
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_9ssp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/createPost"
+                    app:layout_constraintEnd_toStartOf="@id/createPost2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/createPost"
+                    android:id="@+id/createPost2"
                     style="@style/TextView_600_SemiBold_Quicksand"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:background="@drawable/bg_blue_btn"
-                    android:onClick="@{v -> vm.onClick(v)}"
                     android:paddingHorizontal="@dimen/_10sdp"
                     android:paddingVertical="@dimen/_4sdp"
                     android:text="Create Post"

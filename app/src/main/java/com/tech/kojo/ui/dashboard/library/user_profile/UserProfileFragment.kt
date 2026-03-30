@@ -76,7 +76,7 @@ class UserProfileFragment : BaseFragment<FragmentUserProfileBinding>() {
                                     binding.ivCircle.visibility = View.VISIBLE
                                     binding.ivProfile.visibility = View.VISIBLE
                                     if (model.data.isPrivate==true){
-                                        binding.clMain.visibility=View.GONE
+                                        binding.clMain.visibility=View.INVISIBLE
                                         binding.clNoView.visibility=View.VISIBLE
                                     }
                                     else{

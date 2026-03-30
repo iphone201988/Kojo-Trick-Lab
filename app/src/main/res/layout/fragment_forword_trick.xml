@@ -19,19 +19,28 @@
             android:id="@+id/clCommon"
             layout="@layout/dash_board_common_header"
             app:vm="@{vm}" />
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/clCommon"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTrick"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:text=""
             android:textSize="@dimen/_16ssp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clCommon" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvDescription"
@@ -75,11 +84,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvVerticalForward"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_18sdp"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:minHeight="@dimen/_200sdp"
+            android:nestedScrollingEnabled="false"
             android:paddingStart="@dimen/_12sdp"
             android:paddingEnd="@dimen/_12sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -130,6 +140,8 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
 
 

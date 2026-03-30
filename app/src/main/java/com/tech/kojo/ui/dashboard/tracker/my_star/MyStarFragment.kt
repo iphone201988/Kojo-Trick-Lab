@@ -329,7 +329,7 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
         updateProfileStatusDialog.binding.apply {
             val status = if (isPrivate == true) "Public" else "Private"
             text.text = "Update Profile Status"
-            val fullText = "Would you like to update your profile status as $status ?"
+            val fullText = "Would you like to update your \nprofile status as $status ?"
 
             val spannable = SpannableString(fullText)
 

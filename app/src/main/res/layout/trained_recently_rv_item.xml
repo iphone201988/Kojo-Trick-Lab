@@ -56,15 +56,16 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvName"
             style="@style/TextView_700_Bold_Quicksand"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
-            android:gravity="center"
+            android:gravity="start"
             android:text="@{bean.name}"
             android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv1"
             app:layout_constraintTop_toTopOf="@+id/iv1" />
 

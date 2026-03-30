@@ -3,11 +3,14 @@ package com.tech.kojo.base.module
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.tech.kojo.utils.event.NetworkErrorHandler
 import com.tech.kojo.data.api.ApiHelper
 import com.tech.kojo.data.api.ApiHelperImpl
 import com.tech.kojo.data.api.ApiService
 import com.tech.kojo.data.api.Constants
+import com.tech.kojo.data.room_module.AppDb
+import com.tech.kojo.data.room_module.RoomDataBaseQueryPage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -90,5 +93,23 @@ class ApplicationModule {
     @Singleton
     fun provideSharedPref(application: Application): SharedPreferences {
         return application.getSharedPreferences(application.packageName, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRoomDatabase(application: Application): AppDb {
+        return Room.databaseBuilder(
+            application,
+            AppDb::class.java,
+            "kojo_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideVideoDao(db: AppDb): RoomDataBaseQueryPage {
+        return db.connectAbstractClassConnection()
     }
 }

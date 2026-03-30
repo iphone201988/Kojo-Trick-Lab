@@ -56,6 +56,7 @@
                     android:layout_height="@dimen/_32sdp"
                     android:layout_marginEnd="@dimen/_18sdp"
                     android:src="@drawable/search_icon"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/ivBack"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/ivBack" />
@@ -84,7 +85,15 @@
                 app:layout_constraintStart_toStartOf="@+id/ivUser"
                 app:layout_constraintTop_toTopOf="@+id/ivUser"
                 app:srcCompat="@drawable/video_play" />
-
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_stock_yellow"
+                android:backgroundTint="@color/grey"
+                app:layout_constraintTop_toTopOf="@id/clCast"
+                app:layout_constraintStart_toStartOf="@id/clCast"
+                app:layout_constraintEnd_toEndOf="@id/clCast"
+                app:layout_constraintBottom_toBottomOf="@id/clCast"/>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clCast"
                 android:layout_width="wrap_content"
@@ -125,7 +134,15 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_stock_yellow"
+                android:backgroundTint="@color/grey"
+                app:layout_constraintTop_toTopOf="@id/clDownload"
+                app:layout_constraintStart_toStartOf="@id/clDownload"
+                app:layout_constraintEnd_toEndOf="@id/clDownload"
+                app:layout_constraintBottom_toBottomOf="@id/clDownload"/>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clDownload"
                 android:layout_width="wrap_content"
@@ -330,6 +347,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginStart="@dimen/_8sdp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
                     android:textColor="@color/blue"
                     android:gravity="center_vertical"
                     android:textSize="@dimen/_10ssp"

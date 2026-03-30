@@ -98,4 +98,13 @@ dependencies {
     implementation(libs.play.services.cast.framework)
     implementation(libs.play.services.cast)
     implementation(libs.androidx.mediarouter)
+
+    // Room Database
+    val roomVersion = "2.8.4"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+
+    // swipe layout
+    implementation("com.github.zerobranch:SwipeLayout:1.3.1")
 }

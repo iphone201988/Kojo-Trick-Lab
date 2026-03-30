@@ -217,7 +217,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginEnd="@dimen/_18sdp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text='@{String.valueOf(bean.levelData.level)+" level"}'
+            android:text='@{String.valueOf(bean.levelData.level)}'
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_15ssp"
             app:layout_constraintStart_toStartOf="@+id/tvTracingLevel"

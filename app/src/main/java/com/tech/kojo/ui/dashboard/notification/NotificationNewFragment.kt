@@ -47,10 +47,12 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
     private var totalPages = 1
     private var isLoading = false
     private var isLastPage = false
-    private var isRefreshing = false
 
     // Progress bar for pagination
     private var progressBar: ProgressBar? = null
+
+    // Master list to store all notifications across pages
+    private var allNotifications = mutableListOf<NotificationData>()
 
 
     companion object {
@@ -90,10 +92,10 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
                                             Toast.LENGTH_SHORT).show()
                                         return@SimpleRecyclerViewAdapter
                                     }
-                                        val intent = Intent(v.context, CommonActivity::class.java)
-                                        intent.putExtra("fromWhere", "homeProgress")
-                                        intent.putExtra("trackDetailId", m.data?.trickDataId)
-                                        v.context.startActivity(intent)
+                                    val intent = Intent(v.context, CommonActivity::class.java)
+                                    intent.putExtra("fromWhere", "homeProgress")
+                                    intent.putExtra("trackDetailId", m.data?.trickDataId)
+                                    v.context.startActivity(intent)
                                 }
                                 else -> {
                                     Log.e("childAdapter", "childNotificationAdapter: ${m.type} clicked")
@@ -117,7 +119,6 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
 
     override fun onCreateView(view: View) {
         setupUI()
-        setupSwipeRefresh()
         setupPagination()
         initAdapter()
         initOnClick()
@@ -150,51 +151,13 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
         // Add to your layout if needed, or handle in adapter
     }
 
-    /**
-     * Setup swipe refresh layout
-     */
-    private fun setupSwipeRefresh() {
-        binding.ssPullRefresh.apply {
-            setColorSchemeResources(
-                ContextCompat.getColor(requireContext(), R.color.colorPrimary)
-            )
-            setOnRefreshListener {
-                refreshData()
-            }
-        }
-    }
-
-    /**
-     * Refresh data - reset everything and load first page
-     */
-    private fun refreshData() {
-        // Reset pagination state
-        currentPage = 1
-        totalPages = 1
-        isLoading = false
-        isLastPage = false
-        isRefreshing = true
-
-        // Clear existing list
-        notificationAdapter.clearList()
-
-        // Load first page
-        loadFirstPage()
-
-        // Automatically hide refresh after timeout
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (binding.ssPullRefresh.isRefreshing) {
-                binding.ssPullRefresh.isRefreshing = false
-                isRefreshing = false
-            }
-        }, 5000)
-    }
 
     /**
      * Load first page of notifications
      */
     private fun loadFirstPage() {
         currentPage = 1
+        allNotifications.clear() // Clear the master list when loading first page
         val request = HashMap<String, Any>()
         request["page"] = currentPage
         viewModel.getNotificationApi(request, Constants.GET_NOTIFICATION)
@@ -288,9 +251,9 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
      */
     private fun initAdapter() {
         notificationAdapter = SimpleRecyclerViewAdapter<Notification, ItemLayoutNotificationBinding>(
-                R.layout.item_layout_notification,
-                BR.bean
-            ) { v, m, pos ->
+            R.layout.item_layout_notification,
+            BR.bean
+        ) { v, m, pos ->
 
         }
 
@@ -305,7 +268,7 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
             when (response?.status) {
                 Status.LOADING -> {
                     // Only show loading dialog for first page and not during refresh
-                    if (currentPage == 1 && !isRefreshing) {
+                    if (currentPage == 1) {
                         showLoading()
                     }
                 }
@@ -343,32 +306,26 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
     private fun handleNotificationResponse(response: GetNotificationData) {
         hideLoading()
         hideLoadingProgress()
-
-        // Stop refresh if it's running
-        if (binding.ssPullRefresh.isRefreshing) {
-            binding.ssPullRefresh.isRefreshing = false
-        }
-
         runCatching {
-            val notifications = response.data.orEmpty()
-            val groupedNotifications = groupNotificationsByDate(notifications)
+            val newNotifications = response.data.orEmpty()
+
+            // Add new notifications to the master list
+            allNotifications.addAll(newNotifications)
+
+            // Regroup all notifications from scratch to combine same dates across pages
+            val groupedNotifications = groupNotificationsByDate(allNotifications)
 
             // Update pagination info from API response with null safety
             val currentPageFromResponse = response.page ?: 1
             totalPages = response.totalPages ?: 1
 
             Log.d("Pagination", "API Response - Current Page: $currentPageFromResponse, Total Pages: $totalPages")
-            Log.d("Pagination", "Received ${notifications.size} notifications")
+            Log.d("Pagination", "Received ${newNotifications.size} new notifications")
+            Log.d("Pagination", "Total notifications in memory: ${allNotifications.size}")
+            Log.d("Pagination", "Total groups after regrouping: ${groupedNotifications.size}")
 
-            // Update list based on page
-            if (currentPageFromResponse == 1) {
-                notificationAdapter.setList(groupedNotifications)
-                Log.d("Pagination", "Set new list with ${groupedNotifications.size} groups")
-            } else {
-                val startPosition = notificationAdapter.list.size
-                notificationAdapter.addToList(groupedNotifications)
-                Log.d("Pagination", "Added ${groupedNotifications.size} groups at position $startPosition")
-            }
+            // Always set the entire list with regrouped notifications
+            notificationAdapter.setList(groupedNotifications)
 
             // Update pagination state with proper null safety
             isLoading = false
@@ -384,8 +341,6 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
             Log.e("apiErrorOccurred", "Error: ${e.message}", e)
             handleApiError(e)
         }.also {
-            // Reset refresh flag
-            isRefreshing = false
         }
     }
 
@@ -395,13 +350,6 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
     private fun handleParseError() {
         Log.e("NotificationError", "Failed to parse notification data")
         showErrorToast("Failed to parse notification data")
-
-        // Stop refresh if it's running
-        if (binding.ssPullRefresh.isRefreshing) {
-            binding.ssPullRefresh.isRefreshing = false
-        }
-
-        isRefreshing = false
         isLoading = false
         hideLoadingProgress()
     }
@@ -416,6 +364,15 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
         if (currentPage > 1) {
             currentPage--
             isLoading = false
+
+            // Remove the failed page's notifications from master list
+            // Since we don't know exactly which ones were added, we need to reload all notifications
+            // or we can keep track of page-wise notifications. For simplicity, we'll just reset
+            // the master list and reload from first page if needed
+            if (allNotifications.isNotEmpty()) {
+                // Optional: Implement retry logic or just keep the existing data
+                Log.e("Pagination", "Error occurred while loading page $currentPage. Data may be inconsistent.")
+            }
         }
 
         hideLoadingProgress()
@@ -428,14 +385,6 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
         hideLoading()
         hideLoadingProgress()
         showErrorToast(message)
-
-        // Stop refresh if it's running
-        if (binding.ssPullRefresh.isRefreshing) {
-            binding.ssPullRefresh.isRefreshing = false
-        }
-
-        // Reset states
-        isRefreshing = false
         isLoading = false
 
         // If error occurred while loading more, revert page count
@@ -508,5 +457,6 @@ class NotificationNewFragment : BaseFragment<FragmentNotificationNewBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
         progressBar = null
+        allNotifications.clear()
     }
 }

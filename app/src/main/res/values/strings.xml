@@ -115,5 +115,7 @@
     <string name="remove">Remove</string>
     <string name="session_note">Session Note</string>
     <string name="select_trick">Select Trick</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="username">Username</string>
 
 </resources>

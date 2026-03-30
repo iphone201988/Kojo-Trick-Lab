@@ -7,14 +7,17 @@ import com.tech.kojo.data.api.ApiHelper
 import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.event.SingleRequestEvent
 import com.google.gson.JsonObject
+import com.tech.kojo.data.room_module.DownloadVideoData
+import com.tech.kojo.ui.dashboard.profile_options.download_video.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeProgressDetailsVM @Inject constructor(private val apiHelper: ApiHelper): BaseViewModel(){
+class HomeProgressDetailsVM @Inject constructor(private val apiHelper: ApiHelper,private val repository: VideoRepository): BaseViewModel(){
     val observeCommon = SingleRequestEvent<JsonObject>()
+    val observeVideo = SingleRequestEvent<List<DownloadVideoData>>()
     // get trick data by id api
     fun getTrickDataByIdApi(data: HashMap<String, Any>,url: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,6 +34,19 @@ class HomeProgressDetailsVM @Inject constructor(private val apiHelper: ApiHelper
                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                 observeCommon.postValue(Resource.error("${e.message}", null))
             }
+        }
+    }
+
+    fun insertVideo(video: DownloadVideoData) {
+        viewModelScope.launch {
+            repository.insertVideo(video)
+        }
+    }
+
+    fun getAllVideos() {
+        viewModelScope.launch {
+            val list = repository.getAllVideos()
+            observeVideo.postValue(Resource.success("getDownloadVideo", list))
         }
     }
 }

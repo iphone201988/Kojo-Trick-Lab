@@ -154,7 +154,7 @@ object BindingUtils {
         if (url != null) {
             Glide.with(image.context).load(Constants.BASE_URL_IMAGE + url)
                 .placeholder(R.drawable.progress_animation_small)
-                .error(R.drawable.progress_animation_small).into(image)
+                .error(R.drawable.holder_dummy).into(image)
         } else {
             image.setImageResource(R.drawable.holder_dummy)
         }

@@ -48,10 +48,10 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
     }
 
     override fun onCreateView(view: View) {
-        binding.type = false
-        binding.acceptType = false
-        binding.clCommon.tvHeader.text = "Create a account"
 
+        binding.clCommon.tvHeader.text = "Create a account"
+        binding.type = agePermission
+        binding.acceptType = termAndCondition
         // click
         initOnClick()
         // observer

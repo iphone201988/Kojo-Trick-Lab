@@ -1,5 +1,6 @@
 package com.tech.kojo.base
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -14,11 +15,15 @@ import androidx.databinding.ViewDataBinding
 import com.tech.kojo.App
 import com.tech.kojo.BR
 import com.tech.kojo.R
-import com.tech.kojo.base.local.SharedPrefManager
 import com.tech.kojo.base.connectivity.ConnectivityProvider
+import com.tech.kojo.base.local.SharedPrefManager
 import com.tech.kojo.base.network.ErrorCodes
 import com.tech.kojo.base.network.NetworkError
+import com.tech.kojo.ui.auth.AuthActivity
+import com.tech.kojo.ui.common.CommonActivity.Companion.observeActivity
+import com.tech.kojo.ui.dashboard.profile_options.download_video.DownloadVideoFragment
 import com.tech.kojo.utils.AlertManager
+import com.tech.kojo.utils.Resource
 import com.tech.kojo.utils.event.NoInternetSheet
 import com.tech.kojo.utils.hideKeyboard
 import javax.inject.Inject
@@ -58,8 +63,12 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
 
     fun showUnauthorised() {
         sharedPrefManager.clear()
-       // startActivity(LoginActivity.newIntent(this))
-       // finishAffinity()
+        sharedPrefManager.setOnBoarding("true")
+        val intent = Intent(this, AuthActivity::class.java)
+        startActivity(intent)
+        finishAffinity()
+//         startActivity(LoginActivity.newIntent(this))
+//         finishAffinity()
     }
 
     private fun setStatusBarColor(colorResId: Int) {
@@ -69,6 +78,7 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
             window.statusBarColor = ContextCompat.getColor(this, colorResId)
         }
     }
+
     private fun setStatusBarDarkText() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -98,6 +108,7 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
     fun showLoading() {
         progressDialogAvl.isLoading(true)
     }
+
     fun onError(error: Throwable, showErrorView: Boolean) {
         if (error is NetworkError) {
 
@@ -108,16 +119,12 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
                 }
 
                 else -> AlertManager.showNegativeAlert(
-                    this,
-                    error.message,
-                    getString(R.string.alert)
+                    this, error.message, getString(R.string.alert)
                 )
             }
         } else {
             AlertManager.showNegativeAlert(
-                this,
-                getString(R.string.please_try_again),
-                getString(R.string.alert)
+                this, getString(R.string.please_try_again), getString(R.string.alert)
             )
         }
     }
@@ -136,11 +143,27 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
             noInternetSheet?.isCancelable = false
         }
         if (state.hasInternet()) {
-            if (noInternetSheet?.isVisible == true)
+            DownloadVideoFragment.data = 1
+            if (noInternetSheet?.isVisible == true) {
                 noInternetSheet?.dismiss()
+            }
         } else {
-            if (noInternetSheet?.isVisible == false)
-                noInternetSheet?.show(supportFragmentManager, noInternetSheet?.tag)
+            if (noInternetSheet?.isVisible == false && DownloadVideoFragment.data != 2) {
+                if (sharedPrefManager.getLoggedIn() != null && sharedPrefManager.getLoggedIn() == true) {
+                    DownloadVideoFragment.data = 2
+                    observeActivity.postValue(
+                        Resource.success(
+                            "checkInternet", true
+                        )
+                    )
+                } else {
+                    if (noInternetSheet?.isVisible == false) noInternetSheet?.show(
+                        supportFragmentManager,
+                        noInternetSheet?.tag
+                    )
+                }
+
+            }
         }
     }
 

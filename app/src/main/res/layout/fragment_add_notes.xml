@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="com.tech.kojo.ui.dashboard.tracker.add_notes.AddNotesFragmentVM" />
+            type="com.tech.kojo.ui.dashboard.tracker.combo_goals.add_notes.AddNotesFragmentVM" />
 
         <variable
             name="bean"
@@ -25,7 +25,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.dashboard.tracker.add_notes.AddNotesFragment">
+        tools:context=".ui.dashboard.tracker.combo_goals.add_notes.AddNotesFragment">
 
 
         <include

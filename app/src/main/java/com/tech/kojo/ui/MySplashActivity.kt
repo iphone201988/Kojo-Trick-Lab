@@ -34,6 +34,7 @@ class MySplashActivity : BaseActivity<ActivityMySplashBinding>() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreateView() {
         // view
+        sharedPrefManager.setLoggedIn(false)
         initView()
         // click
         initOnClick()

@@ -58,14 +58,15 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv1"
             style="@style/TextView_500_Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:gravity="center"
+            android:gravity="start"
             android:text="@{bean.title}"
             tools:text="Forward Roll Basics"
             android:textColor="@color/blue"
             android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toStartOf="@id/ivProgress"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivCircle"
             app:layout_constraintTop_toTopOf="parent" />

@@ -1,16 +1,13 @@
 package com.tech.kojo.ui.dashboard.library.video_player
 
 import android.annotation.SuppressLint
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -40,15 +37,21 @@ import com.tech.kojo.utils.showSuccessToast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
-import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaLoadRequestData
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
-import com.tech.kojo.utils.MyToast
+import com.tech.kojo.data.room_module.DownloadVideoData
 import com.tech.kojo.utils.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Date
@@ -69,12 +72,15 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     private var currentFilterType = FilterType.TOP
 
     private var videoTitle: String? = null
+    private var thumbnailUrl: String? = null
 
     private var mCastContext: CastContext? = null
     private var mCastSession: CastSession? = null
     private var mSessionManagerListener: SessionManagerListener<CastSession>? = null
 
     private val args: VideoPlayerFragmentArgs by navArgs()
+
+    private var downloadedVideos = ArrayList<DownloadVideoData>()
 
     enum class FilterType {
         TOP,
@@ -92,7 +98,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     override fun onCreateView(view: View) {
         mCastContext = CastContext.getSharedInstance(requireContext())
         setupCastListener()
-
+        viewModel.getAllVideos()
+        observeDownloadedVideo()
         // adapter
         initAdapter()
         // click
@@ -166,7 +173,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         super.onResume()
         // api call
         val data = HashMap<String, Any>()
-        data["isViewed"]=false
+//        data["isViewed"]=false
         if (args.topicId.isNotEmpty() && args.videoId.isNotEmpty()) {
             topicId = args.topicId
             userVideoId = args.videoId
@@ -203,11 +210,22 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
                 R.id.ivVideo -> {
                     if (!videoUrl.isNullOrEmpty()) {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("fromWhere", "videoVimeo")
-                        intent.putExtra("videoId",userVideoId)
-                        intent.putExtra("videoUrl", videoUrl)
-                        startActivity(intent)
+                        if (videoUrl!!.contains("vimeo")){
+                            val intent = Intent(requireContext(), CommonActivity::class.java)
+                            intent.putExtra("fromWhere", "videoVimeo")
+                            intent.putExtra("videoId",userVideoId)
+                            intent.putExtra("videoUrl", videoUrl)
+                            startActivity(intent)
+                        }
+                        else{
+                            val intent = Intent(requireContext(), CommonActivity::class.java)
+
+                        intent.putExtra("fromWhere", "video")
+                            intent.putExtra("videoId",userVideoId)
+                            intent.putExtra("videoUrl", videoUrl)
+                            startActivity(intent)
+                        }
+
                     }
                 }
 
@@ -232,7 +250,11 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
                 R.id.clDownload -> {
                     if (!videoUrl.isNullOrEmpty()) {
-                        downloadVideo(videoUrl!!)
+                        if (downloadedVideos.any { it.thumbnailUrl == thumbnailUrl }) {
+                            showErrorToast("Video already downloaded")
+                            return@observe
+                        }
+                        downloadAndSaveVideo()
                     } else {
                         showErrorToast("Video URL not found")
                     }
@@ -258,26 +280,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
      * Get first valid user ID from filtered comments
      */
     private fun getFirstValidUserId(): String? {
-        return filteredCommentData.firstOrNull { it.userId != null }?.userId?._id
-    }
-
-    private fun downloadVideo(url: String) {
-        try {
-            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
-            val request = DownloadManager.Request(fullUrl.toUri())
-            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-            request.setTitle("Downloading Video")
-            request.setDescription("Downloading video file...")
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4")
-
-            val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            downloadManager.enqueue(request)
-            showSuccessToast("Download started...")
-        } catch (e: Exception) {
-            Log.e("DownloadError", "Error: ${e.message}", e)
-            showErrorToast("Download failed: ${e.message}")
-        }
+        return originalCommentData.firstOrNull { it.userId != null }?.userId?._id
     }
 
     /**
@@ -314,7 +317,25 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                 if (model?.success == true && model.data != null) {
                                     binding.bean = model.data
                                     videoUrl = model.data.videoUrl
+                                    if (videoUrl!!.contains("vimeo")){
+                                        binding.clDownload.visibility=View.GONE
+                                    }
+                                    else{
+                                        binding.clDownload.visibility=View.VISIBLE
+                                    }
                                     videoTitle = model.data.title
+                                    thumbnailUrl = model.data.thumbnailUrl
+                                    if (downloadedVideos.any { it.thumbnailUrl == thumbnailUrl }) {
+                                        binding.tvDownload.text="Downloaded"
+                                        binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.green_color))
+                                        binding.ivDownload.setImageResource(R.drawable.ic_download_video)
+                                        binding.clDownload.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green_color)
+                                    } else {
+                                        binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
+                                        binding.tvDownload.text="Download"
+                                        binding.ivDownload.setImageResource(R.drawable.download_icon)
+                                        binding.clDownload.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.white)
+                                    }
                                 }
                             }.onFailure { e ->
                                 showErrorToast(e.message.toString())
@@ -565,7 +586,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         commentsBottomSheet.behavior.isDraggable = true
         commentsBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         commentsBottomSheet.show()
-
         // Set initial filter state
         commentsBottomSheet.binding.check = if (currentFilterType == FilterType.TOP) 1 else 2
 
@@ -581,7 +601,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 .load(url)
                 .placeholder(R.drawable.progress_animation_small)
                 .error(R.drawable.holder_dummy)
-                .into(commentsBottomSheet.binding.ivPerson)
+                .into(commentsBottomSheet.binding.ivPerson2)
         }
 
         // Initialize comment adapter
@@ -635,4 +655,179 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
+    //    private fun downloadVideo(url: String) {
+//        try {
+//            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
+//            val request = DownloadManager.Request(fullUrl.toUri())
+//            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+//            request.setTitle("Downloading Video")
+//            request.setDescription("Downloading video file...")
+//            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+//            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4")
+//
+//            val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//            downloadManager.enqueue(request)
+//            showSuccessToast("Download started...")
+//        } catch (e: Exception) {
+//            Log.e("DownloadError", "Error: ${e.message}", e)
+//            showErrorToast("Download failed: ${e.message}")
+//        }
+//    }
+
+    ///// download video
+    private fun downloadAndSaveVideo() {
+        if (videoUrl.isNullOrEmpty()) return
+        
+        showLoading()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val fullUrl = if (videoUrl!!.startsWith("http")) videoUrl!! else Constants.BASE_URL_IMAGE + videoUrl!!
+                Log.d("VideoDownload", "Downloading from: $fullUrl")
+
+                val localPath = requireContext().downloadVideo(
+                    url = fullUrl, fileName = "${userVideoId ?: System.currentTimeMillis()}.mp4"
+                )
+
+                if (localPath == null) {
+                    throw Exception("Download failed, localPath is null")
+                }
+
+                val downloadVideo = DownloadVideoData(
+                    _id = userVideoId,
+                    createdAt = System.currentTimeMillis().toString(),
+                    thumbnailUrl = thumbnailUrl,
+                    title = videoTitle ?: "Video",
+                    videoDownload = true,
+                    localPath = localPath
+                )
+
+                viewModel.insertVideo(downloadVideo)
+
+                launch(Dispatchers.Main) {
+                    hideLoading()
+                    showSuccessToast("Video downloaded successfully")
+                    binding.tvDownload.text="Downloaded"
+                    binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.green_color))
+                    binding.ivDownload.setImageResource(R.drawable.ic_download_video)
+                    binding.clDownload.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green_color)
+                    viewModel.getAllVideos()
+                }
+
+            } catch (e: Exception) {
+                Log.e("VideoDownloadError", e.message ?: "Unknown error", e)
+
+                launch(Dispatchers.Main) {
+                    hideLoading()
+                    showErrorToast("Video download failed. Please try again.")
+                }
+            }
+        }
+    }
+
+
+    fun Context.downloadVideo(url: String, fileName: String): String? {
+        var currentUrl = url
+        var connection: HttpURLConnection? = null
+        val file = File(filesDir, fileName)
+        if (file.exists()) file.delete()
+
+        try {
+            var redirects = 0
+            val maxRedirects = 5
+
+            while (redirects < maxRedirects) {
+                val urlObj = URL(currentUrl)
+                connection = urlObj.openConnection() as HttpURLConnection
+                connection.connectTimeout = 15000
+                connection.readTimeout = 15000
+                connection.instanceFollowRedirects = true
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0")
+
+                val status = connection.responseCode
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
+                    status == HttpURLConnection.HTTP_MOVED_PERM ||
+                    status == HttpURLConnection.HTTP_SEE_OTHER ||
+                    status == 307 || status == 308) {
+
+                    var newUrl = connection.getHeaderField("Location")
+                    if (newUrl == null) break
+
+                    if (newUrl.startsWith("/")) {
+                        newUrl = urlObj.protocol + "://" + urlObj.host + (if (urlObj.port != -1) ":" + urlObj.port else "") + newUrl
+                    }
+
+                    Log.d("VideoDownload", "Redirected ($status) to: $newUrl")
+                    currentUrl = newUrl
+                    redirects++
+                    connection.disconnect()
+                    continue
+                }
+                break
+            }
+
+            if (connection?.responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("VideoDownload", "Server returned HTTP ${connection?.responseCode}")
+                return null
+            }
+
+            val input = connection.inputStream
+            val output = FileOutputStream(file)
+            input.use { inp ->
+                output.use { outp ->
+                    inp.copyTo(outp)
+                }
+            }
+
+            Log.d("VideoDownload", "Downloaded file size: ${file.length()} bytes")
+            if (file.length() == 0L) {
+                file.delete()
+                return null
+            }
+
+            return file.absolutePath
+        } catch (e: Exception) {
+            Log.e("VideoDownload", "Error downloading: ${e.message}")
+            if (file.exists()) file.delete()
+            return null
+        } finally {
+            connection?.disconnect()
+        }
+    }
+    private fun observeDownloadedVideo() {
+        viewModel.observeVideo.observe(viewLifecycleOwner) {
+            when (it?.status) {
+                Status.LOADING -> {
+//                    showLoading()
+                }
+
+                Status.SUCCESS -> {
+                    when (it.message) {
+                        "getDownloadVideo" -> {
+                            runCatching {
+                                downloadedVideos = it.data as ArrayList<DownloadVideoData>
+
+                            }.onFailure { e ->
+                                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                                showErrorToast(
+                                    e.localizedMessage ?: getString(R.string.something_went_wrong)
+                                )
+                            }.also {
+//                                hideLoading()
+                            }
+                        }
+
+                    }
+                }
+
+                Status.ERROR -> {
+//                    hideLoading()
+                    showErrorToast(it.message.toString())
+                }
+
+                else -> {
+                }
+            }
+        }
+    }
 }

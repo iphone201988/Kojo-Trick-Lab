@@ -11,6 +11,8 @@ import com.tech.kojo.R
 import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
+import org.json.JSONObject
 import java.util.Random
 
 class MyFirebaseMessagingServiceClass : FirebaseMessagingService() {
@@ -23,20 +25,25 @@ class MyFirebaseMessagingServiceClass : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         //  ImageUtils.checkNotification = 1
-        if (remoteMessage.notification != null) {
-            showNotification(remoteMessage.notification)
-            Log.d("dgffgfgdfgggff", "onMessageReceived: ")
-        } else if (remoteMessage.notification != null) {
-            //  checkNotification(remoteMessage.notification?.body)
-            showNotification(remoteMessage.notification)
-            Log.d("dgffgfgdfgggff", "onMessageReceived: ")
-        } else {
-            Log.d("MyFirebase", "none_data")
+        if (remoteMessage.data!=null){
+            checkNotification(remoteMessage.data)
         }
     }
 
-    private fun showNotification(message: RemoteMessage.Notification?) {
+    private fun checkNotification(messageBody: MutableMap<String, String>) {
+        try {
+            val gson = Gson()
+            val obj = JSONObject(messageBody as Map<String, Any>)
+            val data: NotificationPayload =
+                gson.fromJson(obj.toString(), NotificationPayload::class.java)
+            showNotification(data)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    private fun showNotification(data: NotificationPayload) {
         val intent = Intent(applicationContext, DashBoardActivity::class.java)
+        intent.putExtra("NOTIFICATION_DATA", "$data")
         val channelId = "notification_channel"
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val notifyPendingIntent = PendingIntent.getActivity(
@@ -47,8 +54,8 @@ class MyFirebaseMessagingServiceClass : FirebaseMessagingService() {
         )
         val builder: NotificationCompat.Builder =
             NotificationCompat.Builder(applicationContext, channelId).setChannelId(channelId)
-                .setSmallIcon(R.drawable.iv_notification).setContentText(message?.body)
-                .setContentTitle(message?.title).setAutoCancel(true)
+                .setSmallIcon(R.drawable.iv_notification).setContentText(data.body)
+                .setContentTitle(data.title).setAutoCancel(true)
                 .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000)).setOnlyAlertOnce(false)
                 .setContentIntent(notifyPendingIntent)
         val a = generateRandom()
@@ -56,7 +63,7 @@ class MyFirebaseMessagingServiceClass : FirebaseMessagingService() {
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
-                channelId, "web_app", NotificationManager.IMPORTANCE_HIGH
+                channelId, "Notifications", NotificationManager.IMPORTANCE_HIGH
             )
             notificationChannel.setShowBadge(true)
             notificationManager.createNotificationChannel(notificationChannel)
