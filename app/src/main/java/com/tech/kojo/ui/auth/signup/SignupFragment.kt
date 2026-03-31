@@ -19,9 +19,11 @@ import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.data.api.Constants
+import com.tech.kojo.data.model.AuthModel
 import com.tech.kojo.data.model.LoginApiResponse
 import com.tech.kojo.databinding.FragmentSignupBinding
 import com.tech.kojo.ui.auth.AuthCommonVM
+import com.tech.kojo.ui.auth.login.LoginFragmentDirections
 import com.tech.kojo.ui.dashboard.DashBoardActivity
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.Status
@@ -182,10 +184,19 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
                                     loginData.token.let {
                                         sharedPrefManager.setToken(it.toString())
                                     }
-                                    val intent =
-                                        Intent(requireContext(), DashBoardActivity::class.java)
-                                    startActivity(intent)
-                                    requireActivity().finish()
+                                    if (loginData.isProfileCompleted==false) {
+                                        val action = LoginFragmentDirections.navigateToSetupFragment()
+                                        BindingUtils.navigateWithSlide(findNavController(), action)
+                                    } else {
+                                        val intent =
+                                            Intent(requireContext(), DashBoardActivity::class.java)
+                                        startActivity(intent)
+                                        requireActivity().finish()
+                                    }
+//                                    val intent =
+//                                        Intent(requireContext(), DashBoardActivity::class.java)
+//                                    startActivity(intent)
+//                                    requireActivity().finish()
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

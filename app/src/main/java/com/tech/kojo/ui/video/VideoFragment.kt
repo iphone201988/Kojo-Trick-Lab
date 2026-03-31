@@ -110,40 +110,40 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
                     Uri.fromFile(file)
                 } else {
                     Log.e("VideoFragment", "File does not exist: $videoPath")
-                    // Fallback to Uri.parse in case it's already a URI string
                     Uri.parse(videoPath)
                 }
             }
             else -> null
         }
 
-        if (mediaUri == null) {
-            // showInfoToast("Video source not found")
-            return
-        }
+        if (mediaUri == null) return
 
-        // Create ExoPlayer instance
         player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
+
             binding.playerView.player = exoPlayer
 
-            // Use DefaultDataSource.Factory to handle both local (file://) and remote (http://) URIs
-            // DefaultDataSource will use DefaultHttpDataSource for http(s) schemes.
+            // ✅ Enable controller
+            binding.playerView.useController = true
+
+            // ✅ Hide initially
+            binding.playerView.hideController()
+
+            // ✅ Auto hide duration
+            binding.playerView.controllerShowTimeoutMs = 2000
+
             val httpDataSourceFactory = DefaultHttpDataSource.Factory()
                 .setAllowCrossProtocolRedirects(true)
-            val dataSourceFactory = DefaultDataSource.Factory(requireContext(), httpDataSourceFactory)
 
-            // Build MediaSource with the factory
+            val dataSourceFactory =
+                DefaultDataSource.Factory(requireContext(), httpDataSourceFactory)
+
             val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(MediaItem.fromUri(mediaUri))
 
-            Log.d("VideoFragment", "Playing video from: $mediaUri")
-
-            // Prepare and start playback
             exoPlayer.setMediaSource(mediaSource)
             exoPlayer.prepare()
             exoPlayer.playWhenReady = true
 
-            // Error listener
             exoPlayer.addListener(object : Player.Listener {
 
                 override fun onPlaybackStateChanged(state: Int) {
@@ -151,6 +151,19 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
                         val durationMs = exoPlayer.duration
                         val formatted = formatDuration(durationMs)
                         Log.d("VideoFragment", "Video duration: $formatted")
+                    }
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+
+                    if (isPlaying) {
+                        // ▶️ Playing → hide controller smoothly
+                        binding.playerView.postDelayed({
+                            binding.playerView.hideController()
+                        }, 500)
+                    } else {
+                        // ⏸ Paused → show controller
+                        binding.playerView.showController()
                     }
                 }
 

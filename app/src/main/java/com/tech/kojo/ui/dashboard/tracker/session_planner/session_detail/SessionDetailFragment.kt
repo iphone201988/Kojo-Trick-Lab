@@ -212,7 +212,7 @@ class SessionDetailFragment : BaseFragment<FragmentSessionDetailBinding>() {
             requireContext(), R.layout.add_session_bottom_item
         ) { view ->
             when (view?.id) {
-                R.id.ivSelectColor -> {
+                R.id.ivSelectColor,R.id.etSelectColorTag -> {
                     initDialog()
                 }
 

@@ -507,7 +507,7 @@ class ProgressionDetailsFragment : BaseFragment<FragmentProgressionDetailsBindin
 
                 launch(Dispatchers.Main) {
                     hideLoading()
-                    showSuccessToast("Video downloaded successfully")
+                    showSuccessToast("Video saved to download")
                     viewModel.getAllVideos()
                 }
 

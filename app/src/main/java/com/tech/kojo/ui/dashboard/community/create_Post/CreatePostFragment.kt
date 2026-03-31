@@ -281,7 +281,7 @@ class CreatePostFragment : BaseFragment<FragmentCreatePostBinding>() {
         if (type == 1) {
             warningItem.binding.text.text = "Video too long"
             warningItem.binding.tvSure.text =
-                "Your video exceeds the allowed duration (Max 10 seconds)."
+                "Your video exceeds the allowed duration (Max 30 seconds)."
         } else {
             warningItem.binding.text.text = "File  too Long"
             warningItem.binding.tvSure.text = "Your video exceeds the size limit (Max 20 MB)."

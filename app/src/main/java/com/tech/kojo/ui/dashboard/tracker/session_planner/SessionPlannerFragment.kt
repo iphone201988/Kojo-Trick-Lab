@@ -396,6 +396,7 @@ class SessionPlannerFragment : BaseFragment<FragmentSessionPlannerBinding>() {
                                     BindingUtils.parseJson(jsonData)
                                 var createSession = model?.data
                                 if (createSession != null) {
+                                    colorCode ="red"
                                     showSuccessToast("Session created successfully")
                                     addSessionBottomSheet.dismiss()
                                     val data = HashMap<String, Any>()

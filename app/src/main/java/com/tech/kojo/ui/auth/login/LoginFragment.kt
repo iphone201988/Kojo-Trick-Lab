@@ -216,7 +216,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                                         loginData.token.let {
                                             sharedPrefManager.setToken(it.toString())
                                         }
-                                        if (loginData.trickingNickname.isNullOrEmpty()) {
+                                        if (loginData.isProfileCompleted==false) {
                                             val action = LoginFragmentDirections.navigateToSetupFragment()
                                             BindingUtils.navigateWithSlide(findNavController(), action)
                                         } else {
@@ -266,10 +266,30 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                                     loginData.token.let {
                                         sharedPrefManager.setToken(it.toString())
                                     }
-                                    val intent =
-                                        Intent(requireContext(), DashBoardActivity::class.java)
-                                    startActivity(intent)
-                                    requireActivity().finish()
+                                    if (loginData.isProfileCompleted==false) {
+                                        val action = LoginFragmentDirections.navigateToSetupFragment()
+                                        BindingUtils.navigateWithSlide(findNavController(), action)
+                                    } else {
+                                        val authModel = AuthModel(
+                                            binding.etEmail.text.toString().trim(),
+                                            binding.etPassword.text.toString().trim()
+                                        )
+                                        if (isPasswordSave) {
+                                            authUserList.add(authModel)
+                                            authSharedPreference?.saveAuthList(
+                                                "MyPrefsAuth",
+                                                authUserList
+                                            )
+                                        }
+                                        val intent =
+                                            Intent(requireContext(), DashBoardActivity::class.java)
+                                        startActivity(intent)
+                                        requireActivity().finish()
+                                    }
+//                                    val intent =
+//                                        Intent(requireContext(), DashBoardActivity::class.java)
+//                                    startActivity(intent)
+//                                    requireActivity().finish()
                                 }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)

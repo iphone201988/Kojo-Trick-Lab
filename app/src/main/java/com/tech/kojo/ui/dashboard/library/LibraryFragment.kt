@@ -142,9 +142,12 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
                 section: LibrarySection.Topic, sectionPosition: Int
             ) {
                 val intent = Intent(requireContext(), CommonActivity::class.java)
-                intent.putExtra("fromWhere", "fragmentSeeAll")
-                intent.putExtra("topicId", section.id)
-                intent.putExtra("title", section.title)
+//                intent.putExtra("fromWhere", "fragmentSeeAll")
+//                intent.putExtra("topicId", section.id)
+//                intent.putExtra("title", section.title)
+                intent.putExtra("fromWhere", "allVideo")
+                intent.putExtra("videoTopicId",section.id)
+                intent.putExtra("videoTitle", section.title)
                 startActivity(intent)
             }
 

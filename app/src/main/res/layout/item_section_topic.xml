@@ -26,10 +26,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginEnd="@dimen/_5sdp"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:ellipsize="end"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="@dimen/_14ssp"
                 app:layout_constraintEnd_toStartOf="@id/tvSeeAll"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tvSeeAll" />

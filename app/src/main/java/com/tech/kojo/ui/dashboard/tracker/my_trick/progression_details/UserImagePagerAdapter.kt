@@ -26,7 +26,7 @@ class UserImagePagerAdapter(
 ) : RecyclerView.Adapter<UserImagePagerAdapter.ImageViewHolder>() {
 
     private var currentPlayingPosition: Int = -1
-    private var isControllerVisible: Boolean = true
+
 
     inner class ImageViewHolder(val binding: HolderUserImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -154,6 +154,7 @@ class UserImagePagerAdapter(
                     repeatMode = Player.REPEAT_MODE_ONE
 
                     addListener(object : Player.Listener {
+
                         override fun onPlaybackStateChanged(state: Int) {
                             when (state) {
                                 Player.STATE_READY -> {
@@ -168,9 +169,21 @@ class UserImagePagerAdapter(
                             }
                         }
 
+                        override fun onIsPlayingChanged(isPlayingNow: Boolean) {
+
+                            if (isPlayingNow) {
+                                // ▶️ Playing → hide controller smoothly
+                                binding.localPlayerView.postDelayed({
+                                    binding.localPlayerView.hideController()
+                                }, 500)
+                            } else {
+                                // ⏸ Paused → show controller
+                                binding.localPlayerView.showController()
+                            }
+                        }
+
                         override fun onPlayerError(error: PlaybackException) {
                             Log.e("VideoPlayer", "Playback error: ${error.message}")
-//                            showErrorToast("Playback error occurred")
                             stopVideo()
                         }
                     })
@@ -186,18 +199,6 @@ class UserImagePagerAdapter(
                 binding.ivUser.visibility = View.INVISIBLE
                 binding.ivVideoPlay.visibility = View.GONE
                 binding.ivFullscreen.visibility = View.VISIBLE  // Fullscreen always visible
-
-                // Show controller initially, then auto-hide
-                isControllerVisible = true
-                binding.localPlayerView.useController = true
-
-                // Auto-hide controller after 3 seconds
-                binding.localPlayerView.postDelayed({
-                    if (isPlaying && binding.localPlayerView.visibility == View.VISIBLE) {
-                        binding.localPlayerView.useController = true
-                        isControllerVisible = false
-                    }
-                }, 3000)
 
                 isPlaying = true
                 currentPlayingPosition = adapterPosition

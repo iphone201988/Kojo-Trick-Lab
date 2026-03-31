@@ -459,6 +459,15 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
+        val currentUser = sharedPrefManager.getLoginData()
+        if (!currentUser?.socialLinkedAccounts.isNullOrEmpty()){
+            commonDialog.binding.tvChangePassword.visibility=View.GONE
+            commonDialog.binding.viewChangePassword.visibility=View.GONE
+        }
+        else{
+            commonDialog.binding.tvChangePassword.visibility=View.VISIBLE
+            commonDialog.binding.viewChangePassword.visibility=View.VISIBLE
+        }
     }
 
     // Helper to convert dp to pixels
@@ -734,7 +743,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     "NEW_POST", "POST_LIKE", "POST_COMMENT" -> {
                         val intent = Intent(this@DashBoardActivity, CommonActivity::class.java)
                         intent.putExtra("fromWhere", "communityDetail")
-                        intent.putExtra("postId", payload.postId)
+                        intent.putExtra("postId", payload.data?.postId)
                         startActivity(intent)
                     }
 
@@ -759,7 +768,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                         }
                         val intent = Intent(this, CommonActivity::class.java)
                         intent.putExtra("fromWhere", "homeProgress")
-                        intent.putExtra("trackDetailId", payload.trickDataId)
+                        intent.putExtra("trackDetailId", payload.data?.trickDataId)
                         startActivity(intent)
                     }
 

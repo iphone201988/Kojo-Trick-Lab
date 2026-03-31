@@ -45,6 +45,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.tech.kojo.data.room_module.DownloadVideoData
+import com.tech.kojo.utils.BindingUtils.makeTextExpandable
 import com.tech.kojo.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -173,7 +174,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         super.onResume()
         // api call
         val data = HashMap<String, Any>()
-//        data["isViewed"]=false
         if (args.topicId.isNotEmpty() && args.videoId.isNotEmpty()) {
             topicId = args.topicId
             userVideoId = args.videoId
@@ -202,7 +202,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                     requireActivity().finish()
                 }
 
-                R.id.clComments -> {
+                R.id.clComments,R.id.tvNoCommentView -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         initBottomSheet()
                     }
@@ -419,7 +419,12 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
             val firstValidComment = originalCommentData.firstOrNull { it.userId != null }
 
             if (firstValidComment != null) {
-                binding.tvMessage.text = firstValidComment.comment
+                binding.tvNoCommentView.visibility=View.GONE
+                binding.tvMessage.visibility=View.VISIBLE
+                binding.ivPerson.visibility=View.VISIBLE
+                binding.tvMessage.makeTextExpandable(
+                    firstValidComment.comment.toString()
+                )
 
                 val url = firstValidComment.userId?.profilePicture
                 val imageUrl = when {
@@ -439,10 +444,18 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 }
             } else {
                 // If no comments with valid user, show first comment anyway
-                binding.tvMessage.text = filteredCommentData[0].comment
+                binding.tvNoCommentView.visibility=View.GONE
+                binding.tvMessage.visibility=View.VISIBLE
+                binding.ivPerson.visibility=View.VISIBLE
+                binding.tvMessage.makeTextExpandable(
+                    filteredCommentData[0].comment.toString()
+                )
                 binding.ivPerson.setImageResource(R.drawable.holder_dummy)
             }
         } else {
+            binding.tvNoCommentView.visibility=View.VISIBLE
+            binding.tvMessage.visibility=View.INVISIBLE
+            binding.ivPerson.visibility=View.INVISIBLE
             binding.tvCommentsCounts.text = "0"
             binding.tvMessage.text = "-"
             binding.ivPerson.setImageResource(R.drawable.holder_dummy)
@@ -498,11 +511,16 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                     R.id.cardView -> {
                         // api call
                         if (m._id?.isNotEmpty() == true && m.topicId?._id?.isNotEmpty() == true) {
-                            topicId = m.topicId._id
-                            userVideoId = m._id
-                            val data = HashMap<String, Any>()
-                            data["isViewed"]=false
-                            viewModel.getVideoById(Constants.GET_VIDEO_ID + "/${m._id}", data)
+//                            topicId = m.topicId._id
+//                            userVideoId = m._id
+//                            val data = HashMap<String, Any>()
+//                            viewModel.getVideoById(Constants.GET_VIDEO_ID + "/${m._id}", data)
+                            val intent = Intent(requireContext(), CommonActivity::class.java)
+                            intent.putExtra("videoId", m._id)
+                            intent.putExtra("topicId", m.topicId._id)
+                            intent.putExtra("categoryId", m.categoryId?._id)
+                            intent.putExtra("fromWhere", "videoPlayer")
+                            startActivity(intent)
                         }
                     }
                 }
@@ -706,7 +724,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
                 launch(Dispatchers.Main) {
                     hideLoading()
-                    showSuccessToast("Video downloaded successfully")
+                    showSuccessToast("Video saved to download")
                     binding.tvDownload.text="Downloaded"
                     binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.green_color))
                     binding.ivDownload.setImageResource(R.drawable.ic_download_video)

@@ -81,6 +81,7 @@ data class LoginUser(
     val youtubeLink: String?,
     val isPrivate: Boolean?,
     val isSubscription: Boolean?,
+    val isProfileCompleted: Boolean?,
 )
 data class SocialLinkedAccount(
     val _id: String?,
@@ -264,7 +265,7 @@ data class GetCommentsApiResponse(
 )
 
 data class GetCommentData(
-    val _id: String?, val createdAt: String?, val message: String?, val user: UserIdProfile?
+    val _id: String?, val createdAt: String?, val message: String?, val user: UserIdProfile?, var isExpanded: Boolean=false
 )
 
 /**
@@ -669,7 +670,8 @@ data class CommentsData(
     val createdAt: String?,
     val updatedAt: String?,
     val userId: UserIdProfile?,
-    val videoId: String?
+    val videoId: String?,
+    var isExpanded: Boolean=false
 )
 
 @Parcelize

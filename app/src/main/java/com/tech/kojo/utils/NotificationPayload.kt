@@ -1,11 +1,16 @@
 package com.tech.kojo.utils
 
-class NotificationPayload (
-    val postId :String?,
+
+data class NotificationPayload(
+    val body: String?,
+    val `data`: NotificationDataPayload?,
+    val title: String?,
+    val type: String?
+)
+
+data class NotificationDataPayload(
     val trickDataId :String?,
-    val userId :String?,
-    val deepLink :String?,
-    val body :String?,
-    val title :String?,
-    val type :String?,
+    val deepLink: String?,
+    val postId: String?,
+    val userId: String?
 )

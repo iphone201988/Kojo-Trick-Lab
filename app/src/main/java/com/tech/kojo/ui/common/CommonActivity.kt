@@ -323,9 +323,11 @@ class CommonActivity : BaseActivity<ActivityCommonBinding>() {
                     "video" -> {
                         val videoUrl = intent.getStringExtra("videoUrl")
                         val videoPath = intent.getStringExtra("videoPath")
+                        val videoId = intent.getStringExtra("videoId")
                         val bundle = Bundle()
                         bundle.putString("videoUrl", videoUrl)
                         bundle.putString("videoPath", videoPath)
+                        bundle.putString("videoId", videoId)
                         graph.setStartDestination(R.id.fragmentVideo)
                         navController.setGraph(graph, bundle)
                     }

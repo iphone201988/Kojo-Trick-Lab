@@ -68,6 +68,7 @@ class SetupFragment : BaseFragment<FragmentSetupBinding>() {
                     val tiktok = binding.etTikTok.text.toString().trim()
                     val youtube = binding.etYouTube.text.toString().trim()
                     val data = HashMap<String, Any>()
+                    data["isProfileCompleted"]=true
                     if (name.isNotEmpty()) {
                         data["trickingNickname"] = name
                     }

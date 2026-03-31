@@ -371,7 +371,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
      */
 
     private fun initAdapter() {
-        communityAdapter = MultiViewAdapter(object : MultiViewAdapter.OnItemClickListener {
+        val myId = sharedPrefManager.getLoginData()?._id
+        communityAdapter = MultiViewAdapter(myId,object : MultiViewAdapter.OnItemClickListener {
             override fun onItemClick(item: PostData?, clickedViewId: Int, position: Int) {
                 postPosition = position
                 when (clickedViewId) {
@@ -442,6 +443,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
     private fun playInLine(item: PostData?, position: Int) {
         if (item?.videoLink == null) return
 
+        // Stop previous player
         player?.stop()
         player?.release()
 
@@ -462,27 +464,65 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
             .createMediaSource(MediaItem.fromUri(videoUrl))
 
         player = ExoPlayer.Builder(requireContext()).build().apply {
+
             setMediaSource(mediaSource)
             prepare()
             playWhenReady = true
+
             addListener(object : Player.Listener {
-                override fun onPlayerError(error: PlaybackException) {
-                    super.onPlayerError(error)
-                    Log.e("CommunityFragment", "Player error at pos $position: ${error.message}", error)
-                    showErrorToast("Playback error: ${error.localizedMessage}")
-                }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     when (playbackState) {
-                        Player.STATE_BUFFERING -> Log.d("CommunityFragment", "Buffering at pos $position")
-                        Player.STATE_READY -> Log.d("CommunityFragment", "Ready to play at pos $position")
-                        Player.STATE_ENDED -> Log.d("CommunityFragment", "Video ended at pos $position")
-                        Player.STATE_IDLE -> Log.d("CommunityFragment", "Player idle at pos $position")
+                        Player.STATE_BUFFERING ->
+                            Log.d("CommunityFragment", "Buffering at pos $position")
+
+                        Player.STATE_READY ->
+                            Log.d("CommunityFragment", "Ready to play at pos $position")
+
+                        Player.STATE_ENDED ->
+                            Log.d("CommunityFragment", "Video ended at pos $position")
+
+                        Player.STATE_IDLE ->
+                            Log.d("CommunityFragment", "Player idle at pos $position")
                     }
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+
+                    // 🔥 Get current visible ViewHolder
+                    val viewHolder = binding.rvCommunity
+                        .findViewHolderForAdapterPosition(position)
+                            as? MultiViewAdapter.VideoPostViewHolder
+
+                    val playerView = viewHolder?.binding?.playerView ?: return
+
+                    // Enable controller
+                    playerView.useController = true
+                    playerView.controllerShowTimeoutMs = 2000
+
+                    if (isPlaying) {
+                        // ▶️ Playing → hide controller smoothly
+                        playerView.postDelayed({
+                            playerView.hideController()
+                        }, 500)
+                    } else {
+                        // ⏸ Paused → show controller
+                        playerView.showController()
+                    }
+                }
+
+                override fun onPlayerError(error: PlaybackException) {
+                    Log.e(
+                        "CommunityFragment",
+                        "Player error at pos $position: ${error.message}",
+                        error
+                    )
+                    showErrorToast("Playback error: ${error.localizedMessage}")
                 }
             })
         }
 
+        // Attach player to adapter
         communityAdapter.setPlayingPosition(position, player)
     }
 

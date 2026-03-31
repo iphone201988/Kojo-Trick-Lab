@@ -68,7 +68,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profileImage"
-            setImageFromUrl="@{bean.userData.profilePicture}"
+            setImageFromUrlHttp="@{bean.userData.profilePicture}"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:scaleType="centerCrop"
@@ -138,7 +138,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardVideoPlayer"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/_150sdp"
             android:visibility="gone"
             app:cardCornerRadius="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="@+id/iv1"
@@ -150,7 +150,9 @@
                 android:id="@+id/playerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:use_controller="true" />
+                app:use_controller="true"
+                app:resize_mode="fill"
+                />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivMaximize"
@@ -186,9 +188,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="@{bean.description}"
-            android:maxLines="3"
-            android:ellipsize="end"
+            setExpandableText="@{bean.description}"
             android:textColor="@color/blue"
             android:textSize="@dimen/_10ssp"
             app:layout_constraintEnd_toEndOf="parent"

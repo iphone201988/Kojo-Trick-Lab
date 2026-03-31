@@ -189,7 +189,7 @@
             android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:onClick="@{v->callback.onViewClick(v)}"
-            android:text="Privacy"
+            android:text="Privacy Policy"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

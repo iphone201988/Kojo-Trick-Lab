@@ -81,7 +81,7 @@
             android:onClick="@{v->vm.onClick(v)}"
             android:scaleType="centerCrop"
             android:visibility="gone"
-            setImageFromUrl="@{bean.user.profilePicture}"
+            setImageFromUrlHttp="@{bean.user.profilePicture}"
             app:layout_constraintBottom_toBottomOf="@+id/ivCircle"
             app:layout_constraintEnd_toEndOf="@+id/ivCircle"
             app:layout_constraintStart_toStartOf="@+id/ivCircle"

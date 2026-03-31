@@ -233,7 +233,7 @@
                 style="@style/TextView_700_Bold_Quicksand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No Community Added Yet"
+                android:text="No Post found"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:textSize="@dimen/_15ssp"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -26,6 +26,7 @@ import com.tech.kojo.databinding.FragmentForwordTrickBinding
 import com.tech.kojo.databinding.VerticalForwardRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.makeTextExpandable
 import com.tech.kojo.utils.BindingUtils.setTextCapitalized
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
@@ -207,67 +208,6 @@ class ForwardTrickFragment : BaseFragment<FragmentForwordTrickBinding>() {
 
     }
 
-
-    /***
-     * Method to make text expandable
-     */
-    fun AppCompatTextView.makeTextExpandable(fullText: String, maxLines: Int = 2) {
-        post {
-            val readMoreText = " Read more"
-            val readLessText = " Read less"
-
-            text = fullText
-            movementMethod = LinkMovementMethod.getInstance()
-
-            // If text fits within maxLines, do nothing
-            if (layout.lineCount <= maxLines) return@post
-
-            val endOfVisibleText = layout.getLineEnd(maxLines - 1)
-            val visibleText =
-                fullText.substring(0, endOfVisibleText - readMoreText.length).trimEnd()
-
-            val collapsedText = "$visibleText...$readMoreText"
-            val collapsedSpannable = SpannableStringBuilder(collapsedText)
-
-            // "Read more" click
-            collapsedSpannable.setSpan(
-                object : ClickableSpan() {
-                    override fun onClick(widget: View) {
-                        val expandedText = "$fullText$readLessText"
-                        val expandedSpannable = SpannableStringBuilder(expandedText)
-                        expandedSpannable.setSpan(object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                makeTextExpandable(fullText, maxLines)
-                            }
-                        }, fullText.length, expandedText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-                        expandedSpannable.setSpan(
-                            ForegroundColorSpan(Color.parseColor("#F9A825")),
-                            fullText.length,
-                            expandedText.length,
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                        )
-
-                        text = expandedSpannable
-                        movementMethod = LinkMovementMethod.getInstance()
-                    }
-                },
-                collapsedText.length - readMoreText.length,
-                collapsedText.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            collapsedSpannable.setSpan(
-                ForegroundColorSpan(Color.parseColor("#F9A825")),
-                collapsedText.length - readMoreText.length,
-                collapsedText.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            text = collapsedSpannable
-            movementMethod = LinkMovementMethod.getInstance()
-        }
-    }
 
     override fun onResume() {
         super.onResume()

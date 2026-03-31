@@ -16,7 +16,12 @@ import android.os.Build
 import android.os.Environment
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.Log
@@ -1061,6 +1066,155 @@ object BindingUtils {
         )
 
         view.text = spannable
+    }
+
+
+    fun AppCompatTextView.makeTextExpandable(fullText: String, maxLines: Int = 2) {
+        post {
+            val readMoreText = " Read more"
+            val readLessText = " Read less"
+
+            text = fullText
+            movementMethod = LinkMovementMethod.getInstance()
+
+            // If text fits within maxLines, do nothing
+            if (layout.lineCount <= maxLines) return@post
+
+            val endOfVisibleText = layout.getLineEnd(maxLines - 1)
+            val visibleText =
+                fullText.substring(0, endOfVisibleText - readMoreText.length).trimEnd()
+
+            val collapsedText = "$visibleText...$readMoreText"
+            val collapsedSpannable = SpannableStringBuilder(collapsedText)
+
+            // "Read more" click
+            collapsedSpannable.setSpan(
+                object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        val expandedText = "$fullText$readLessText"
+                        val expandedSpannable = SpannableStringBuilder(expandedText)
+                        expandedSpannable.setSpan(object : ClickableSpan() {
+                            override fun onClick(widget: View) {
+                                makeTextExpandable(fullText, maxLines)
+                            }
+                        }, fullText.length, expandedText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                        expandedSpannable.setSpan(
+                            ForegroundColorSpan(Color.parseColor("#F9A825")),
+                            fullText.length,
+                            expandedText.length,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+
+                        text = expandedSpannable
+                        movementMethod = LinkMovementMethod.getInstance()
+                    }
+                },
+                collapsedText.length - readMoreText.length,
+                collapsedText.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            collapsedSpannable.setSpan(
+                ForegroundColorSpan(Color.parseColor("#F9A825")),
+                collapsedText.length - readMoreText.length,
+                collapsedText.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            text = collapsedSpannable
+            movementMethod = LinkMovementMethod.getInstance()
+        }
+    }
+
+    @BindingAdapter("setExpandableText")
+    @JvmStatic
+    fun setExpandableText(textView: AppCompatTextView, fullText: String?) {
+
+        if (fullText.isNullOrEmpty()) {
+            textView.text = ""
+            return
+        }
+
+        val maxLinesCollapsed = 3
+        textView.maxLines = maxLinesCollapsed
+        textView.text = fullText
+
+        textView.post {
+
+            if (textView.lineCount <= maxLinesCollapsed) {
+                return@post
+            }
+
+            val endIndex = textView.layout.getLineEnd(maxLinesCollapsed - 1)
+
+            val trimmedText = fullText
+                .substring(0, endIndex)
+                .trimEnd()
+                .split(" ")
+                .dropLast(6)
+                .joinToString(" ")
+
+            val collapsedText = "$trimmedText... Read More"
+            val expandedText = "$fullText  Read Less"
+
+            val spannableCollapsed = SpannableString(collapsedText)
+            val spannableExpanded = SpannableString(expandedText)
+            val showMoreStart = collapsedText.indexOf("Read More")
+
+            spannableCollapsed.apply {
+                setSpan(
+                    object : ClickableSpan() {
+                        override fun onClick(widget: View) {
+                            textView.text = spannableExpanded
+                            textView.maxLines = Int.MAX_VALUE
+                        }
+
+                        override fun updateDrawState(ds: TextPaint) {
+                            ds.isUnderlineText = true
+                            ds.isFakeBoldText = true
+                            ds.color = ContextCompat.getColor(
+                                textView.context,
+                                R.color.colorPrimary
+                            )
+                        }
+                    },
+                    showMoreStart,
+                    collapsedText.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            // ---- EXPANDED CLICK ----
+            val showLessStart = expandedText.indexOf("Read Less")
+
+            spannableExpanded.apply {
+                setSpan(
+                    object : ClickableSpan() {
+                        override fun onClick(widget: View) {
+                            textView.text = spannableCollapsed
+                            textView.maxLines = maxLinesCollapsed
+                        }
+
+                        override fun updateDrawState(ds: TextPaint) {
+                            ds.isUnderlineText = true
+                            ds.isFakeBoldText = true
+                            ds.color = ContextCompat.getColor(
+                                textView.context,
+                                R.color.colorPrimary
+                            )
+                        }
+                    },
+                    showLessStart,
+                    expandedText.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            textView.movementMethod = LinkMovementMethod.getInstance()
+            textView.highlightColor = Color.TRANSPARENT
+            textView.text = spannableCollapsed
+        }
     }
 
 }

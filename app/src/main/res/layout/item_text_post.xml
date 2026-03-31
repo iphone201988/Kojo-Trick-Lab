@@ -63,7 +63,7 @@
         app:layout_constraintTop_toTopOf="parent">
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profileImage"
-            setImageFromUrl="@{bean.userData.profilePicture}"
+            setImageFromUrlHttp="@{bean.userData.profilePicture}"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:scaleType="centerCrop"
@@ -132,10 +132,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
-            android:text="@{bean.description}"
+            setExpandableText="@{bean.description}"
             android:textColor="@color/blue"
-            android:maxLines="3"
-            android:ellipsize="end"
             android:textSize="@dimen/_10ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

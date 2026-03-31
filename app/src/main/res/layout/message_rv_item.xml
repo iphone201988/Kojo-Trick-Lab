@@ -85,7 +85,7 @@
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginEnd="18dp"
             android:paddingEnd="@dimen/_18sdp"
-            android:text="@{bean.comment}"
+            setExpandableText="@{bean.comment}"
             android:textColor="@color/blue"
             android:textSize="@dimen/_10ssp"
             app:layout_constraintEnd_toEndOf="parent"

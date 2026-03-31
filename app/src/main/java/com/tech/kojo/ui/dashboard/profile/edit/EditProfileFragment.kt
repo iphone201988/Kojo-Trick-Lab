@@ -81,8 +81,10 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
         // data set
         val data = sharedPrefManager.getLoginData()
         if (data != null) {
-            binding.tvChoose.text = data.skin
-            skin = data.skin
+            if (!data.skin.isNullOrEmpty()){
+                binding.tvChoose.text = data.skin
+                skin = data.skin
+            }
             binding.ivCircle1.visibility = View.GONE
             binding.ivCircle.visibility = View.VISIBLE
             binding.ivProfile.visibility = View.VISIBLE

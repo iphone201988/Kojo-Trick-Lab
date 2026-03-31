@@ -3,7 +3,10 @@ package com.tech.kojo.ui.dashboard.community.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.annotation.OptIn
 import androidx.databinding.DataBindingUtil
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.RecyclerView
 import com.tech.kojo.R
@@ -15,7 +18,7 @@ import com.tech.kojo.databinding.ItemVideoPostBinding
 import com.zerobranch.layout.SwipeLayout
 
 class MultiViewAdapter(
-    private val listener: OnItemClickListener
+    private var myId: String?,private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val listItem: MutableList<FeedItem> = mutableListOf()
@@ -166,8 +169,15 @@ class MultiViewAdapter(
         fun bind(item: PostData?, listener: OnItemClickListener, position: Int) {
 
             binding.bean = item
+            val isMyPost = item?.userData?._id == myId
+
+            if (isMyPost) {
+                binding.swipeLayout.isEnabled = true
+                binding.swipeLayout.isEnabledSwipe = true
+
                 binding.swipeLayout.setOnActionsListener(object :
                     SwipeLayout.SwipeActionsListener {
+
                     override fun onOpen(direction: Int, isContinuous: Boolean) {
                         if (direction == SwipeLayout.LEFT) {
                             if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
@@ -176,10 +186,17 @@ class MultiViewAdapter(
                             swipeLayout = binding.swipeLayout
                         }
                     }
+
                     override fun onClose() {
                         if (swipeLayout == binding.swipeLayout) swipeLayout = null
                     }
                 })
+
+            } else {
+                binding.swipeLayout.close(true)
+                binding.swipeLayout.isEnabledSwipe = false
+                binding.swipeLayout.setOnActionsListener(null)
+            }
             binding.cardView.setOnClickListener {
                 listener.onItemClick(item, binding.cardView.id, position)
             }
@@ -205,28 +222,47 @@ class MultiViewAdapter(
     inner class VideoPostViewHolder(val binding: ItemVideoPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @OptIn(UnstableApi::class)
         fun bind(item: PostData?, listener: OnItemClickListener, position: Int, isPlaying: Boolean, player: ExoPlayer?) {
 
             binding.bean = item
-            binding.swipeLayout.setOnActionsListener(object :
-                SwipeLayout.SwipeActionsListener {
-                override fun onOpen(direction: Int, isContinuous: Boolean) {
-                    if (direction == SwipeLayout.LEFT) {
-                        if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
-                            swipeLayout?.close(true)
+            val isMyPost = item?.userData?._id == myId
+
+            if (isMyPost) {
+                binding.swipeLayout.isEnabled = true
+                binding.swipeLayout.isEnabledSwipe = true
+
+                binding.swipeLayout.setOnActionsListener(object :
+                    SwipeLayout.SwipeActionsListener {
+
+                    override fun onOpen(direction: Int, isContinuous: Boolean) {
+                        if (direction == SwipeLayout.LEFT) {
+                            if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
+                                swipeLayout?.close(true)
+                            }
+                            swipeLayout = binding.swipeLayout
                         }
-                        swipeLayout = binding.swipeLayout
                     }
-                }
-                override fun onClose() {
-                    if (swipeLayout == binding.swipeLayout) swipeLayout = null
-                }
-            })
+
+                    override fun onClose() {
+                        if (swipeLayout == binding.swipeLayout) swipeLayout = null
+                    }
+                })
+
+            } else {
+                binding.swipeLayout.close(true)
+                binding.swipeLayout.isEnabledSwipe = false
+                binding.swipeLayout.setOnActionsListener(null)
+            }
             if (isPlaying && player != null) {
                 binding.cardVideoPlayer.visibility = View.VISIBLE
                 binding.ivVideo.visibility = View.GONE
                 binding.iv1.visibility = View.INVISIBLE
                 binding.playerView.player = player
+                binding.playerView.setShowFastForwardButton(false)
+                binding.playerView.setShowNextButton(false)
+                binding.playerView.setShowRewindButton(false)
+                binding.playerView.setShowPreviousButton(false)
             } else {
                 binding.cardVideoPlayer.visibility = View.GONE
                 binding.ivVideo.visibility = View.VISIBLE
@@ -271,20 +307,35 @@ class MultiViewAdapter(
         fun bind(item: PostData?, listener: OnItemClickListener, position: Int) {
 
             binding.bean = item
-            binding.swipeLayout.setOnActionsListener(object :
-                SwipeLayout.SwipeActionsListener {
-                override fun onOpen(direction: Int, isContinuous: Boolean) {
-                    if (direction == SwipeLayout.LEFT) {
-                        if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
-                            swipeLayout?.close(true)
+            val isMyPost = item?.userData?._id == myId
+
+            if (isMyPost) {
+                binding.swipeLayout.isEnabled = true
+                binding.swipeLayout.isEnabledSwipe = true
+
+                binding.swipeLayout.setOnActionsListener(object :
+                    SwipeLayout.SwipeActionsListener {
+
+                    override fun onOpen(direction: Int, isContinuous: Boolean) {
+                        if (direction == SwipeLayout.LEFT) {
+                            if (swipeLayout != null && swipeLayout != binding.swipeLayout) {
+                                swipeLayout?.close(true)
+                            }
+                            swipeLayout = binding.swipeLayout
                         }
-                        swipeLayout = binding.swipeLayout
                     }
-                }
-                override fun onClose() {
-                    if (swipeLayout == binding.swipeLayout) swipeLayout = null
-                }
-            })
+
+                    override fun onClose() {
+                        if (swipeLayout == binding.swipeLayout) swipeLayout = null
+                    }
+                })
+
+            } else {
+                binding.swipeLayout.close(true)
+                binding.swipeLayout.isEnabledSwipe = false
+                binding.swipeLayout.setOnActionsListener(null)
+            }
+
             binding.ivLike.setOnClickListener {
                 listener.onItemClick(item, binding.ivLike.id, position)
             }

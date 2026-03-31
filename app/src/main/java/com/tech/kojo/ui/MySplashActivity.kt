@@ -41,22 +41,38 @@ class MySplashActivity : BaseActivity<ActivityMySplashBinding>() {
         val data = sharedPrefManager.getLoginData()
             if (data != null) {
                 if (data.isEmailVerified == true) {
-//                    if (data.trickingNickname.isNullOrEmpty()){
-//                        val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
-//                        intent.putExtra("open","setup")
-//                        startActivity(intent)
-//                        finish()
-//                    }
-//                    else{
+                    if (data.isProfileCompleted==true){
                         val intent = Intent(this@MySplashActivity, DashBoardActivity::class.java)
                         startActivity(intent)
                         finish()
-//                    }
+                    }
+                    else{
+                        val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
+                        intent.putExtra("open","setup")
+                        startActivity(intent)
+                        finish()
+                    }
                 }
                 else {
-                    val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    if (!data.socialLinkedAccounts.isNullOrEmpty()){
+                        if (data.isProfileCompleted==true){
+                            val intent = Intent(this@MySplashActivity, DashBoardActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                        else{
+                            val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
+                            intent.putExtra("open","setup")
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                    else{
+                        val intent = Intent(this@MySplashActivity, AuthActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+
                 }
             }
         else{

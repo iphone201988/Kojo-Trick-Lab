@@ -454,7 +454,7 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
 
                 launch(Dispatchers.Main) {
                     hideLoading()
-                    showSuccessToast("Video downloaded successfully")
+                    showSuccessToast("Video saved to download")
                     viewModel.getAllVideos()
                 }
 

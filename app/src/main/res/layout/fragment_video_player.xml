@@ -42,7 +42,7 @@
                     android:id="@+id/ivBack"
                     android:layout_width="@dimen/_32sdp"
                     android:layout_height="@dimen/_32sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginStart="@dimen/_18sdp"
                     android:onClick="@{v->vm.onClick(v)}"
                     android:src="@drawable/left_icon"
@@ -355,6 +355,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivPerson"
                     app:layout_constraintTop_toBottomOf="@+id/tvComments" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNoCommentView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextView_600_SemiBold"
+                    android:text="No Comments found"
+                    android:onClick="@{v->vm.onClick(v)}"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:padding="@dimen/_8sdp"
+                    android:textSize="@dimen/_12ssp"
+                    android:textColor="@color/blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvComments"/>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -33,6 +34,7 @@ import com.tech.kojo.databinding.FragmentCommunityDetailBinding
 import com.tech.kojo.databinding.ItemLayoutCommentsBinding
 import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BindingUtils
+import com.tech.kojo.utils.BindingUtils.makeTextExpandable
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
@@ -169,16 +171,50 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
      */
     @OptIn(UnstableApi::class)
     private fun showVideo(path: String) {
+
         val dataSourceFactory = DefaultHttpDataSource.Factory()
             .setAllowCrossProtocolRedirects(true)
+
         val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(MediaItem.fromUri(path))
 
-        player = ExoPlayer.Builder(requireActivity()).build().also {
-            binding.playerView.player = it
-            it.setMediaSource(mediaSource)
-            it.prepare()
-            it.playWhenReady = true
+        player = ExoPlayer.Builder(requireActivity()).build().also { exoPlayer ->
+
+            binding.playerView.player = exoPlayer
+
+            // Initially hide controller
+            binding.playerView.useController = true
+            binding.playerView.hideController()
+
+            // Optional: auto-hide timeout
+            binding.playerView.controllerShowTimeoutMs = 2000
+
+            // Hide unwanted buttons
+            binding.playerView.setShowFastForwardButton(false)
+            binding.playerView.setShowNextButton(false)
+            binding.playerView.setShowRewindButton(false)
+            binding.playerView.setShowPreviousButton(false)
+
+            exoPlayer.setMediaSource(mediaSource)
+            exoPlayer.prepare()
+            exoPlayer.playWhenReady = true
+
+            // 🔥 Player state listener
+            exoPlayer.addListener(object : Player.Listener {
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+
+                    if (isPlaying) {
+                        // ▶️ When playing → hide controller smoothly with delay
+                        binding.playerView.postDelayed({
+                            binding.playerView.hideController()
+                        }, 500)
+                    } else {
+                        // ⏸ When paused → show controller
+                        binding.playerView.showController()
+                    }
+                }
+            })
         }
     }
 
@@ -191,6 +227,9 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
         if (communityData != null) {
             binding.tvLikes.text = "${communityData?.totalLikes}"
             binding.bean = communityData
+            binding.tvDescription.makeTextExpandable(
+                communityData?.description.toString()
+            )
             isPinned = communityData?.isPinned
             isLiked = communityData?.isLiked
             postId = communityData?._id
@@ -362,6 +401,9 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                     if (model.data!=null){
                                         binding.tvLikes.text = "${model.data.totalLikes}"
                                         binding.bean = model.data
+                                        binding.tvDescription.makeTextExpandable(
+                                            model.data.description.toString()
+                                        )
                                         isPinned = model.data.isPinned
                                         isLiked = model.data.isLiked
                                         postId = model.data._id
@@ -428,8 +470,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                 when(v.id){
                     R.id.profileImage->{
                         val loggedInUserId = sharedPrefManager.getLoginData()?._id
-                        val clickedUserId = communityData?.userData?._id
-
+                        val clickedUserId = m?.user?._id
                         if (clickedUserId.isNullOrEmpty() || communityData?.userData?._id==null) {
                             showInfoToast("User not available")
                             return@SimpleRecyclerViewAdapter
@@ -443,6 +484,10 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                         } else {
                             showInfoToast("You can't open your own profile")
                         }
+                    }
+                    R.id.tvDescription->{
+                        m?.isExpanded = !(m?.isExpanded ?: false)
+                        commentAdapter.notifyItemChanged(pos)
                     }
                 }
             }

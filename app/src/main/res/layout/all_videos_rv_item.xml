@@ -60,6 +60,8 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:text="@{bean.title}"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintEnd_toStartOf="@id/tvPhill"
