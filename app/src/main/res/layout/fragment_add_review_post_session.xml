@@ -280,7 +280,6 @@
                     android:hint="Enter here..."
                     android:imeOptions="actionDone"
                     android:inputType="textMultiLine"
-                    android:onClick="@{v->vm.onClick(v)}"
                     android:paddingStart="@dimen/_15sdp"
                     android:singleLine="false"
                     android:text="@{bean.review}"

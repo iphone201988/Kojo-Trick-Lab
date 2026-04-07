@@ -216,6 +216,18 @@ class HomeProgressDetailsFragment : BaseFragment<FragmentHomeProgressDetailsBind
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
                 R.id.ivProgress, R.id.ivClosePlayer -> requireActivity().finish()
+                R.id.ivFullscreen->{
+                    val currentPosition = binding.viewpager.currentItem
+                    reorderedVideos.getOrNull(currentPosition)?.let {  videoItem->
+                        videoItem.link?.let { url ->
+                        val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+                            putExtra("fromWhere", "video")
+                            putExtra("videoUrl", url)
+                        }
+                        startActivity(intent)
+                    }}
+
+                }
                 R.id.btnDownload,R.id.ivDownload ->
                     downloadCurrentVideo()
 //                R.id.ivMAx -> openCurrentVideoFullScreen()

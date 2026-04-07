@@ -143,6 +143,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
 
                             }.also {
                                 communityAdapter.hideLoader()
+                                binding.ssPullRefresh.isRefreshing = false
                                 hideLoading()
                             }
                         }
@@ -247,8 +248,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
             ContextCompat.getColor(requireContext(), R.color.colorPrimary)
         )
         binding.ssPullRefresh.setOnRefreshListener {
-            Handler().postDelayed({
-                binding.ssPullRefresh.isRefreshing = false
+
                 isProgress = true
                 if (binding.check==3){
                     val data = HashMap<String, Any>()
@@ -258,8 +258,6 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                 else{
                     getApi(isPopular)
                 }
-
-            }, 2000)
         }
     }
 
@@ -335,25 +333,15 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                 }
 
                 R.id.tvNewest -> {
-                    binding.check = 1
-                    isPopular = false
-                    getApi(false)
-                    showLoading()
+                    resetAndSwitchTab(isPopular = false, tabType = 1)
                 }
 
                 R.id.consPinned -> {
-                    binding.check = 3
-                    val data = HashMap<String, Any>()
-                    data["page"] = currentPage
-                    data["pinned"] = true
-                    viewModel.getPostApi(data, Constants.GET_POST)
+                    resetAndSwitchToPinned()
                 }
 
                 R.id.tvCompleteTask -> {
-                    binding.check = 2
-                    isPopular = true
-                    getApi(true)
-                    showLoading()
+                    resetAndSwitchTab(isPopular = true, tabType = 2)
                 }
 
                 R.id.createPost -> {
@@ -361,11 +349,36 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
                     intent.putExtra("fromWhere", "createPost")
                     startActivity(intent)
                 }
-
             }
         }
     }
 
+    private fun resetAndSwitchTab(isPopular: Boolean, tabType: Int) {
+        binding.check = tabType
+        this.isPopular = isPopular
+        resetPaginationState()
+        getApi(isPopular)
+        showLoading()
+    }
+
+    private fun resetAndSwitchToPinned() {
+        binding.check = 3
+        resetPaginationState()
+        val data = HashMap<String, Any>()
+        data["page"] = currentPage
+        data["pinned"] = true
+        viewModel.getPostApi(data, Constants.GET_POST)
+        showLoading()
+    }
+
+    private fun resetPaginationState() {
+        currentPage = 1
+        isLoading = false
+        isLastPage = false
+        isProgress = false
+        communityAdapter.clearList()
+        communityAdapter.hideLoader()
+    }
     /**
      * Method to initialize adapter
      */
@@ -535,6 +548,13 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>() {
         super.onDestroy()
         player?.release()
         player = null
+    }
+
+    fun onRefresh() {
+        // Reload fragment data
+        if (isAdded) {
+            initView()
+        }
     }
 
 

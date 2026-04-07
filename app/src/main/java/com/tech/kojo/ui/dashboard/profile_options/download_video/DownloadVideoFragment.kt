@@ -57,9 +57,9 @@ class DownloadVideoFragment : BaseFragment<FragmentDownloadVideoBinding>() {
             when (it?.id) {
                 R.id.ivBack -> {
                     if (data == 2) {
-                        requireActivity().finishAffinity()
-                        requireActivity().finishAndRemoveTask()
-//                        requireActivity().onBackPressedDispatcher.onBackPressed()
+//                        requireActivity().finishAffinity()
+//                        requireActivity().finishAndRemoveTask()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     } else {
                         requireActivity().onBackPressedDispatcher.onBackPressed()
                     }

@@ -96,11 +96,13 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
                 }
 
                 R.id.ivRollEdit -> {
-                    initBottomSheet(1)
+                    Log.e("jsdjs", "initOnClick: $favTrick", )
+                    initBottomSheet(1,favTrick)
                 }
 
                 R.id.ivTwistEdit -> {
-                    initBottomSheet(2)
+                    Log.e("jsdjs", "initOnClick: $bestTrick", )
+                    initBottomSheet(2,bestTrick)
                 }
 
                 R.id.clProgress -> {
@@ -225,7 +227,7 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
     /**
      * Initialize bottom sheet
      */
-    private fun initBottomSheet(type: Int) {
+    private fun initBottomSheet(type: Int,trickName:String?) {
         updateBottomSheet = BaseCustomBottomSheet(
             requireContext(), R.layout.add_favourite_trick_bottom_sheet
         ) { view ->
@@ -263,6 +265,7 @@ class MyStarFragment : BaseFragment<FragmentMyStarBinding>() {
             } else {
                 updateBottomSheet.binding.tvTitle.text = "Update Favourite Trick:"
         }
+        updateBottomSheet.binding.etEnterNote.setText(trickName)
         updateBottomSheet.show()
 
     }

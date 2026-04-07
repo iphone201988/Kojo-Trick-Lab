@@ -1,5 +1,7 @@
 package com.tech.kojo.ui.auth
 
+import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.view.ViewCompat
@@ -34,15 +36,27 @@ class AuthActivity : BaseActivity<ActivityAuthBinding>() {
         initView()
         sharedPrefManager.setLoggedIn(false)
         val from = intent.getStringExtra("open")
-        navController.graph =
-            navController.navInflater.inflate(R.navigation.auth_section_navigation).apply {
-                if (from=="setup"){
-                    setStartDestination(R.id.fragmentSetup)
+        val graph = navController.navInflater.inflate(R.navigation.auth_section_navigation)
+
+        val startDestinationId = when(from) {
+            "setup"-> R.id.fragmentAddProfile
+            else -> R.id.fragmentLogin
+        }
+
+        graph.setStartDestination(startDestinationId)
+        navController.graph = graph
+
+        when (startDestinationId) {
+            R.id.fragmentAddProfile -> {
+                val bundle = Bundle().apply {
+                    putString("from", "1")
                 }
-                else{
-                    setStartDestination(R.id.fragmentLogin)
-                }
+                navController.navigate(startDestinationId, bundle)
             }
+            else -> {
+                navController.navigate(startDestinationId)
+            }
+        }
     }
 
     private fun initView() {

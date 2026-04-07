@@ -63,7 +63,6 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity(),
 
     fun showUnauthorised() {
         sharedPrefManager.clear()
-        sharedPrefManager.setOnBoarding("true")
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finishAffinity()

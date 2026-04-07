@@ -12,7 +12,13 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
         }
 
         fun <T> error(msg: String?, data: T?): Resource<T> {
-            return Resource(Status.ERROR, data, msg)
+            if (data!=null){
+                return Resource(Status.ERROR, data, msg)
+            }
+            else{
+                return Resource(Status.ERROR, data, "No internet connection.Please try again.")
+            }
+
         }
         inline fun <reified T> errorBody(msg: ResponseBody?, data: T?): Resource<T> {
             val gson = Gson()

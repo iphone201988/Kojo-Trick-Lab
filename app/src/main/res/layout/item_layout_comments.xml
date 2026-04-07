@@ -19,11 +19,51 @@
 
     </data>
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.zerobranch.layout.SwipeLayout
+        android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_marginBottom="@dimen/_10sdp"
+        app:draggedItem="@id/cardView"
+        app:isTogether="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rightItem="@id/constantSwap"
+        app:swipeDirection="left">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constantSwap"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@drawable/bg_rv_items"
+            android:backgroundTint="@color/red_color"
+            android:paddingHorizontal="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@id/cardView"
+            app:layout_constraintTop_toTopOf="@id/cardView">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvdelete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:text="Delete"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Delete Layout - This will match the height of cardView -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/bg_rv_items"
         android:padding="@dimen/_10sdp">
 
@@ -34,7 +74,6 @@
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:scaleType="centerCrop"
-            android:onClick="@{v->callback.onItemClick(v,bean,pos)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
@@ -78,5 +117,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileImage" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.zerobranch.layout.SwipeLayout>
 
 </layout>

@@ -105,12 +105,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clEmpty"
             android:layout_width="match_parent"
+            android:visibility="gone"
+            android:minHeight="@dimen/_300sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_height="match_parent">
+            app:layout_constraintTop_toBottomOf="@+id/rvForward"
+            android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivCommonProgress"
@@ -118,7 +119,6 @@
                 android:layout_height="@dimen/_180sdp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/empty_combo"
-
                 android:layout_marginBottom="@dimen/_43sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -3,6 +3,7 @@ package com.tech.kojo.ui.dashboard.community.community_detail
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.util.Log
+import android.util.Log.v
 import android.view.View
 import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
@@ -14,8 +15,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tech.kojo.BR
 import com.tech.kojo.R
@@ -31,8 +30,9 @@ import com.tech.kojo.data.model.PinnedApiResponse
 import com.tech.kojo.data.model.PostData
 import com.tech.kojo.data.model.PostDetailModel
 import com.tech.kojo.databinding.FragmentCommunityDetailBinding
-import com.tech.kojo.databinding.ItemLayoutCommentsBinding
 import com.tech.kojo.ui.common.CommonActivity
+import com.tech.kojo.ui.dashboard.community.adapter.MultiViewAdapter
+import com.tech.kojo.utils.AppUtils.preventMultipleClick
 import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.BindingUtils.makeTextExpandable
 import com.tech.kojo.utils.Status
@@ -43,7 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
-    private lateinit var commentAdapter: SimpleRecyclerViewAdapter<GetCommentData, ItemLayoutCommentsBinding>
+    private lateinit var commentAdapter: CommunityCommentAdapter
     private val viewModel: CommunityDetailVm by viewModels()
     private var postId: String? = null
     private var isPinned: Boolean? = null
@@ -55,6 +55,8 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
     private var player: ExoPlayer? = null
     private var comments = ArrayList<GetCommentData>()
     private var communityData: PostData? = null
+
+    private var deletePosition: Int=-1
     override fun getLayoutResource(): Int {
         return R.layout.fragment_community_detail
     }
@@ -94,11 +96,12 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                 R.id.ivBack -> {
                     requireActivity().finish()
                 }
-                R.id.profileImage->{
+
+                R.id.profileImage -> {
                     val loggedInUserId = sharedPrefManager.getLoginData()?._id
                     val clickedUserId = communityData?.userData?._id
 
-                    if (clickedUserId.isNullOrEmpty() || communityData?.userData?._id==null) {
+                    if (clickedUserId.isNullOrEmpty() || communityData?.userData?._id == null) {
                         showInfoToast("User not available")
                         return@observe
                     }
@@ -172,8 +175,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
     @OptIn(UnstableApi::class)
     private fun showVideo(path: String) {
 
-        val dataSourceFactory = DefaultHttpDataSource.Factory()
-            .setAllowCrossProtocolRedirects(true)
+        val dataSourceFactory = DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
 
         val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource(MediaItem.fromUri(path))
@@ -227,6 +229,9 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
         if (communityData != null) {
             binding.tvLikes.text = "${communityData?.totalLikes}"
             binding.bean = communityData
+            binding.tvTitle.makeTextExpandable(
+                communityData?.title.toString()
+            )
             binding.tvDescription.makeTextExpandable(
                 communityData?.description.toString()
             )
@@ -251,24 +256,22 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
             }
             communityID = communityData?._id
             videoLink = communityData?.videoLink
-            if (isLiked==true){
+            if (isLiked == true) {
                 binding.ivLike.setImageResource(R.drawable.iv_heart)
-            }
-            else{
+            } else {
                 binding.ivLike.setImageResource(R.drawable.iv_heart_unfilled)
             }
             // api call
             val data = HashMap<String, Any>()
             data["page"] = currentPage
             data["limit"] = 10
-            viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data,true)
-        }
-        else{
+            viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data, true)
+        } else {
             val postId = arguments?.getString("postId")
-            if (postId!=null){
+            if (postId != null) {
                 val request = HashMap<String, Any>()
-                request["postId"]=postId
-                viewModel.getPostDetailApi(Constants.POST_DETAIL,request)
+                request["postId"] = postId
+                viewModel.getPostDetailApi(Constants.POST_DETAIL, request)
             }
         }
         // adapter
@@ -293,10 +296,9 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 if (model?.success == true) {
                                     binding.tvLikes.text = "$like"
                                     // Toggle logic
-                                    if (model.message!!.contains("Post unliked")){
+                                    if (model.message!!.contains("Post unliked")) {
                                         isLiked = false
-                                    }
-                                    else{
+                                    } else {
                                         isLiked = true
                                     }
 //                                    isLiked = pinned
@@ -353,7 +355,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                     data["page"] = currentPage
                                     data["limit"] = 10
                                     viewModel.getCommentsApi(
-                                        Constants.GET_COMMENTS + "/${communityID}", data,false
+                                        Constants.GET_COMMENTS + "/${communityID}", data, false
                                     )
 
                                 }
@@ -372,16 +374,19 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 val model: GetCommentsApiResponse? =
                                     BindingUtils.parseJson(jsonData)
                                 val list = model?.comments as ArrayList<GetCommentData>
+
+                                // Add isMyComment flag to each comment
+//                                list?.forEach { comment ->
+//                                    comment.isMyComment = comment.user?._id == currentUserId
+//                                }
+
                                 if (currentPage == 1) {
                                     comments.clear()
                                 }
                                 comments.addAll(list)
-                                commentAdapter.list = comments
+                                commentAdapter.setList(comments)
                                 binding.count.text = model?.total.toString()
-                                scroll = if ((model?.page
-                                        ?: 0) < (model?.totalPages
-                                        ?: 0)
-                                ) {
+                                scroll = if ((model?.page ?: 0) < (model?.totalPages ?: 0)) {
                                     1
                                 } else {
                                     0
@@ -393,14 +398,18 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 hideLoading()
                             }
                         }
-                        "getPostDetailApi"->{
+
+                        "getPostDetailApi" -> {
                             runCatching {
                                 val jsonData = it.data?.toString().orEmpty()
-                                val model : PostDetailModel?=BindingUtils.parseJson(jsonData)
-                                if (model!=null){
-                                    if (model.data!=null){
+                                val model: PostDetailModel? = BindingUtils.parseJson(jsonData)
+                                if (model != null) {
+                                    if (model.data != null) {
                                         binding.tvLikes.text = "${model.data.totalLikes}"
                                         binding.bean = model.data
+                                        binding.tvTitle.makeTextExpandable(
+                                            model.data.title.toString()
+                                        )
                                         binding.tvDescription.makeTextExpandable(
                                             model.data.description.toString()
                                         )
@@ -415,18 +424,25 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                         }
 
                                         if (isPinned == true) {
-                                            binding.ivPinIcon.imageTintList = ColorStateList.valueOf(
-                                                ContextCompat.getColor(requireContext(), R.color.blue)
-                                            )
+                                            binding.ivPinIcon.imageTintList =
+                                                ColorStateList.valueOf(
+                                                    ContextCompat.getColor(
+                                                        requireContext(),
+                                                        R.color.blue
+                                                    )
+                                                )
                                         } else {
-                                            binding.ivPinIcon.imageTintList = ColorStateList.valueOf(
-                                                ContextCompat.getColor(requireContext(), R.color.blue_40)
-                                            )
+                                            binding.ivPinIcon.imageTintList =
+                                                ColorStateList.valueOf(
+                                                    ContextCompat.getColor(
+                                                        requireContext(),
+                                                        R.color.blue_40
+                                                    )
+                                                )
                                         }
-                                        if (isLiked==true){
+                                        if (isLiked == true) {
                                             binding.ivLike.setImageResource(R.drawable.iv_heart)
-                                        }
-                                        else{
+                                        } else {
                                             binding.ivLike.setImageResource(R.drawable.iv_heart_unfilled)
                                         }
                                         communityID = model.data._id
@@ -442,7 +458,11 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 val data = HashMap<String, Any>()
                                 data["page"] = currentPage
                                 data["limit"] = 10
-                                viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data,false)
+                                viewModel.getCommentsApi(
+                                    Constants.GET_COMMENTS + "/${communityID}",
+                                    data,
+                                    false
+                                )
                             }
                         }
 
@@ -465,15 +485,17 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
      * Method to initialize click
      */
     private fun initAdapter() {
-        commentAdapter =
-            SimpleRecyclerViewAdapter(R.layout.item_layout_comments, BR.bean) { v, m, pos ->
-                when(v.id){
-                    R.id.profileImage->{
+        // Get current logged-in user ID
+        val currentUserId = sharedPrefManager.getLoginData()?._id
+        commentAdapter = CommunityCommentAdapter(currentUserId,object : CommunityCommentAdapter.OnItemClickListener2 {
+            override fun onItemClick(item: GetCommentData?, clickedViewId: Int, position: Int) {
+                when(clickedViewId){
+                    R.id.profileImage -> {
                         val loggedInUserId = sharedPrefManager.getLoginData()?._id
-                        val clickedUserId = m?.user?._id
-                        if (clickedUserId.isNullOrEmpty() || communityData?.userData?._id==null) {
+                        val clickedUserId = item?.user?._id
+                        if (clickedUserId.isNullOrEmpty() || communityData?.userData?._id == null) {
                             showInfoToast("User not available")
-                            return@SimpleRecyclerViewAdapter
+                            return
                         }
 
                         if (clickedUserId != loggedInUserId) {
@@ -485,12 +507,13 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                             showInfoToast("You can't open your own profile")
                         }
                     }
-                    R.id.tvDescription->{
-                        m?.isExpanded = !(m?.isExpanded ?: false)
-                        commentAdapter.notifyItemChanged(pos)
+
+                    R.id.tvdelete -> {
+                        deletePosition = position
                     }
                 }
-            }
+            }})
+
         binding.rvComments.adapter = commentAdapter
 
     }
@@ -504,8 +527,8 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                     currentPage++
                     val data = HashMap<String, Any>()
                     data["page"] = currentPage
-                    data["limit"] =10
-                    viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data,true)
+                    data["limit"] = 10
+                    viewModel.getCommentsApi(Constants.GET_COMMENTS + "/${communityID}", data, true)
                     scroll = 0
                 }
             }

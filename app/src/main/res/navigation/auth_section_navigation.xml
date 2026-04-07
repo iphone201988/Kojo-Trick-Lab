@@ -44,7 +44,7 @@
     <fragment
         android:id="@+id/fragmentLogin"
         android:name="com.tech.kojo.ui.auth.login.LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login"/>
 
     <fragment
         android:id="@+id/fragmentSignUp"

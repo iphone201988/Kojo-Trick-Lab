@@ -24,7 +24,7 @@ class MultiViewAdapter(
     private val listItem: MutableList<FeedItem> = mutableListOf()
     private var playingPosition: Int = -1
     private var player: ExoPlayer? = null
-    var swipeLayout: SwipeLayout? = null
+    private var swipeLayout: SwipeLayout? = null
     companion object {
         private const val TYPE_VIDEO = 1
         private const val TYPE_IMAGE = 3
@@ -356,6 +356,12 @@ class MultiViewAdapter(
 
             binding.executePendingBindings()
         }
+    }
+
+    fun clearList() {
+        val size = listItem.size
+        listItem.clear()
+        notifyItemRangeRemoved(0, size)
     }
 
     interface OnItemClickListener {

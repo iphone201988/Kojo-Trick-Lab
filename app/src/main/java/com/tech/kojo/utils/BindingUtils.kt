@@ -78,6 +78,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.collections.map
+import com.zerobranch.layout.SwipeLayout
 
 object BindingUtils {
 
@@ -1142,28 +1143,53 @@ object BindingUtils {
 
         textView.post {
 
-            if (textView.lineCount <= maxLinesCollapsed) {
+            val lineCount = textView.lineCount
+
+            // If text has 3 lines or less, just show normally
+            if (lineCount <= maxLinesCollapsed) {
+                textView.maxLines = lineCount
                 return@post
             }
 
+            // Get the end index of the 3rd line
             val endIndex = textView.layout.getLineEnd(maxLinesCollapsed - 1)
 
-            val trimmedText = fullText
-                .substring(0, endIndex)
-                .trimEnd()
-                .split(" ")
-                .dropLast(6)
-                .joinToString(" ")
+            // Ensure we have valid end index
+            val safeEndIndex = if (endIndex > fullText.length || endIndex <= 0) {
+                // If endIndex is invalid, take a reasonable amount of characters
+                minOf(100, fullText.length)
+            } else {
+                endIndex
+            }
 
-            val collapsedText = "$trimmedText... Read More"
+            // Get the text up to the end index
+            var displayText = fullText.substring(0, safeEndIndex).trimEnd()
+
+            // If display text is too short, take more characters
+            if (displayText.length < 30 && fullText.length > 30) {
+                val extendedEndIndex = minOf(safeEndIndex + 50, fullText.length)
+                displayText = fullText.substring(0, extendedEndIndex).trimEnd()
+            }
+
+            // Ensure we don't cut a word in the middle
+            val lastSpaceIndex = displayText.lastIndexOf(" ")
+            val finalDisplayText = if (lastSpaceIndex > displayText.length / 2) {
+                displayText.substring(0, lastSpaceIndex)
+            } else {
+                displayText
+            }
+
+            val collapsedText = "$finalDisplayText... Read More"
             val expandedText = "$fullText  Read Less"
 
             val spannableCollapsed = SpannableString(collapsedText)
             val spannableExpanded = SpannableString(expandedText)
-            val showMoreStart = collapsedText.indexOf("Read More")
 
-            spannableCollapsed.apply {
-                setSpan(
+            val showMoreStart = collapsedText.indexOf("Read More")
+            val showLessStart = expandedText.indexOf("Read Less")
+
+            if (showMoreStart >= 0) {
+                spannableCollapsed.setSpan(
                     object : ClickableSpan() {
                         override fun onClick(widget: View) {
                             textView.text = spannableExpanded
@@ -1185,11 +1211,8 @@ object BindingUtils {
                 )
             }
 
-            // ---- EXPANDED CLICK ----
-            val showLessStart = expandedText.indexOf("Read Less")
-
-            spannableExpanded.apply {
-                setSpan(
+            if (showLessStart >= 0) {
+                spannableExpanded.setSpan(
                     object : ClickableSpan() {
                         override fun onClick(widget: View) {
                             textView.text = spannableCollapsed

@@ -254,7 +254,18 @@ class FinalProgressFragment : BaseFragment<FragmentFinalProgressBinding>() {
                 R.id.ivProgress, R.id.ivClosePlayer -> {
                     requireActivity().finish()
                 }
+                R.id.ivFullscreen->{
+                    val currentPosition = binding.viewpager.currentItem
+                    reorderedVideos.getOrNull(currentPosition)?.let {  videoItem->
+                        videoItem.link?.let { url ->
+                            val intent = Intent(requireContext(), CommonActivity::class.java).apply {
+                                putExtra("fromWhere", "video")
+                                putExtra("videoUrl", url)
+                            }
+                            startActivity(intent)
+                        }}
 
+                }
                 R.id.ivPlus -> {
                     val current = repsCount.value ?: 0
                     val newCount = current + 1

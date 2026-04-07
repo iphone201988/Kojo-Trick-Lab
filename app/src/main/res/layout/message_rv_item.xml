@@ -18,11 +18,51 @@
 
         <import type="android.view.View" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.zerobranch.layout.SwipeLayout
+        android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_margin="@dimen/_3sdp"
+        app:draggedItem="@id/cardView"
+        app:isTogether="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rightItem="@id/constantSwap"
+        app:swipeDirection="left">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constantSwap"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@drawable/bg_rv_items"
+        android:backgroundTint="@color/red_color"
+        android:paddingHorizontal="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="@id/cardView"
+        app:layout_constraintTop_toTopOf="@id/cardView">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvdelete"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:text="Delete"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
         android:padding="@dimen/_5sdp">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -32,7 +72,6 @@
             android:layout_height="@dimen/_22sdp"
             android:layout_marginStart="@dimen/_6sdp"
             android:scaleType="centerCrop"
-            android:onClick="@{v -> callback.onItemClick(v,bean,pos)}"
             android:src="@drawable/holder_dummy"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -75,15 +114,13 @@
             app:layout_constraintBottom_toBottomOf="@+id/tvComments"
             app:layout_constraintStart_toEndOf="@+id/tvDash"
             app:layout_constraintTop_toTopOf="@+id/tvComments" />
-
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvMessage"
             style="@style/TextView_400_Regular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginEnd="18dp"
+            android:layout_marginEnd="@dimen/_11sdp"
             android:paddingEnd="@dimen/_18sdp"
             setExpandableText="@{bean.comment}"
             android:textColor="@color/blue"
@@ -93,4 +130,5 @@
             app:layout_constraintTop_toBottomOf="@+id/tvComments" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.zerobranch.layout.SwipeLayout>
 </layout>

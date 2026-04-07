@@ -9,8 +9,16 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaLoadRequestData
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.CastSession
+import com.google.android.gms.cast.framework.SessionManagerListener
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.tech.kojo.BR
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -23,10 +31,10 @@ import com.tech.kojo.data.model.GetUserCommentsData
 import com.tech.kojo.data.model.GetVideoByIdResponse
 import com.tech.kojo.data.model.RelatedVideoData
 import com.tech.kojo.data.model.UserIdProfile
+import com.tech.kojo.data.room_module.DownloadVideoData
 import com.tech.kojo.databinding.CommentBottomSheetItemBinding
 import com.tech.kojo.databinding.FragmentVideoPlayerBinding
 import com.tech.kojo.databinding.ItemSectionRvItemBinding
-import com.tech.kojo.databinding.MessageRvItemBinding
 import com.tech.kojo.ui.common.CommonActivity
 import com.tech.kojo.utils.BaseCustomBottomSheet
 import com.tech.kojo.utils.BindingUtils
@@ -34,19 +42,8 @@ import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.tech.kojo.utils.showSuccessToast
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import dagger.hilt.android.AndroidEntryPoint
-import java.time.Instant
-import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.cast.MediaInfo
-import com.google.android.gms.cast.MediaLoadRequestData
-import com.google.android.gms.cast.MediaMetadata
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.SessionManagerListener
-import com.tech.kojo.data.room_module.DownloadVideoData
-import com.tech.kojo.utils.BindingUtils.makeTextExpandable
 import com.tech.kojo.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -54,15 +51,16 @@ import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.time.Instant
 import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     private val viewModel: VideoPlayerFragmentVM by viewModels()
     private lateinit var relatedAdapter: SimpleRecyclerViewAdapter<RelatedVideoData, ItemSectionRvItemBinding>
     private lateinit var commentsBottomSheet: BaseCustomBottomSheet<CommentBottomSheetItemBinding>
-    private lateinit var commentsAdapter: SimpleRecyclerViewAdapter<CommentsData, MessageRvItemBinding>
+    private lateinit var commentsAdapter: VideoCommentsAdapter
     private var userVideoId: String? = null
     private var topicId: String? = null
     private var videoUrl: String? = null
@@ -82,10 +80,10 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     private val args: VideoPlayerFragmentArgs by navArgs()
 
     private var downloadedVideos = ArrayList<DownloadVideoData>()
+    private var deletePosition: Int? = null
 
     enum class FilterType {
-        TOP,
-        MOST_RECENT
+        TOP, MOST_RECENT
     }
 
     override fun getLayoutResource(): Int {
@@ -158,16 +156,12 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         val movieMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE)
         movieMetadata.putString(MediaMetadata.KEY_TITLE, videoTitle ?: "Video")
 
-        val mediaInfo = MediaInfo.Builder(videoUrl!!)
-            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setContentType("video/mp4")
-            .setMetadata(movieMetadata)
-            .build()
+        val mediaInfo = MediaInfo.Builder(videoUrl!!).setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+            .setContentType("video/mp4").setMetadata(movieMetadata).build()
 
-        remoteMediaClient.load(MediaLoadRequestData.Builder()
-            .setMediaInfo(mediaInfo)
-            .setAutoplay(true)
-            .build())
+        remoteMediaClient.load(
+            MediaLoadRequestData.Builder().setMediaInfo(mediaInfo).setAutoplay(true).build()
+        )
     }
 
     override fun onResume() {
@@ -202,7 +196,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                     requireActivity().finish()
                 }
 
-                R.id.clComments,R.id.tvNoCommentView -> {
+                R.id.clComments, R.id.tvNoCommentView -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         initBottomSheet()
                     }
@@ -210,18 +204,17 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
                 R.id.ivVideo -> {
                     if (!videoUrl.isNullOrEmpty()) {
-                        if (videoUrl!!.contains("vimeo")){
+                        if (videoUrl!!.contains("vimeo")) {
                             val intent = Intent(requireContext(), CommonActivity::class.java)
                             intent.putExtra("fromWhere", "videoVimeo")
-                            intent.putExtra("videoId",userVideoId)
+                            intent.putExtra("videoId", userVideoId)
                             intent.putExtra("videoUrl", videoUrl)
                             startActivity(intent)
-                        }
-                        else{
+                        } else {
                             val intent = Intent(requireContext(), CommonActivity::class.java)
 
-                        intent.putExtra("fromWhere", "video")
-                            intent.putExtra("videoId",userVideoId)
+                            intent.putExtra("fromWhere", "video")
+                            intent.putExtra("videoId", userVideoId)
                             intent.putExtra("videoUrl", videoUrl)
                             startActivity(intent)
                         }
@@ -317,24 +310,37 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                 if (model?.success == true && model.data != null) {
                                     binding.bean = model.data
                                     videoUrl = model.data.videoUrl
-                                    if (videoUrl!!.contains("vimeo")){
-                                        binding.clDownload.visibility=View.GONE
-                                    }
-                                    else{
-                                        binding.clDownload.visibility=View.VISIBLE
+                                    if (videoUrl!!.contains("vimeo")) {
+                                        binding.clDownload.visibility = View.GONE
+                                    } else {
+                                        binding.clDownload.visibility = View.VISIBLE
                                     }
                                     videoTitle = model.data.title
                                     thumbnailUrl = model.data.thumbnailUrl
                                     if (downloadedVideos.any { it.thumbnailUrl == thumbnailUrl }) {
-                                        binding.tvDownload.text="Downloaded"
-                                        binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.green_color))
+                                        binding.tvDownload.text = "Downloaded"
+                                        binding.tvDownload.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(), R.color.green_color
+                                            )
+                                        )
                                         binding.ivDownload.setImageResource(R.drawable.ic_download_video)
-                                        binding.clDownload.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green_color)
+                                        binding.clDownload.backgroundTintList =
+                                            ContextCompat.getColorStateList(
+                                                requireContext(), R.color.green_color
+                                            )
                                     } else {
-                                        binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
-                                        binding.tvDownload.text="Download"
+                                        binding.tvDownload.setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(), R.color.white
+                                            )
+                                        )
+                                        binding.tvDownload.text = "Download"
                                         binding.ivDownload.setImageResource(R.drawable.download_icon)
-                                        binding.clDownload.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.white)
+                                        binding.clDownload.backgroundTintList =
+                                            ContextCompat.getColorStateList(
+                                                requireContext(), R.color.white
+                                            )
                                     }
                                 }
                             }.onFailure { e ->
@@ -354,7 +360,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                     BindingUtils.parseJson<GetUserCommentsData>(it.data.toString())
                                 if (model?.success == true && model.data != null) {
                                     originalCommentData = model.data as ArrayList<CommentsData>
-                                    filterComments(currentFilterType) // Apply current filter
+                                    filterComments(currentFilterType)
                                     updateMainCommentDisplay()
                                 }
                             }.onFailure { e ->
@@ -419,12 +425,13 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
             val firstValidComment = originalCommentData.firstOrNull { it.userId != null }
 
             if (firstValidComment != null) {
-                binding.tvNoCommentView.visibility=View.GONE
-                binding.tvMessage.visibility=View.VISIBLE
-                binding.ivPerson.visibility=View.VISIBLE
-                binding.tvMessage.makeTextExpandable(
-                    firstValidComment.comment.toString()
-                )
+                binding.tvNoCommentView.visibility = View.GONE
+                binding.tvMessage.visibility = View.VISIBLE
+                binding.ivPerson.visibility = View.VISIBLE
+                binding.tvMessage.text = firstValidComment.comment.toString()
+//                binding.tvMessage.makeTextExpandable(
+//                    firstValidComment.comment.toString()
+//                )
 
                 val url = firstValidComment.userId?.profilePicture
                 val imageUrl = when {
@@ -434,28 +441,27 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 }
 
                 imageUrl?.let { imgUrl ->
-                    Glide.with(requireContext())
-                        .load(imgUrl)
+                    Glide.with(requireContext()).load(imgUrl)
                         .placeholder(R.drawable.progress_animation_small)
-                        .error(R.drawable.holder_dummy)
-                        .into(binding.ivPerson)
+                        .error(R.drawable.holder_dummy).into(binding.ivPerson)
                 } ?: run {
                     binding.ivPerson.setImageResource(R.drawable.holder_dummy)
                 }
             } else {
                 // If no comments with valid user, show first comment anyway
-                binding.tvNoCommentView.visibility=View.GONE
-                binding.tvMessage.visibility=View.VISIBLE
-                binding.ivPerson.visibility=View.VISIBLE
-                binding.tvMessage.makeTextExpandable(
-                    filteredCommentData[0].comment.toString()
-                )
+                binding.tvNoCommentView.visibility = View.GONE
+                binding.tvMessage.visibility = View.VISIBLE
+                binding.ivPerson.visibility = View.VISIBLE
+                binding.tvMessage.text = filteredCommentData[0].comment.toString()
+//                binding.tvMessage.makeTextExpandable(
+//                    filteredCommentData[0].comment.toString()
+//                )
                 binding.ivPerson.setImageResource(R.drawable.holder_dummy)
             }
         } else {
-            binding.tvNoCommentView.visibility=View.VISIBLE
-            binding.tvMessage.visibility=View.INVISIBLE
-            binding.ivPerson.visibility=View.INVISIBLE
+            binding.tvNoCommentView.visibility = View.VISIBLE
+            binding.tvMessage.visibility = View.INVISIBLE
+            binding.ivPerson.visibility = View.INVISIBLE
             binding.tvCommentsCounts.text = "0"
             binding.tvMessage.text = "-"
             binding.ivPerson.setImageResource(R.drawable.holder_dummy)
@@ -475,6 +481,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                     parseDate(comment.createdAt) ?: Date(0)
                 }
             }
+
             FilterType.TOP -> {
                 // For "Top", we'll sort by oldest first (chronological order)
                 // You can change this logic based on your requirements
@@ -495,7 +502,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
      */
     private fun updateBottomSheetComments() {
         if (::commentsAdapter.isInitialized) {
-            commentsAdapter.list = filteredCommentData
+            commentsAdapter.setList(filteredCommentData)
             commentsAdapter.notifyDataSetChanged()
             commentsBottomSheet.binding.tvCommentsCounts.text = filteredCommentData.size.toString()
         }
@@ -575,8 +582,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
                         userVideoId?.takeIf { it.isNotEmpty() }?.let {
                             val data = hashMapOf<String, Any>(
-                                "comment" to message,
-                                "videoId" to it
+                                "comment" to message, "videoId" to it
                             )
                             viewModel.postComments(Constants.VIDEO_COMMENTS, data)
                         }
@@ -615,11 +621,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
 
         imageUrl?.let { url ->
-            Glide.with(requireContext())
-                .load(url)
-                .placeholder(R.drawable.progress_animation_small)
-                .error(R.drawable.holder_dummy)
-                .into(commentsBottomSheet.binding.ivPerson2)
+            Glide.with(requireContext()).load(url).placeholder(R.drawable.progress_animation_small)
+                .error(R.drawable.holder_dummy).into(commentsBottomSheet.binding.ivPerson2)
         }
 
         // Initialize comment adapter
@@ -640,35 +643,45 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
      */
     @SuppressLint("NotifyDataSetChanged")
     private fun initCommentAdapter() {
-        commentsAdapter = SimpleRecyclerViewAdapter(R.layout.message_rv_item, BR.bean) { v, m, _ ->
-            when (v?.id) {
-                R.id.ivPerson -> {
-                    val loggedInUserId = sharedPrefManager.getLoginData()?._id
-                    val clickedUserId = m.userId?._id
+        val currentUserId = sharedPrefManager.getLoginData()?._id
+        commentsAdapter =
+            VideoCommentsAdapter(currentUserId, object : VideoCommentsAdapter.OnItemClickListener2 {
+                override fun onItemClick(item: CommentsData?, clickedViewId: Int, position: Int) {
+                    when (clickedViewId) {
+                        R.id.ivPerson, R.id.tvComments -> {
+                            val loggedInUserId = sharedPrefManager.getLoginData()?._id
+                            val clickedUserId = item?.userId?._id
 
-                    if (clickedUserId.isNullOrEmpty() || m.userId==null) {
-                        showInfoToast("User not available")
-                        return@SimpleRecyclerViewAdapter
-                    }
+                            if (clickedUserId.isNullOrEmpty() || item?.userId == null) {
+                                showInfoToast("User not available")
+                                return
+                            }
 
-                    if (clickedUserId != loggedInUserId) {
-                        val intent = Intent(requireContext(), CommonActivity::class.java)
-                        intent.putExtra("userId", clickedUserId)
-                        intent.putExtra("fromWhere", "userProfile")
-                        startActivity(intent)
-                    } else {
-                        showInfoToast("You can't open your own profile")
+                            if (clickedUserId != loggedInUserId) {
+                                val intent = Intent(requireContext(), CommonActivity::class.java)
+                                intent.putExtra("userId", clickedUserId)
+                                intent.putExtra("fromWhere", "userProfile")
+                                startActivity(intent)
+                                commentsBottomSheet.dismiss()
+                            } else {
+                                showInfoToast("You can't open your own profile")
+                            }
+                        }
+
+                        R.id.tvdelete -> {
+                            deletePosition = position
+                            /// delete comment
+                        }
                     }
                 }
-            }
-        }
+            })
 
         commentsBottomSheet.binding.rvMessage.adapter = commentsAdapter
 
         // Set filtered data to adapter
         if (filteredCommentData.isNotEmpty()) {
-            commentsAdapter.list = filteredCommentData
-            commentsAdapter.notifyDataSetChanged()
+            commentsAdapter.setList(filteredCommentData)
+//            commentsAdapter.notifyDataSetChanged()
             commentsBottomSheet.binding.tvCommentsCounts.text = filteredCommentData.size.toString()
         }
     }
@@ -695,12 +708,13 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     ///// download video
     private fun downloadAndSaveVideo() {
         if (videoUrl.isNullOrEmpty()) return
-        
+
         showLoading()
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val fullUrl = if (videoUrl!!.startsWith("http")) videoUrl!! else Constants.BASE_URL_IMAGE + videoUrl!!
+                val fullUrl =
+                    if (videoUrl!!.startsWith("http")) videoUrl!! else Constants.BASE_URL_IMAGE + videoUrl!!
                 Log.d("VideoDownload", "Downloading from: $fullUrl")
 
                 val localPath = requireContext().downloadVideo(
@@ -725,10 +739,15 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 launch(Dispatchers.Main) {
                     hideLoading()
                     showSuccessToast("Video saved to download")
-                    binding.tvDownload.text="Downloaded"
-                    binding.tvDownload.setTextColor(ContextCompat.getColor(requireContext(),R.color.green_color))
+                    binding.tvDownload.text = "Downloaded"
+                    binding.tvDownload.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(), R.color.green_color
+                        )
+                    )
                     binding.ivDownload.setImageResource(R.drawable.ic_download_video)
-                    binding.clDownload.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.green_color)
+                    binding.clDownload.backgroundTintList =
+                        ContextCompat.getColorStateList(requireContext(), R.color.green_color)
                     viewModel.getAllVideos()
                 }
 
@@ -763,16 +782,14 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0")
 
                 val status = connection.responseCode
-                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                    status == HttpURLConnection.HTTP_MOVED_PERM ||
-                    status == HttpURLConnection.HTTP_SEE_OTHER ||
-                    status == 307 || status == 308) {
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER || status == 307 || status == 308) {
 
                     var newUrl = connection.getHeaderField("Location")
                     if (newUrl == null) break
 
                     if (newUrl.startsWith("/")) {
-                        newUrl = urlObj.protocol + "://" + urlObj.host + (if (urlObj.port != -1) ":" + urlObj.port else "") + newUrl
+                        newUrl =
+                            urlObj.protocol + "://" + urlObj.host + (if (urlObj.port != -1) ":" + urlObj.port else "") + newUrl
                     }
 
                     Log.d("VideoDownload", "Redirected ($status) to: $newUrl")
@@ -812,6 +829,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
             connection?.disconnect()
         }
     }
+
     private fun observeDownloadedVideo() {
         viewModel.observeVideo.observe(viewLifecycleOwner) {
             when (it?.status) {

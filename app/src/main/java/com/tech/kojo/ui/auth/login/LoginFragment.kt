@@ -217,7 +217,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                                             sharedPrefManager.setToken(it.toString())
                                         }
                                         if (loginData.isProfileCompleted==false) {
-                                            val action = LoginFragmentDirections.navigateToSetupFragment()
+                                            val action = LoginFragmentDirections.navigateToAddProfileFragment()
                                             BindingUtils.navigateWithSlide(findNavController(), action)
                                         } else {
                                             val authModel = AuthModel(
@@ -267,7 +267,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                                         sharedPrefManager.setToken(it.toString())
                                     }
                                     if (loginData.isProfileCompleted==false) {
-                                        val action = LoginFragmentDirections.navigateToSetupFragment()
+                                        val action = LoginFragmentDirections.navigateToAddProfileFragment()
                                         BindingUtils.navigateWithSlide(findNavController(), action)
                                     } else {
                                         val authModel = AuthModel(

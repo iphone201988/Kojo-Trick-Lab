@@ -89,9 +89,21 @@ class EditProfileFragment : BaseFragment<FragmentEditProfileBinding>() {
             binding.ivCircle.visibility = View.VISIBLE
             binding.ivProfile.visibility = View.VISIBLE
             setBgSkin(binding.ivBgProfile,data.skin)
-            Glide.with(requireContext()).load(Constants.BASE_URL_IMAGE + data.profilePicture)
-                .placeholder(R.drawable.holder_dummy).error(R.drawable.holder_dummy)
-                .into(binding.ivProfile)
+            val imageUrl = when {
+                data?.profilePicture.isNullOrEmpty() -> null
+                data?.profilePicture?.startsWith("http") == true -> data.profilePicture
+                else -> Constants.BASE_URL_IMAGE + data?.profilePicture
+            }
+
+            if (imageUrl != null) {
+                Glide.with(requireContext())
+                    .load(imageUrl)
+                    .placeholder(R.drawable.holder_dummy)
+                    .error(R.drawable.holder_dummy)
+                    .into(binding.ivProfile)
+            } else {
+                binding.ivProfile.setImageResource(R.drawable.holder_dummy)
+            }
         }
 
     }

@@ -39,6 +39,10 @@ class AddReviewPostSessionFragment : BaseFragment<FragmentAddReviewPostSessionBi
         initView()
         // observer
         initObserver()
+        binding.etDescription.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
+        }
 
     }
 

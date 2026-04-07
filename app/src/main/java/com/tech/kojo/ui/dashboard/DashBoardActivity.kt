@@ -1,10 +1,14 @@
 package com.tech.kojo.ui.dashboard
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.os.Build
 import android.util.Log
 import android.view.Gravity
@@ -50,6 +54,7 @@ import com.tech.kojo.utils.BindingUtils
 import com.tech.kojo.utils.NotificationPayload
 import com.tech.kojo.utils.Status
 import com.tech.kojo.utils.event.SingleRequestEvent
+import com.tech.kojo.utils.isNetworkAvailable
 import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showSuccessToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,6 +68,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     private lateinit var deleteOrLogoutDialogItem: BaseCustomDialog<DeleteOrLogoutDialogItemBinding>
     private var PERMISSION_REQUEST_CODE = 16
     private var isSubscribed: Boolean? = false
+    private var isInternetConnected = true
 
     companion object {
         var changeImage = SingleRequestEvent<Boolean>()
@@ -80,6 +86,7 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
     }
 
     override fun onCreateView() {
+        checkInternetConnection()
         // check permission
         if (Build.VERSION.SDK_INT > 32) {
             if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
@@ -152,7 +159,9 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
 
     override fun onResume() {
         super.onResume()
-
+        // Register network receiver
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkReceiver, filter)
         changeImage.observe(this@DashBoardActivity) {
             when (it?.status) {
                 Status.LOADING -> {
@@ -284,6 +293,9 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     // api call
                     viewModel.getAllCategory(Constants.GET_ALL_CATEGORY)
 
+                }
+                R.id.btnRetry->{
+                    retryLoading()
                 }
             }
         })
@@ -552,7 +564,6 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                                 val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
                                     sharedPrefManager.clear()
-                                    sharedPrefManager.setOnBoarding("true")
                                     showSuccessToast(model.message.toString())
                                     val intent =
                                         Intent(this@DashBoardActivity, AuthActivity::class.java)
@@ -573,7 +584,6 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                                 val model: CommonApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
                                     sharedPrefManager.clear()
-                                    sharedPrefManager.setOnBoarding("true")
                                     showSuccessToast(model.message.toString())
                                     val intent =
                                         Intent(this@DashBoardActivity, AuthActivity::class.java)
@@ -779,6 +789,94 @@ class DashBoardActivity : BaseActivity<ActivityDashBoardBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Check internet connection
+     */
+    private fun checkInternetConnection() {
+        isInternetConnected =isNetworkAvailable()
+        if (!isInternetConnected) {
+            showNoInternetView()
+        } else {
+            hideNoInternetView()
+        }
+    }
+
+    /**
+     * Show no internet view
+     */
+    private fun showNoInternetView() {
+        binding.clNoInternet.visibility = View.VISIBLE
+        binding.fragmentContainer.visibility = View.GONE
+    }
+
+    /**
+     * Hide no internet view
+     */
+    private fun hideNoInternetView() {
+        binding.clNoInternet.visibility = View.GONE
+        binding.fragmentContainer.visibility = View.VISIBLE
+    }
+
+    private fun retryLoading() {
+        if (isNetworkAvailable()) {
+            isInternetConnected = true
+            hideNoInternetView()
+
+            // Refresh current fragment if needed
+            refreshCurrentFragment()
+        } else {
+            showErrorToast("No internet connection. Please try again.")
+        }
+    }
+
+    /**
+     * Refresh current fragment
+     */
+    private fun refreshCurrentFragment() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        when (currentFragment) {
+            is HomeFragment -> {
+                // Call refresh method in HomeFragment
+                (currentFragment as? HomeFragment)?.onRefresh()
+            }
+            is LibraryFragment -> {
+                (currentFragment as? LibraryFragment)?.onRefresh()
+            }
+            is TrackerFragment -> {
+                (currentFragment as? TrackerFragment)?.onRefresh()
+            }
+            is CommunityFragment -> {
+                (currentFragment as? CommunityFragment)?.onRefresh()
+            }
+            is ProfileFragment -> {
+                (currentFragment as? ProfileFragment)?.onRefresh()
+            }
+        }
+    }
+    // Add network change receiver to listen for internet connection changes
+    private val networkReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val isConnected = this@DashBoardActivity.isNetworkAvailable()
+            if (isConnected && !isInternetConnected) {
+                // Internet just came back
+                isInternetConnected = true
+                retryLoading()
+            } else if (!isConnected && isInternetConnected) {
+                // Internet lost
+                isInternetConnected = false
+                showNoInternetView()
+            }
+        }
+    }
+    override fun onPause() {
+        super.onPause()
+        try {
+            unregisterReceiver(networkReceiver)
+        } catch (e: Exception) {
+            // Receiver not registered
         }
     }
 

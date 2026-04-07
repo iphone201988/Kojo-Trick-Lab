@@ -38,8 +38,6 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
     }
 
     override fun onCreateView(view: View) {
-        // view
-        initView()
         // adapter
         initTrickAdapter()
         // click
@@ -187,6 +185,8 @@ class TrainedRecentlyFragment : BaseFragment<FragmentTrainedRecentlyBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // view
+        initView()
         viewModel.notificationCount.value = sharedPrefManager.getNotificationCount()
     }
 

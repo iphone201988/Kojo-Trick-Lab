@@ -265,7 +265,7 @@ data class GetCommentsApiResponse(
 )
 
 data class GetCommentData(
-    val _id: String?, val createdAt: String?, val message: String?, val user: UserIdProfile?, var isExpanded: Boolean=false
+    val _id: String?, val createdAt: String?, val message: String?, val user: UserIdProfile?, var isExpanded: Boolean=false , var isMyComment: Boolean=false
 )
 
 /**
@@ -671,7 +671,8 @@ data class CommentsData(
     val updatedAt: String?,
     val userId: UserIdProfile?,
     val videoId: String?,
-    var isExpanded: Boolean=false
+    var isExpanded: Boolean=false,
+    var isMyComment: Boolean= false
 )
 
 @Parcelize

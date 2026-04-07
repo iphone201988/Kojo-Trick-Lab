@@ -124,6 +124,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     }
 
+    // In each fragment add this method
+    fun onRefresh() {
+        // Reload fragment data
+        if (isAdded) {
+           initView()
+        }
+    }
+
 
 
 

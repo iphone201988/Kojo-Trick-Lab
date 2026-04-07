@@ -47,10 +47,10 @@ class UserImagePagerAdapter(
                 }
             }
 
-            // Fullscreen button click handler - always available
-            binding.ivFullscreen.setOnClickListener {
-                displayVideos.getOrNull(adapterPosition)?.let { onFullScreenClick(it) }
-            }
+//            // Fullscreen button click handler - always available
+//            binding.ivFullscreen.setOnClickListener {
+//                displayVideos.getOrNull(adapterPosition)?.let { onFullScreenClick(it) }
+//            }
 
 //            // Add click listener for player controller visibility toggle
 //            binding.localPlayerView.setOnClickListener {
@@ -77,7 +77,7 @@ class UserImagePagerAdapter(
             binding.ivUser.visibility = View.VISIBLE
             binding.ivVideoPlay.visibility = View.VISIBLE
             // Fullscreen button is always visible in thumbnail mode
-            binding.ivFullscreen.visibility = View.VISIBLE
+//            binding.ivFullscreen.visibility = View.VISIBLE
             isPlaying = false
         }
 
@@ -92,7 +92,7 @@ class UserImagePagerAdapter(
             binding.ivUser.visibility = View.INVISIBLE
             binding.ivVideoPlay.visibility = View.GONE
             // Fullscreen button remains visible when video is playing
-            binding.ivFullscreen.visibility = View.VISIBLE
+          //  binding.ivFullscreen.visibility = View.VISIBLE
 
             // Restore controller visibility state
 //            updateControllerVisibility()
@@ -198,7 +198,7 @@ class UserImagePagerAdapter(
                 binding.localPlayerView.setShowPreviousButton(false)
                 binding.ivUser.visibility = View.INVISIBLE
                 binding.ivVideoPlay.visibility = View.GONE
-                binding.ivFullscreen.visibility = View.VISIBLE  // Fullscreen always visible
+               // binding.ivFullscreen.visibility = View.VISIBLE  // Fullscreen always visible
 
                 isPlaying = true
                 currentPlayingPosition = adapterPosition

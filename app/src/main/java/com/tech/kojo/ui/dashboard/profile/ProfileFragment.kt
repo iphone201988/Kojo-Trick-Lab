@@ -254,4 +254,79 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         }
     }
 
+    fun onRefresh() {
+        // Reload fragment data
+        if (isAdded){
+            val currentUser = sharedPrefManager.getLoginData()
+            // ✅ Create chip list dynamically
+            val list = mutableListOf<ChipData>()
+            if (currentUser != null) {
+                binding.bean = currentUser
+                binding.ivCircle1.visibility = View.GONE
+                binding.ivCircle.visibility = View.VISIBLE
+                binding.ivProfile.visibility = View.VISIBLE
+                val imageUrl = when {
+                    currentUser?.profilePicture.isNullOrEmpty() -> null
+                    currentUser?.profilePicture?.startsWith("http") == true -> currentUser.profilePicture
+                    else -> Constants.BASE_URL_IMAGE + currentUser?.profilePicture
+                }
+
+                if (imageUrl != null) {
+                    Glide.with(requireContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.holder_dummy)
+                        .error(R.drawable.holder_dummy)
+                        .into(binding.ivProfile)
+                } else {
+                    binding.ivProfile.setImageResource(R.drawable.holder_dummy)
+                }
+
+                if (!currentUser.instagramLink.isNullOrEmpty()) {
+                    list.add(
+                        ChipData(
+                            title = "Instagram",
+                            icon = R.drawable.ic_chip_insta,
+                            link = currentUser.instagramLink
+                        )
+                    )
+                }
+
+                if (!currentUser.youtubeLink.isNullOrEmpty()) {
+                    list.add(
+                        ChipData(
+                            title = "YouTube",
+                            icon = R.drawable.ic_chip_youtube,
+                            link = currentUser.youtubeLink
+                        )
+                    )
+                }
+                if (!currentUser.tiktockLink.isNullOrEmpty()) {
+                    list.add(
+                        ChipData(
+                            title = "TikTok",
+                            icon = R.drawable.ic_chip_tiktok,
+                            link = currentUser.tiktockLink
+                        )
+                    )
+                }
+                if(list.isNotEmpty()){
+                    binding.tvSocialMediaLinks.visibility = View.VISIBLE
+                    binding.chipGroupStatus.visibility = View.VISIBLE
+                    chipStatus(list)
+                }
+                else{
+                    binding.tvSocialMediaLinks.visibility = View.GONE
+                    binding.chipGroupStatus.visibility = View.GONE
+                }
+
+
+                DashBoardActivity.changeImage.postValue(
+                    Resource.success(
+                        "changeImage", true
+                    )
+                )
+            }
+        }
+    }
+
 }

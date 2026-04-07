@@ -198,5 +198,14 @@ class LibraryFragment : BaseFragment<FragmentLibraryBinding>() {
         return list
     }
 
+    fun onRefresh() {
+        // Reload fragment data
+        if (isAdded) {
+            val data = HashMap<String, Any>()
+            data["page"] = 1
+            viewModel.getLibraryVideoApi(data, Constants.VIDEO_LIBRARY)
+        }
+    }
+
 
 }

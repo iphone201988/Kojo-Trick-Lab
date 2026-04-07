@@ -13,10 +13,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg_color"
         tools:context=".ui.video.VideoFragment">
-
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/videoContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
         <androidx.media3.ui.PlayerView
             android:id="@+id/playerView"
             android:layout_width="match_parent"
@@ -35,7 +41,18 @@
             android:onClick="@{v -> vm.onClick(v)}"
             android:src="@drawable/baseline_cancel_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/playerView"
-            app:tint="@color/black" />
+            app:layout_constraintTop_toTopOf="@+id/playerView"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivFullscreen"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_marginBottom="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:onClick="@{v->vm.onClick(v)}"
+            android:src="@drawable/ic_maximise"
+            app:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -79,8 +79,22 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
                                 )
                                 var tracker = model?.data
                                 if (tracker != null) {
-                                    trickAdapter.list = tracker
+                                    val orderMap = mapOf(
+                                        "My Tricks" to 1,
+                                        "Combo Goals" to 2,
+                                        "TrickingMilestone" to 3,
+                                        "Session Planner" to 4
+                                    )
+
+                                    val sortedTracker = tracker.sortedBy { item ->
+                                        orderMap[item?.title] ?: Int.MAX_VALUE
+                                    }
+
+                                    trickAdapter.list = sortedTracker
                                 }
+//                                if (tracker != null) {
+//                                    trickAdapter.list = tracker
+//                                }
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                                 showErrorToast(e.message.toString())
@@ -139,6 +153,13 @@ class TrackerFragment : BaseFragment<FragmentTrackerBinding>() {
 
             }
         binding.rvTrick.adapter = trickAdapter
+    }
+
+    fun onRefresh() {
+        // Reload fragment data
+        if (isAdded) {
+          initView()
+        }
     }
 
 

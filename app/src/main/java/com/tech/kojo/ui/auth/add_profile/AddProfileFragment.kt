@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.tech.kojo.BR
@@ -37,6 +38,8 @@ import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import com.github.dhaval2404.imagepicker.util.FileUtil
 import com.google.android.material.imageview.ShapeableImageView
+import com.tech.kojo.ui.auth.AuthActivity
+import com.tech.kojo.ui.auth.login.LoginFragmentDirections
 import com.tech.kojo.utils.BindingUtils.compressImage
 import com.tech.kojo.utils.BindingUtils.hasCameraPermission
 import com.tech.kojo.utils.BindingUtils.setBgSkin
@@ -145,7 +148,17 @@ class AddProfileFragment : BaseFragment<FragmentAddProfileBinding>() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
                 R.id.ivBack -> {
-                    findNavController().popBackStack()
+                    val from = arguments?.getString("from")
+                    if (from =="1"){
+                        sharedPrefManager.clear()
+                        val intent = Intent(requireContext(), AuthActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                    else{
+                        findNavController().popBackStack()
+                    }
+
                 }
 
 

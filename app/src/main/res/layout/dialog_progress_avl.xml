@@ -5,16 +5,14 @@
     android:layout_height="match_parent">
 
     <View
-        android:layout_width="@dimen/_60sdp"
-        android:layout_height="@dimen/_60sdp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/bg_stock_yellow"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/progress_wheel"
         android:layout_width="100dp"
@@ -24,10 +22,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_colorFilter="@color/red_color"
+        app:lottie_colorFilter="@color/colorPrimary"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/progress_icon"
         android:layout_centerInParent="true"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/TextView_600_SemiBold"
+        android:text="Loading..."
+        android:visibility="gone"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="@id/progress_wheel"
+        app:layout_constraintTop_toBottomOf="@id/progress_wheel"
+        app:layout_constraintEnd_toEndOf="@id/progress_wheel"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

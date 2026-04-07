@@ -78,5 +78,6 @@ class SharedPrefManager @Inject constructor(private val sharedPreferences: Share
 
     fun clear() {
         sharedPreferences.edit().clear().apply()
+        setOnBoarding("true")
     }
 }

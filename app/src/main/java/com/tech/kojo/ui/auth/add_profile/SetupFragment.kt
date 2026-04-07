@@ -59,6 +59,14 @@ class SetupFragment : BaseFragment<FragmentSetupBinding>() {
                 }
 
                 R.id.btnConfirm -> {
+                    if (binding.etTricking.text.isNullOrEmpty()){
+                        showErrorToast("Please enter tricking nickname")
+                        return@observe
+                    }
+                    if (binding.etCountry.text.isNullOrEmpty()){
+                        showErrorToast("Please select country")
+                        return@observe
+                    }
                     val name = binding.etTricking.text.toString().trim()
                     val country = binding.etCountry.text.toString().trim()
                     val time = binding.etTime.text.toString().trim()
@@ -100,7 +108,7 @@ class SetupFragment : BaseFragment<FragmentSetupBinding>() {
 
                 R.id.etCountry -> {
                     val picker = CountryPicker.newInstance(
-                        "Select Country", Theme.DARK
+                        "Select Country", Theme.LIGHT
                     ) // dialog title and theme
                     picker.setListener(object : CountryPickerListener {
                         override fun onSelectCountry(

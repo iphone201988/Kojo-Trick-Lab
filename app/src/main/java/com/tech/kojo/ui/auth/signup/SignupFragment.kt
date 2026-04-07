@@ -185,7 +185,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
                                         sharedPrefManager.setToken(it.toString())
                                     }
                                     if (loginData.isProfileCompleted==false) {
-                                        val action = LoginFragmentDirections.navigateToSetupFragment()
+                                        val action = LoginFragmentDirections.navigateToAddProfileFragment()
                                         BindingUtils.navigateWithSlide(findNavController(), action)
                                     } else {
                                         val intent =
