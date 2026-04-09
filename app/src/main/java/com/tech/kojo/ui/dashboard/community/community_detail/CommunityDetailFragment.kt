@@ -57,6 +57,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
     private var communityData: PostData? = null
 
     private var deletePosition: Int=-1
+    private var deletingCommentId: String? = null
     override fun getLayoutResource(): Int {
         return R.layout.fragment_community_detail
     }
@@ -350,13 +351,18 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 val jsonData = it.data?.toString().orEmpty()
                                 val model: AddCommentApiResponse? = BindingUtils.parseJson(jsonData)
                                 if (model?.success == true) {
-                                    // api call
-                                    val data = HashMap<String, Any>()
-                                    data["page"] = currentPage
-                                    data["limit"] = 10
-                                    viewModel.getCommentsApi(
-                                        Constants.GET_COMMENTS + "/${communityID}", data, false
-                                    )
+                                    val newComment = model.comment
+                                    if (newComment != null) {
+                                        comments.add(0, newComment)
+                                        commentAdapter.setList(comments)
+                                        binding.etChat.text?.clear()
+                                        binding.rvComments.scrollToPosition(0)
+                                        val currentCount = binding.count.text.toString().toIntOrNull() ?: 0
+                                        binding.count.text = (currentCount + 1).toString()
+                                        showSuccessToast("Comment posted successfully")
+                                    } else {
+                                        showErrorToast("Failed to post comment: Invalid response")
+                                    }
 
                                 }
                             }.onFailure { e ->
@@ -364,7 +370,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                                 showErrorToast(e.message.toString())
                             }.also {
-
+                                hideLoading()
                             }
                         }
 
@@ -466,6 +472,22 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
                             }
                         }
 
+                        "deletePostComments"->{
+                            runCatching {
+                                showSuccessToast("Comment deleted successfully")
+                                comments.removeAt(deletePosition)
+                                commentAdapter.setList(comments)
+                                val currentCount = binding.count.text.toString().toIntOrNull() ?: 0
+                                if (currentCount > 0) {
+                                    binding.count.text = (currentCount - 1).toString()
+                                }
+                            }.onFailure { e ->
+                                showErrorToast(e.message.orEmpty())
+                            }.also {
+                                hideLoading()
+                            }
+                        }
+
 
                     }
                 }
@@ -510,6 +532,7 @@ class CommunityDetailFragment : BaseFragment<FragmentCommunityDetailBinding>() {
 
                     R.id.tvdelete -> {
                         deletePosition = position
+                        viewModel.deletePostComments("${Constants.GET_COMMENTS}/${postId}/${item?._id}")
                     }
                 }
             }})

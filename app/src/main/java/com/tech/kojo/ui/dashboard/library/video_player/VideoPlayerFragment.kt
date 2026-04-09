@@ -1,11 +1,13 @@
 package com.tech.kojo.ui.dashboard.library.video_player
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -25,12 +27,12 @@ import com.tech.kojo.base.BaseFragment
 import com.tech.kojo.base.BaseViewModel
 import com.tech.kojo.base.SimpleRecyclerViewAdapter
 import com.tech.kojo.data.api.Constants
+import com.tech.kojo.data.model.AddedCommentModel
 import com.tech.kojo.data.model.CommentsData
 import com.tech.kojo.data.model.GetRelatedVideoData
 import com.tech.kojo.data.model.GetUserCommentsData
 import com.tech.kojo.data.model.GetVideoByIdResponse
 import com.tech.kojo.data.model.RelatedVideoData
-import com.tech.kojo.data.model.UserIdProfile
 import com.tech.kojo.data.room_module.DownloadVideoData
 import com.tech.kojo.databinding.CommentBottomSheetItemBinding
 import com.tech.kojo.databinding.FragmentVideoPlayerBinding
@@ -51,7 +53,6 @@ import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.Date
 import java.util.Locale
 
@@ -81,6 +82,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
     private var downloadedVideos = ArrayList<DownloadVideoData>()
     private var deletePosition: Int? = null
+    private var deletingCommentId: String? = null
+    private var pendingCommentIndex: Int? = null
 
     enum class FilterType {
         TOP, MOST_RECENT
@@ -99,11 +102,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         setupCastListener()
         viewModel.getAllVideos()
         observeDownloadedVideo()
-        // adapter
         initAdapter()
-        // click
         initOnClick()
-        // observer
         initObserver()
     }
 
@@ -166,7 +166,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
     override fun onResume() {
         super.onResume()
-        // api call
         val data = HashMap<String, Any>()
         if (args.topicId.isNotEmpty() && args.videoId.isNotEmpty()) {
             topicId = args.topicId
@@ -186,9 +185,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
-    /**
-     * Method to initialize click
-     */
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
@@ -212,13 +208,11 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                             startActivity(intent)
                         } else {
                             val intent = Intent(requireContext(), CommonActivity::class.java)
-
                             intent.putExtra("fromWhere", "video")
                             intent.putExtra("videoId", userVideoId)
                             intent.putExtra("videoUrl", videoUrl)
                             startActivity(intent)
                         }
-
                     }
                 }
 
@@ -269,16 +263,10 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
-    /**
-     * Get first valid user ID from filtered comments
-     */
     private fun getFirstValidUserId(): String? {
         return originalCommentData.firstOrNull { it.userId != null }?.userId?._id
     }
 
-    /**
-     * Parse date string to Date object
-     */
     private fun parseDate(dateString: String?): Date? {
         if (dateString.isNullOrEmpty()) return null
         return try {
@@ -286,7 +274,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
             format.parse(dateString)
         } catch (e: Exception) {
             try {
-                // Fallback format
                 val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
                 format.parse(dateString)
             } catch (e: Exception) {
@@ -295,9 +282,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
-    /**
-     * Method to initialize observer
-     */
     private fun initObserver() {
         viewModel.observeCommon.observe(viewLifecycleOwner) {
             when (it?.status) {
@@ -317,7 +301,7 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                     }
                                     videoTitle = model.data.title
                                     thumbnailUrl = model.data.thumbnailUrl
-                                    if (downloadedVideos.any { it.thumbnailUrl == thumbnailUrl }) {
+                                    if (downloadedVideos.any { it -> it.thumbnailUrl == thumbnailUrl }) {
                                         binding.tvDownload.text = "Downloaded"
                                         binding.tvDownload.setTextColor(
                                             ContextCompat.getColor(
@@ -346,7 +330,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                             }.onFailure { e ->
                                 showErrorToast(e.message.toString())
                             }.also {
-                                // api call
                                 val data = HashMap<String, Any>()
                                 viewModel.getUserRelated(
                                     Constants.VIDEO_RELATED + "/${args.topicId}", data
@@ -377,7 +360,8 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                                 )
                                 if (model?.success == true) {
                                     val safeList =
-                                        model.data?.filterNot { it?._id == userVideoId }.orEmpty()
+                                        model.data?.filterNot { it -> it?._id == userVideoId }
+                                            .orEmpty()
                                     relatedAdapter.list = safeList
                                 }
                             }.onFailure { e ->
@@ -390,10 +374,36 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                             }
                         }
 
+                        "deletePostVideoComments" -> {
+                            runCatching {
+                                showSuccessToast("Comment deleted")
+                                deleteCommentFromData(deletingCommentId)
+                            }.onFailure { e ->
+                                showErrorToast(e.message.orEmpty())
+                            }.also {
+                                hideLoading()
+                                deletingCommentId = null
+                                deletePosition = null
+                            }
+                        }
+
                         "postComments" -> {
                             runCatching {
-//                                // Successfully posted comment
-//                                showSuccessToast("Comment posted successfully")
+                                val model = BindingUtils.parseJson<AddedCommentModel>(
+                                    it.data?.toString().orEmpty()
+                                )
+                                if (model?.success == true) {
+                                    val newComment = model.data
+                                    if (newComment != null) {
+                                        originalCommentData.add(0, newComment)
+                                        filterComments(currentFilterType)
+                                        commentsBottomSheet.binding.etComments.text?.clear()
+                                        commentsBottomSheet.binding.rvMessage.scrollToPosition(0)
+                                        showSuccessToast("Comment posted successfully")
+                                    } else {
+                                        showErrorToast("Failed to post comment: Invalid response")
+                                    }
+                                }
                             }.onFailure { e ->
                                 showErrorToast(e.message.orEmpty())
                             }.also {
@@ -406,6 +416,9 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 Status.ERROR -> {
                     hideLoading()
                     showErrorToast(it.message.toString())
+                    deletingCommentId = null
+                    deletePosition = null
+                    pendingCommentIndex = null
                 }
 
                 Status.LOADING -> showLoading()
@@ -414,14 +427,42 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
-    /**
-     * Update the main comment display in the fragment
-     */
-    private fun updateMainCommentDisplay() {
-        if (filteredCommentData.isNotEmpty()) {
-            binding.tvCommentsCounts.text = originalCommentData.size.toString()
+    private fun deleteCommentFromData(commentId: String?) {
+        if (commentId.isNullOrEmpty()) return
 
-            // Find first comment with valid user data
+        // Find and remove from original data
+        val originalPosition = originalCommentData.indexOfFirst { it._id == commentId }
+        if (originalPosition != -1) {
+            originalCommentData.removeAt(originalPosition)
+        }
+
+        // Find and remove from filtered data
+        val filteredPosition = filteredCommentData.indexOfFirst { it._id == commentId }
+        if (filteredPosition != -1) {
+            filteredCommentData.removeAt(filteredPosition)
+
+            if (::commentsAdapter.isInitialized) {
+                commentsAdapter.setList(ArrayList(filteredCommentData))
+                commentsAdapter.notifyItemRemoved(filteredPosition)
+                commentsAdapter.notifyItemRangeChanged(
+                    filteredPosition,
+                    filteredCommentData.size - filteredPosition
+                )
+            }
+
+            if (::commentsBottomSheet.isInitialized && commentsBottomSheet.isShowing) {
+                commentsBottomSheet.binding.tvCommentsCounts.text =
+                    filteredCommentData.size.toString()
+            }
+        }
+
+        binding.tvCommentsCounts.text = originalCommentData.size.toString()
+        updateMainCommentDisplay()
+    }
+
+    private fun updateMainCommentDisplay() {
+        if (originalCommentData.isNotEmpty()) {
+            binding.tvCommentsCounts.text = originalCommentData.size.toString()
             val firstValidComment = originalCommentData.firstOrNull { it.userId != null }
 
             if (firstValidComment != null) {
@@ -429,9 +470,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 binding.tvMessage.visibility = View.VISIBLE
                 binding.ivPerson.visibility = View.VISIBLE
                 binding.tvMessage.text = firstValidComment.comment.toString()
-//                binding.tvMessage.makeTextExpandable(
-//                    firstValidComment.comment.toString()
-//                )
 
                 val url = firstValidComment.userId?.profilePicture
                 val imageUrl = when {
@@ -447,15 +485,11 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 } ?: run {
                     binding.ivPerson.setImageResource(R.drawable.holder_dummy)
                 }
-            } else {
-                // If no comments with valid user, show first comment anyway
+            } else if (originalCommentData.isNotEmpty()) {
                 binding.tvNoCommentView.visibility = View.GONE
                 binding.tvMessage.visibility = View.VISIBLE
                 binding.ivPerson.visibility = View.VISIBLE
-                binding.tvMessage.text = filteredCommentData[0].comment.toString()
-//                binding.tvMessage.makeTextExpandable(
-//                    filteredCommentData[0].comment.toString()
-//                )
+                binding.tvMessage.text = originalCommentData[0].comment.toString()
                 binding.ivPerson.setImageResource(R.drawable.holder_dummy)
             }
         } else {
@@ -468,60 +502,42 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
-    /**
-     * Filter comments based on selected filter type
-     */
     private fun filterComments(filterType: FilterType) {
         currentFilterType = filterType
 
         filteredCommentData = when (filterType) {
             FilterType.MOST_RECENT -> {
-                // Sort by date (newest first) - descending order
                 originalCommentData.sortedByDescending { comment ->
                     parseDate(comment.createdAt) ?: Date(0)
                 }
             }
 
             FilterType.TOP -> {
-                // For "Top", we'll sort by oldest first (chronological order)
-                // You can change this logic based on your requirements
                 originalCommentData.sortedBy { comment ->
                     parseDate(comment.createdAt) ?: Date(0)
                 }
             }
         }.toCollection(ArrayList())
 
-        // Update bottom sheet if it's open
         if (::commentsBottomSheet.isInitialized && commentsBottomSheet.isShowing) {
             updateBottomSheetComments()
         }
     }
 
-    /**
-     * Update comments in bottom sheet
-     */
     private fun updateBottomSheetComments() {
         if (::commentsAdapter.isInitialized) {
-            commentsAdapter.setList(filteredCommentData)
+            commentsAdapter.setList(ArrayList(filteredCommentData))
             commentsAdapter.notifyDataSetChanged()
             commentsBottomSheet.binding.tvCommentsCounts.text = filteredCommentData.size.toString()
         }
     }
 
-    /**
-     * Initialize adapter
-     */
     private fun initAdapter() {
         relatedAdapter =
             SimpleRecyclerViewAdapter(R.layout.item_section_rv_item, BR.bean) { v, m, _ ->
                 when (v?.id) {
                     R.id.cardView -> {
-                        // api call
                         if (m._id?.isNotEmpty() == true && m.topicId?._id?.isNotEmpty() == true) {
-//                            topicId = m.topicId._id
-//                            userVideoId = m._id
-//                            val data = HashMap<String, Any>()
-//                            viewModel.getVideoById(Constants.GET_VIDEO_ID + "/${m._id}", data)
                             val intent = Intent(requireContext(), CommonActivity::class.java)
                             intent.putExtra("videoId", m._id)
                             intent.putExtra("topicId", m.topicId._id)
@@ -536,9 +552,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         binding.rvRelated.adapter = relatedAdapter
     }
 
-    /**
-     * Initialize bottom sheet
-     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initBottomSheet() {
         commentsBottomSheet = BaseCustomBottomSheet(
@@ -546,45 +559,15 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         ) { view ->
             when (view?.id) {
                 R.id.ivSend -> {
-                    val profile = sharedPrefManager.getLoginData()
                     val message =
                         commentsBottomSheet.binding.etComments.text?.toString()?.trim().orEmpty()
 
                     if (message.isNotEmpty()) {
-                        val userProfileData = profile?.let {
-                            UserIdProfile(
-                                _id = it._id,
-                                name = it.name,
-                                profilePicture = it.profilePicture,
-                                email = "",
-                                isPrivate = it.isPrivate
-                            )
-                        }
-
-                        val newComment = CommentsData(
-                            __v = null,
-                            _id = null,
-                            comment = message,
-                            createdAt = Instant.now().toString(),
-                            updatedAt = Instant.now().toString(),
-                            userId = userProfileData,
-                            videoId = userVideoId
-                        )
-
-                        // Add to original data
-                        originalCommentData.add(0, newComment)
-
-                        // Apply current filter to update filtered list
-                        filterComments(currentFilterType)
-
-                        commentsBottomSheet.binding.etComments.text?.clear()
-                        commentsBottomSheet.binding.rvMessage.scrollToPosition(0)
-
                         userVideoId?.takeIf { it.isNotEmpty() }?.let {
                             val data = hashMapOf<String, Any>(
                                 "comment" to message, "videoId" to it
                             )
-                            viewModel.postComments(Constants.VIDEO_COMMENTS, data)
+                            viewModel.postComments(Constants.VIDEO_COMMENT, data)
                         }
                     } else {
                         showInfoToast("Please enter message")
@@ -610,7 +593,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         commentsBottomSheet.behavior.isDraggable = true
         commentsBottomSheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         commentsBottomSheet.show()
-        // Set initial filter state
         commentsBottomSheet.binding.check = if (currentFilterType == FilterType.TOP) 1 else 2
 
         val profileUser = sharedPrefManager.getLoginData()?.profilePicture
@@ -625,7 +607,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                 .error(R.drawable.holder_dummy).into(commentsBottomSheet.binding.ivPerson2)
         }
 
-        // Initialize comment adapter
         initCommentAdapter()
 
         commentsBottomSheet.setOnDismissListener {
@@ -638,9 +619,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
         }
     }
 
-    /**
-     * Initialize comment adapter
-     */
     @SuppressLint("NotifyDataSetChanged")
     private fun initCommentAdapter() {
         val currentUserId = sharedPrefManager.getLoginData()?._id
@@ -669,8 +647,16 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
                         }
 
                         R.id.tvdelete -> {
+                            val commentId = item?._id
+
+                            // Prevent deleting comments that haven't been saved yet
+                            if (commentId.isNullOrEmpty()) {
+                                showErrorToast("Please wait, comment is still being posted")
+                                return
+                            }
+                            deletingCommentId = commentId
                             deletePosition = position
-                            /// delete comment
+                            viewModel.deletePostVideoComments("${Constants.VIDEO_COMMENT_DELETE}/$commentId")
                         }
                     }
                 }
@@ -678,34 +664,12 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
 
         commentsBottomSheet.binding.rvMessage.adapter = commentsAdapter
 
-        // Set filtered data to adapter
         if (filteredCommentData.isNotEmpty()) {
-            commentsAdapter.setList(filteredCommentData)
-//            commentsAdapter.notifyDataSetChanged()
+            commentsAdapter.setList(ArrayList(filteredCommentData))
             commentsBottomSheet.binding.tvCommentsCounts.text = filteredCommentData.size.toString()
         }
     }
 
-    //    private fun downloadVideo(url: String) {
-//        try {
-//            val fullUrl = if (url.startsWith("http")) url else Constants.BASE_URL_IMAGE + url
-//            val request = DownloadManager.Request(fullUrl.toUri())
-//            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-//            request.setTitle("Downloading Video")
-//            request.setDescription("Downloading video file...")
-//            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-//            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.mp4")
-//
-//            val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-//            downloadManager.enqueue(request)
-//            showSuccessToast("Download started...")
-//        } catch (e: Exception) {
-//            Log.e("DownloadError", "Error: ${e.message}", e)
-//            showErrorToast("Download failed: ${e.message}")
-//        }
-//    }
-
-    ///// download video
     private fun downloadAndSaveVideo() {
         if (videoUrl.isNullOrEmpty()) return
 
@@ -761,7 +725,6 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
             }
         }
     }
-
 
     fun Context.downloadVideo(url: String, fileName: String): String? {
         var currentUrl = url
@@ -833,36 +796,27 @@ class VideoPlayerFragment : BaseFragment<FragmentVideoPlayerBinding>() {
     private fun observeDownloadedVideo() {
         viewModel.observeVideo.observe(viewLifecycleOwner) {
             when (it?.status) {
-                Status.LOADING -> {
-//                    showLoading()
-                }
-
+                Status.LOADING -> {}
                 Status.SUCCESS -> {
                     when (it.message) {
                         "getDownloadVideo" -> {
                             runCatching {
                                 downloadedVideos = it.data as ArrayList<DownloadVideoData>
-
                             }.onFailure { e ->
                                 Log.e("apiErrorOccurred", "Error: ${e.message}", e)
                                 showErrorToast(
                                     e.localizedMessage ?: getString(R.string.something_went_wrong)
                                 )
-                            }.also {
-//                                hideLoading()
                             }
                         }
-
                     }
                 }
 
                 Status.ERROR -> {
-//                    hideLoading()
                     showErrorToast(it.message.toString())
                 }
 
-                else -> {
-                }
+                else -> {}
             }
         }
     }

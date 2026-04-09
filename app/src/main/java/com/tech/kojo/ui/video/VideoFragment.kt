@@ -3,6 +3,7 @@ package com.tech.kojo.ui.video
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.view.View
 import androidx.annotation.OptIn
@@ -20,6 +21,8 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.ui.PlayerView
 import com.tech.kojo.R
 import com.tech.kojo.base.BaseFragment
@@ -33,7 +36,7 @@ import com.tech.kojo.utils.showErrorToast
 import com.tech.kojo.utils.showInfoToast
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
-
+import kotlin.math.max
 
 @AndroidEntryPoint
 class VideoFragment : BaseFragment<FragmentVideoBinding>() {
@@ -47,6 +50,9 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
     private var videoHeight: Int = 0
     private var isVideoHorizontal = false
     private var mediaUri: Uri? = null
+    private var isUsingSoftwareDecoder = false
+    private var retryCount = 0
+    private val MAX_RETRY_COUNT = 2
 
     override fun getLayoutResource(): Int = R.layout.fragment_video
 
@@ -65,9 +71,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
         initObserver()
     }
 
-    /**
-     * Handle clicks
-     */
     private fun initOnClick() {
         viewModel.onClick.observe(viewLifecycleOwner) {
             when (it?.id) {
@@ -111,7 +114,8 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
     }
 
     /**
-     * Initialize ExoPlayer with URL or local path safety
+     * Initialize ExoPlayer with universal resolution support
+     * Automatically falls back to software decoding for high-resolution videos
      */
     @OptIn(UnstableApi::class)
     private fun initializePlayer() {
@@ -140,89 +144,303 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
 
         if (uri == null) return
 
-        player = ExoPlayer.Builder(requireContext()).build().also { exoPlayer ->
+        // Create track selector with adaptive resolution
+        val trackSelector = DefaultTrackSelector(requireContext()).apply {
+            setParameters(
+                parameters
+                    .buildUpon()
+                    // Don't limit resolution initially, let it auto-adapt
+                    .setAllowVideoMixedMimeTypeAdaptiveness(true)
+                    .setAllowAudioMixedMimeTypeAdaptiveness(true)
+                    .build()
+            )
+        }
 
-            binding.playerView.player = exoPlayer
+        // Create renderers factory with decoder fallback enabled
+        val renderersFactory = DefaultRenderersFactory(requireContext())
+            .setEnableDecoderFallback(true) // CRITICAL: Enables software decoding fallback
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
 
-            // Enable controller
-            binding.playerView.useController = true
+        player = ExoPlayer.Builder(requireContext())
+            .setRenderersFactory(renderersFactory)
+            .setTrackSelector(trackSelector)
+            .build()
+            .also { exoPlayer ->
 
-            // Hide initially
-            binding.playerView.hideController()
+                binding.playerView.player = exoPlayer
+                binding.playerView.useController = true
+                binding.playerView.hideController()
+                binding.playerView.controllerShowTimeoutMs = 2000
 
-            // Auto hide duration
-            binding.playerView.controllerShowTimeoutMs = 2000
+                // Configure HTTP client with better timeout settings
+                val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+                    .setAllowCrossProtocolRedirects(true)
+                    .setConnectTimeoutMs(30000)
+                    .setReadTimeoutMs(30000)
+                    .setUserAgent("KojoVideoPlayer/1.0")
 
-            val httpDataSourceFactory =
-                DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
+                val dataSourceFactory = DefaultDataSource.Factory(requireContext(), httpDataSourceFactory)
 
-            val dataSourceFactory =
-                DefaultDataSource.Factory(requireContext(), httpDataSourceFactory)
+                val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(uri))
 
-            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(uri))
+                exoPlayer.setMediaSource(mediaSource)
+                exoPlayer.prepare()
+                exoPlayer.seekTo(playbackPosition)
+                exoPlayer.playWhenReady = this@VideoFragment.playWhenReady
+                setupControllerVisibility()
 
-            exoPlayer.setMediaSource(mediaSource)
-            exoPlayer.prepare()
-            exoPlayer.seekTo(playbackPosition)
-            exoPlayer.playWhenReady = this@VideoFragment.playWhenReady
-            setupControllerVisibility()
+                exoPlayer.addListener(object : Player.Listener {
 
-            exoPlayer.addListener(object : Player.Listener {
+                    override fun onVideoSizeChanged(videoSize: VideoSize) {
+                        super.onVideoSizeChanged(videoSize)
+                        videoWidth = videoSize.width
+                        videoHeight = videoSize.height
+                        isVideoHorizontal = videoWidth > videoHeight
 
-                override fun onVideoSizeChanged(videoSize: VideoSize) {
-                    super.onVideoSizeChanged(videoSize)
-                    videoWidth = videoSize.width
-                    videoHeight = videoSize.height
+                        Log.d("VideoFragment", "Video size: ${videoWidth}x${videoHeight}, " +
+                                "isHorizontal: $isVideoHorizontal, " +
+                                "usingSoftwareDecoder: $isUsingSoftwareDecoder")
 
-                    // Check if video is horizontal (width > height)
-                    isVideoHorizontal = videoWidth > videoHeight
-
-                    Log.d("VideoFragment", "Video size: ${videoWidth}x${videoHeight}, isHorizontal: $isVideoHorizontal")
-
-                    // Adjust fullscreen button based on video orientation
-                    adjustFullscreenButton()
-                }
-
-                override fun onPlaybackStateChanged(state: Int) {
-                    if (state == Player.STATE_READY) {
-                        val durationMs = exoPlayer.duration
-                        val formatted = formatDuration(durationMs)
-                        Log.d("VideoFragment", "Video duration: $formatted")
+                        adjustFullscreenButton()
                     }
-                }
 
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-
-                    if (isPlaying) {
-                        // Playing → hide controller smoothly
-                        binding.playerView.postDelayed({
-                            binding.playerView.hideController()
-                        }, 500)
-                    } else {
-                        // Paused → show controller
-                        binding.playerView.showController()
+                    override fun onPlaybackStateChanged(state: Int) {
+                        when (state) {
+                            Player.STATE_BUFFERING -> {
+                                Log.d("VideoFragment", "Buffering...")
+                            }
+                            Player.STATE_READY -> {
+                                val durationMs = exoPlayer.duration
+                                val formatted = formatDuration(durationMs)
+                                Log.d("VideoFragment", "Video duration: $formatted")
+                            }
+                            Player.STATE_ENDED -> {
+                                Log.d("VideoFragment", "Playback completed")
+                            }
+                        }
                     }
+
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        if (isPlaying) {
+                            binding.playerView.postDelayed({
+                                binding.playerView.hideController()
+                            }, 500)
+                        } else {
+                            binding.playerView.showController()
+                        }
+                    }
+
+                    override fun onPlayerError(error: PlaybackException) {
+                        Log.e("ExoPlayer", "Playback error: ${error.message}", error)
+
+                        // Comprehensive error handling with retry logic
+                        when {
+                            // Hardware decoder failure (high resolution videos)
+                            error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED ||
+                                    error.message?.contains("exceeds capabilities") == true ||
+                                    error.message?.contains("NO_EXCEEDS_CAPABILITIES") == true ||
+                                    error.message?.contains("MediaCodecVideoRenderer") == true -> {
+
+                                if (!isUsingSoftwareDecoder && retryCount < MAX_RETRY_COUNT) {
+                                    retryCount++
+                                    Log.w("VideoFragment", "Hardware decoder failed, retrying with software decoding (Attempt $retryCount)")
+//                                    showInfoToast("Optimizing video playback for your device...")
+                                    retryWithSoftwareDecoding(uri)
+                                } else if (retryCount >= MAX_RETRY_COUNT) {
+                                    showErrorToast("Unable to play this video. The resolution may be too high for your device.")
+                                }
+                            }
+
+                            // Network errors
+                            error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED -> {
+                                showErrorToast("Network connection failed. Please check your internet connection.")
+                            }
+
+                            // File/Format errors
+                            error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND -> {
+                                showErrorToast("Video file not found.")
+                            }
+                            error.errorCode == PlaybackException.ERROR_CODE_DECODING_FAILED -> {
+                                if (!isUsingSoftwareDecoder && retryCount < MAX_RETRY_COUNT) {
+                                    retryCount++
+                                    retryWithSoftwareDecoding(uri)
+                                } else {
+                                    showErrorToast("Video format not supported on this device.")
+                                }
+                            }
+
+                            // Other errors
+                            else -> {
+                                if (!isUsingSoftwareDecoder && retryCount < MAX_RETRY_COUNT) {
+                                    retryCount++
+                                    retryWithSoftwareDecoding(uri)
+                                } else {
+                                    showErrorToast("Failed to play video. Error: ${error.message}")
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+    }
+
+    /**
+     * Retry playback using software decoding for high-resolution videos
+     */
+    @OptIn(UnstableApi::class)
+    private fun retryWithSoftwareDecoding(uri: Uri) {
+        isUsingSoftwareDecoder = true
+
+        try {
+            // Release existing player
+            player?.release()
+
+            // Create track selector with resolution limits for better performance
+            val trackSelector = DefaultTrackSelector(requireContext()).apply {
+                setParameters(
+                    parameters
+                        .buildUpon()
+                        // Limit resolution to 1080p for software decoding
+                        .setMaxVideoSize(1920, 1920)
+                        .setMaxVideoBitrate(10_000_000) // 10 Mbps limit
+                        .setAllowVideoMixedMimeTypeAdaptiveness(true)
+                        .build()
+                )
+            }
+
+            // Force software decoding by preferring software decoders
+            val renderersFactory = DefaultRenderersFactory(requireContext())
+                .setEnableDecoderFallback(true)
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+            // Create new player with software decoding configuration
+            player = ExoPlayer.Builder(requireContext())
+                .setRenderersFactory(renderersFactory)
+                .setTrackSelector(trackSelector)
+                .build()
+                .also { exoPlayer ->
+
+                    binding.playerView.player = exoPlayer
+                    binding.playerView.useController = true
+                    binding.playerView.controllerShowTimeoutMs = 2000
+
+                    val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+                        .setAllowCrossProtocolRedirects(true)
+                        .setConnectTimeoutMs(30000)
+                        .setReadTimeoutMs(30000)
+                        .setUserAgent("KojoVideoPlayer/1.0-Software")
+
+                    val dataSourceFactory = DefaultDataSource.Factory(requireContext(), httpDataSourceFactory)
+                    val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(MediaItem.fromUri(uri))
+
+                    exoPlayer.setMediaSource(mediaSource)
+                    exoPlayer.prepare()
+                    exoPlayer.seekTo(playbackPosition)
+                    exoPlayer.playWhenReady = true
+
+                    // Add listener for software decoding playback
+                    exoPlayer.addListener(object : Player.Listener {
+                        override fun onPlayerError(error: PlaybackException) {
+                            Log.e("ExoPlayer", "Software decoding failed: ${error.message}", error)
+
+                            if (retryCount < MAX_RETRY_COUNT) {
+                                retryCount++
+                             //   showInfoToast("Trying alternative playback method...")
+                                retryWithAlternativeDecoder(uri)
+                            } else {
+                                showErrorToast("This video cannot be played on your device")
+                            }
+                        }
+
+                        override fun onVideoSizeChanged(videoSize: VideoSize) {
+                            videoWidth = videoSize.width
+                            videoHeight = videoSize.height
+                            isVideoHorizontal = videoWidth > videoHeight
+                            adjustFullscreenButton()
+
+                            Log.d("VideoFragment", "Software decoder - Video size: ${videoWidth}x${videoHeight}")
+                        }
+
+                        override fun onPlaybackStateChanged(state: Int) {
+                            if (state == Player.STATE_READY) {
+                                Log.d("VideoFragment", "Software decoder - Playback ready")
+                            }
+                        }
+                    })
+
+                    setupControllerVisibility()
                 }
 
-                override fun onPlayerError(error: PlaybackException) {
-                    Log.e("ExoPlayer", "Playback error: ${error.message}", error)
-                    showInfoToast("Video failed to load.")
+        } catch (e: Exception) {
+            Log.e("VideoFragment", "Failed to initialize software decoding", e)
+            if (retryCount < MAX_RETRY_COUNT) {
+                retryCount++
+                retryWithAlternativeDecoder(uri)
+            } else {
+                showErrorToast("Cannot play this video on your device")
+            }
+        }
+    }
+
+    /**
+     * Last resort: Use basic decoder with minimal settings
+     */
+    @OptIn(UnstableApi::class)
+    private fun retryWithAlternativeDecoder(uri: Uri) {
+        try {
+            player?.release()
+
+            // Most conservative settings
+            val trackSelector = DefaultTrackSelector(requireContext()).apply {
+                setParameters(
+                    parameters
+                        .buildUpon()
+                        .setMaxVideoSize(854, 480) // Force 480p max
+                        .setMaxVideoBitrate(2_000_000) // 2 Mbps max
+                        .setAllowVideoMixedMimeTypeAdaptiveness(false)
+                        .build()
+                )
+            }
+
+            val renderersFactory = DefaultRenderersFactory(requireContext())
+                .setEnableDecoderFallback(true)
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+            player = ExoPlayer.Builder(requireContext())
+                .setRenderersFactory(renderersFactory)
+                .setTrackSelector(trackSelector)
+                .build()
+                .also { exoPlayer ->
+                    binding.playerView.player = exoPlayer
+
+                    val dataSourceFactory = DefaultDataSource.Factory(requireContext())
+                    val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(MediaItem.fromUri(uri))
+
+                    exoPlayer.setMediaSource(mediaSource)
+                    exoPlayer.prepare()
+                    exoPlayer.seekTo(playbackPosition)
+                    exoPlayer.playWhenReady = true
+
+                    exoPlayer.addListener(object : Player.Listener {
+                        override fun onPlayerError(error: PlaybackException) {
+                            showErrorToast("Video playback failed. Please try a different video.")
+                        }
+                    })
                 }
-            })
+        } catch (e: Exception) {
+            showErrorToast("Unable to play this video")
         }
     }
 
     private fun adjustFullscreenButton() {
-        if (!isVideoHorizontal) {
-            // For vertical videos, keep button enabled with fullscreen functionality
-            binding.ivFullscreen.visibility = View.VISIBLE
-            binding.ivFullscreen.setImageResource(R.drawable.ic_maximise)
-            binding.ivFullscreen.alpha = 1f
-        } else {
-            binding.ivFullscreen.visibility = View.VISIBLE
-            binding.ivFullscreen.alpha = 1f
-        }
+        binding.ivFullscreen.visibility = View.VISIBLE
+        binding.ivFullscreen.alpha = 1f
+        binding.ivFullscreen.setImageResource(
+            if (isFullscreen) R.drawable.ic_minimise else R.drawable.ic_maximise
+        )
     }
 
     private fun setupControllerVisibility() {
@@ -269,25 +487,17 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
     private fun releasePlayer() {
         player?.release()
         player = null
-        // Only reset orientation if it was changed for horizontal video
         if (isVideoHorizontal && isFullscreen) {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
 
-    /**
-     * Fullscreen + rotation - Only for horizontal videos
-     * For vertical videos, just expand without rotation
-     */
     private fun toggleFullscreen() {
-        // Save current playback state
         val wasPlaying = player?.isPlaying == true
         val currentPosition = player?.currentPosition ?: 0
 
         if (!isVideoHorizontal) {
-            // For vertical videos: expand without rotation
             toggleFullscreenWithoutRotation()
-            // Restore playback state after layout change
             binding.videoContainer.postDelayed({
                 player?.seekTo(currentPosition)
                 if (wasPlaying) {
@@ -297,7 +507,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
             return
         }
 
-        // For horizontal videos: toggle with rotation
         isFullscreen = !isFullscreen
 
         if (isFullscreen) {
@@ -306,7 +515,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
             exitFullscreen()
         }
 
-        // Restore playback state after layout change
         binding.videoContainer.postDelayed({
             player?.seekTo(currentPosition)
             if (wasPlaying) {
@@ -319,7 +527,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
         isFullscreen = !isFullscreen
 
         if (isFullscreen) {
-            // Expand to fullscreen without rotation
             hideSystemUI()
 
             val params = binding.videoContainer.layoutParams as ConstraintLayout.LayoutParams
@@ -330,9 +537,7 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
             params.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID
             binding.videoContainer.layoutParams = params
 
-            // Set resize mode to fit for vertical videos
             binding.playerView.resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-
             binding.ivFullscreen.setImageResource(R.drawable.ic_minimise)
         } else {
             showSystemUI()
@@ -352,7 +557,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
     private fun enterFullscreen() {
         isFullscreen = true
 
-        // Change orientation for horizontal videos
         if (isVideoHorizontal) {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
@@ -360,24 +564,19 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
         hideSystemUI()
 
         val params = binding.videoContainer.layoutParams as ConstraintLayout.LayoutParams
-
-        // Clear previous constraints
         params.topToBottom = ConstraintLayout.LayoutParams.UNSET
         params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
         params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
         params.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID
         params.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID
-
         binding.videoContainer.layoutParams = params
 
         binding.ivFullscreen.setImageResource(R.drawable.ic_minimise)
     }
 
-
     private fun exitFullscreen() {
         isFullscreen = false
 
-        // Only reset orientation if it was changed (horizontal video)
         if (isVideoHorizontal) {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
@@ -385,14 +584,11 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
         showSystemUI()
 
         val params = binding.videoContainer.layoutParams as ConstraintLayout.LayoutParams
-
-        // Reset constraints
         params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
         params.topToBottom = ConstraintLayout.LayoutParams.UNSET
         params.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
         params.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID
         params.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID
-
         binding.videoContainer.layoutParams = params
 
         binding.ivFullscreen.setImageResource(R.drawable.ic_maximise)
@@ -417,10 +613,8 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Reset system UI
         requireActivity().window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
         requireActivity().window.statusBarColor = Color.TRANSPARENT
         savePlayerState()
         releasePlayer()
@@ -429,7 +623,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>() {
     private fun View.fadeInSlideUp() {
         if (visibility == View.VISIBLE) return
 
-        // start slightly below
         alpha = 0f
         translationY = height * 0.25f
         visibility = View.VISIBLE

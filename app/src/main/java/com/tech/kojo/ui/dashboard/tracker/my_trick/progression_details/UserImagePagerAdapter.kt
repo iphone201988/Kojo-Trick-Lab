@@ -7,10 +7,14 @@ import android.view.ViewGroup
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.recyclerview.widget.RecyclerView
 import com.tech.kojo.data.api.Constants
 import com.tech.kojo.data.model.VideoLink
@@ -27,12 +31,15 @@ class UserImagePagerAdapter(
 
     private var currentPlayingPosition: Int = -1
 
-
     inner class ImageViewHolder(val binding: HolderUserImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private var player: ExoPlayer? = null
         private var isPlaying = false
+        private var isUsingSoftwareDecoder = false
+        private var retryCount = 0
+        private val MAX_RETRY_COUNT = 2
+        private var currentVideoUrl: String? = null
 
         init {
             binding.root.setOnClickListener {
@@ -46,16 +53,6 @@ class UserImagePagerAdapter(
                     playVideo()
                 }
             }
-
-//            // Fullscreen button click handler - always available
-//            binding.ivFullscreen.setOnClickListener {
-//                displayVideos.getOrNull(adapterPosition)?.let { onFullScreenClick(it) }
-//            }
-
-//            // Add click listener for player controller visibility toggle
-//            binding.localPlayerView.setOnClickListener {
-//                toggleControllerVisibility()
-//            }
         }
 
         fun bind(item: VideoLink, position: Int) {
@@ -65,7 +62,6 @@ class UserImagePagerAdapter(
             if (position != currentPlayingPosition) {
                 resetUI()
             } else {
-                // If this is the current playing position, restore player view
                 if (isPlaying && player != null) {
                     showPlayerView()
                 }
@@ -76,9 +72,9 @@ class UserImagePagerAdapter(
             binding.localPlayerView.visibility = View.GONE
             binding.ivUser.visibility = View.VISIBLE
             binding.ivVideoPlay.visibility = View.VISIBLE
-            // Fullscreen button is always visible in thumbnail mode
-//            binding.ivFullscreen.visibility = View.VISIBLE
             isPlaying = false
+            isUsingSoftwareDecoder = false
+            retryCount = 0
         }
 
         @androidx.annotation.OptIn(UnstableApi::class)
@@ -91,37 +87,7 @@ class UserImagePagerAdapter(
             binding.localPlayerView.setShowPreviousButton(false)
             binding.ivUser.visibility = View.INVISIBLE
             binding.ivVideoPlay.visibility = View.GONE
-            // Fullscreen button remains visible when video is playing
-          //  binding.ivFullscreen.visibility = View.VISIBLE
-
-            // Restore controller visibility state
-//            updateControllerVisibility()
         }
-
-//        private fun toggleControllerVisibility() {
-//            if (isPlaying) {
-//                isControllerVisible = !isControllerVisible
-//                updateControllerVisibility()
-//            }
-//        }
-
-//        private fun updateControllerVisibility() {
-//            if (isControllerVisible) {
-//                // Show controller
-//                binding.localPlayerView.useController = true
-//                // Auto-hide controller after 3 seconds
-//                binding.localPlayerView.postDelayed({
-//                    if (isControllerVisible && isPlaying) {
-//                        binding.localPlayerView.useController = false
-//                        isControllerVisible = false
-//                    }
-//                }, 3000)
-//            } else {
-//                // Hide controller but fullscreen button remains visible
-//                binding.localPlayerView.useController = false
-//            }
-//            // Fullscreen button is always visible regardless of controller state
-//        }
 
         fun autoPlayVideo() {
             if (!isPlaying) {
@@ -132,9 +98,11 @@ class UserImagePagerAdapter(
         @androidx.annotation.OptIn(UnstableApi::class)
         private fun playVideo() {
             val videoUrl = displayVideos.getOrNull(adapterPosition)?.link ?: run {
-//                showErrorToast("Video URL not found")
+                Log.e("VideoPlayer", "Video URL not found at position $adapterPosition")
                 return
             }
+
+            currentVideoUrl = videoUrl
 
             // Stop any currently playing video first
             stopVideo()
@@ -143,53 +111,124 @@ class UserImagePagerAdapter(
             else Constants.BASE_URL_IMAGE + videoUrl
 
             try {
-                val mediaSource = ProgressiveMediaSource.Factory(
-                    DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
-                ).createMediaSource(MediaItem.fromUri(fullUrl))
-
-                player = ExoPlayer.Builder(binding.root.context).build().apply {
-                    setMediaSource(mediaSource)
-                    prepare()
-                    playWhenReady = true
-                    repeatMode = Player.REPEAT_MODE_ONE
-
-                    addListener(object : Player.Listener {
-
-                        override fun onPlaybackStateChanged(state: Int) {
-                            when (state) {
-                                Player.STATE_READY -> {
-                                    onPlaybackStateChanged?.invoke(true)
-                                    Log.d("VideoPlayer", "Video ready at position $adapterPosition")
-                                }
-
-                                Player.STATE_ENDED -> {
-                                    Log.d("VideoPlayer", "Video ended at position $adapterPosition")
-                                    stopVideo()
-                                }
-                            }
-                        }
-
-                        override fun onIsPlayingChanged(isPlayingNow: Boolean) {
-
-                            if (isPlayingNow) {
-                                // ▶️ Playing → hide controller smoothly
-                                binding.localPlayerView.postDelayed({
-                                    binding.localPlayerView.hideController()
-                                }, 500)
-                            } else {
-                                // ⏸ Paused → show controller
-                                binding.localPlayerView.showController()
-                            }
-                        }
-
-                        override fun onPlayerError(error: PlaybackException) {
-                            Log.e("VideoPlayer", "Playback error: ${error.message}")
-                            stopVideo()
-                        }
-                    })
+                // Create track selector with adaptive resolution
+                val trackSelector = DefaultTrackSelector(binding.root.context).apply {
+                    setParameters(
+                        parameters.buildUpon().setAllowVideoMixedMimeTypeAdaptiveness(true)
+                            .setAllowAudioMixedMimeTypeAdaptiveness(true).build()
+                    )
                 }
 
-                // Setup UI - fullscreen button is always visible
+                // Create renderers factory with decoder fallback
+                val renderersFactory =
+                    DefaultRenderersFactory(binding.root.context).setEnableDecoderFallback(true) // CRITICAL for high-res videos
+                        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+
+                player =
+                    ExoPlayer.Builder(binding.root.context).setRenderersFactory(renderersFactory)
+                        .setTrackSelector(trackSelector).build().apply {
+                            val httpDataSourceFactory =
+                                DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
+                                    .setConnectTimeoutMs(30000).setReadTimeoutMs(30000)
+                                    .setUserAgent("KojoVideoPlayer/1.0")
+
+                            val dataSourceFactory = DefaultDataSource.Factory(
+                                binding.root.context, httpDataSourceFactory
+                            )
+
+                            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                                .createMediaSource(MediaItem.fromUri(fullUrl))
+
+                            setMediaSource(mediaSource)
+                            prepare()
+                            playWhenReady = true
+                            repeatMode = Player.REPEAT_MODE_ONE
+
+                            addListener(object : Player.Listener {
+                                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                    super.onVideoSizeChanged(videoSize)
+                                    Log.d(
+                                        "VideoPlayer",
+                                        "Video size: ${videoSize.width}x${videoSize.height}, " + "usingSoftwareDecoder: $isUsingSoftwareDecoder"
+                                    )
+                                }
+
+                                override fun onPlaybackStateChanged(state: Int) {
+                                    when (state) {
+                                        Player.STATE_READY -> {
+                                            onPlaybackStateChanged?.invoke(true)
+                                            Log.d(
+                                                "VideoPlayer",
+                                                "Video ready at position $adapterPosition"
+                                            )
+                                        }
+
+                                        Player.STATE_ENDED -> {
+                                            Log.d(
+                                                "VideoPlayer",
+                                                "Video ended at position $adapterPosition"
+                                            )
+                                            stopVideo()
+                                        }
+                                    }
+                                }
+
+                                override fun onIsPlayingChanged(isPlayingNow: Boolean) {
+                                    if (isPlayingNow) {
+                                        binding.localPlayerView.postDelayed({
+                                            binding.localPlayerView.hideController()
+                                        }, 500)
+                                    } else {
+                                        binding.localPlayerView.showController()
+                                    }
+                                }
+
+                                override fun onPlayerError(error: PlaybackException) {
+                                    Log.e("VideoPlayer", "Playback error: ${error.message}", error)
+
+                                    // Handle decoder errors with retry logic
+                                    when {
+                                        error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED || error.message?.contains(
+                                            "exceeds capabilities"
+                                        ) == true || error.message?.contains("NO_EXCEEDS_CAPABILITIES") == true || error.message?.contains(
+                                            "MediaCodecVideoRenderer"
+                                        ) == true -> {
+
+                                            if (!isUsingSoftwareDecoder && retryCount < MAX_RETRY_COUNT) {
+                                                retryCount++
+                                                Log.w(
+                                                    "VideoPlayer",
+                                                    "Hardware decoder failed, retrying with software decoding (Attempt $retryCount)"
+                                                )
+                                                retryWithSoftwareDecoding(fullUrl)
+                                            } else if (retryCount >= MAX_RETRY_COUNT) {
+                                                Log.e(
+                                                    "VideoPlayer",
+                                                    "Max retries reached, cannot play video"
+                                                )
+                                                stopVideo()
+                                            }
+                                        }
+
+                                        error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED -> {
+                                            Log.e("VideoPlayer", "Network connection failed")
+                                            stopVideo()
+                                        }
+
+                                        else -> {
+                                            if (!isUsingSoftwareDecoder && retryCount < MAX_RETRY_COUNT) {
+                                                retryCount++
+                                                retryWithSoftwareDecoding(fullUrl)
+                                            } else {
+                                                stopVideo()
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
+
+                // Setup UI
                 binding.localPlayerView.player = player
                 binding.localPlayerView.visibility = View.VISIBLE
                 binding.localPlayerView.setShowFastForwardButton(false)
@@ -198,7 +237,6 @@ class UserImagePagerAdapter(
                 binding.localPlayerView.setShowPreviousButton(false)
                 binding.ivUser.visibility = View.INVISIBLE
                 binding.ivVideoPlay.visibility = View.GONE
-               // binding.ivFullscreen.visibility = View.VISIBLE  // Fullscreen always visible
 
                 isPlaying = true
                 currentPlayingPosition = adapterPosition
@@ -207,7 +245,169 @@ class UserImagePagerAdapter(
 
             } catch (e: Exception) {
                 Log.e("VideoPlayer", "Error playing video: ${e.message}", e)
-//                showErrorToast("Failed to play video")
+                stopVideo()
+            }
+        }
+
+        @androidx.annotation.OptIn(UnstableApi::class)
+        private fun retryWithSoftwareDecoding(videoUrl: String) {
+            isUsingSoftwareDecoder = true
+
+            try {
+                // Release existing player
+                player?.release()
+
+                // Create track selector with resolution limits for software decoding
+                val trackSelector = DefaultTrackSelector(binding.root.context).apply {
+                    setParameters(
+                        parameters.buildUpon()
+                            .setMaxVideoSize(1920, 1920) // Limit to 1080p for software decoding
+                            .setMaxVideoBitrate(10_000_000) // 10 Mbps limit
+                            .setAllowVideoMixedMimeTypeAdaptiveness(true).build()
+                    )
+                }
+
+                // Force software decoding
+                val renderersFactory =
+                    DefaultRenderersFactory(binding.root.context).setEnableDecoderFallback(true)
+                        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+                player =
+                    ExoPlayer.Builder(binding.root.context).setRenderersFactory(renderersFactory)
+                        .setTrackSelector(trackSelector).build().apply {
+                            val httpDataSourceFactory =
+                                DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true)
+                                    .setConnectTimeoutMs(30000).setReadTimeoutMs(30000)
+                                    .setUserAgent("KojoVideoPlayer/1.0-Software")
+
+                            val dataSourceFactory = DefaultDataSource.Factory(
+                                binding.root.context, httpDataSourceFactory
+                            )
+
+                            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                                .createMediaSource(MediaItem.fromUri(videoUrl))
+
+                            setMediaSource(mediaSource)
+                            prepare()
+                            playWhenReady = true
+                            repeatMode = Player.REPEAT_MODE_ONE
+
+                            addListener(object : Player.Listener {
+                                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                                    Log.d(
+                                        "VideoPlayer",
+                                        "Software decoder - Video size: ${videoSize.width}x${videoSize.height}"
+                                    )
+                                }
+
+                                override fun onPlaybackStateChanged(state: Int) {
+                                    when (state) {
+                                        Player.STATE_READY -> {
+                                            onPlaybackStateChanged?.invoke(true)
+                                            Log.d(
+                                                "VideoPlayer",
+                                                "Software decoder - Video ready at position $adapterPosition"
+                                            )
+                                        }
+
+                                        Player.STATE_ENDED -> {
+                                            Log.d(
+                                                "VideoPlayer",
+                                                "Video ended at position $adapterPosition"
+                                            )
+                                            stopVideo()
+                                        }
+                                    }
+                                }
+
+                                override fun onIsPlayingChanged(isPlayingNow: Boolean) {
+                                    if (isPlayingNow) {
+                                        binding.localPlayerView.postDelayed({
+                                            binding.localPlayerView.hideController()
+                                        }, 500)
+                                    } else {
+                                        binding.localPlayerView.showController()
+                                    }
+                                }
+
+                                override fun onPlayerError(error: PlaybackException) {
+                                    Log.e(
+                                        "VideoPlayer",
+                                        "Software decoding failed: ${error.message}",
+                                        error
+                                    )
+
+                                    if (retryCount < MAX_RETRY_COUNT) {
+                                        retryCount++
+                                        retryWithAlternativeDecoder(videoUrl)
+                                    } else {
+                                        stopVideo()
+                                    }
+                                }
+                            })
+                        }
+
+                binding.localPlayerView.player = player
+                isPlaying = true
+                currentPlayingPosition = adapterPosition
+
+                Log.d("VideoPlayer", "Started software decoding at position $adapterPosition")
+
+            } catch (e: Exception) {
+                Log.e("VideoPlayer", "Failed to initialize software decoding", e)
+                if (retryCount < MAX_RETRY_COUNT) {
+                    retryCount++
+                    retryWithAlternativeDecoder(videoUrl)
+                } else {
+                    stopVideo()
+                }
+            }
+        }
+
+        @androidx.annotation.OptIn(UnstableApi::class)
+        private fun retryWithAlternativeDecoder(videoUrl: String) {
+            try {
+                player?.release()
+
+                // Most conservative settings - force 480p
+                val trackSelector = DefaultTrackSelector(binding.root.context).apply {
+                    setParameters(
+                        parameters.buildUpon().setMaxVideoSize(854, 480) // Force 480p max
+                            .setMaxVideoBitrate(2_000_000) // 2 Mbps limit
+                            .setAllowVideoMixedMimeTypeAdaptiveness(false).build()
+                    )
+                }
+
+                val renderersFactory =
+                    DefaultRenderersFactory(binding.root.context).setEnableDecoderFallback(true)
+                        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF)
+
+                player =
+                    ExoPlayer.Builder(binding.root.context).setRenderersFactory(renderersFactory)
+                        .setTrackSelector(trackSelector).build().apply {
+                            val dataSourceFactory = DefaultDataSource.Factory(binding.root.context)
+                            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+                                .createMediaSource(MediaItem.fromUri(videoUrl))
+
+                            setMediaSource(mediaSource)
+                            prepare()
+                            playWhenReady = true
+                            repeatMode = Player.REPEAT_MODE_ONE
+
+                            addListener(object : Player.Listener {
+                                override fun onPlayerError(error: PlaybackException) {
+                                    Log.e("VideoPlayer", "Alternative decoder also failed", error)
+                                    stopVideo()
+                                }
+                            })
+                        }
+
+                binding.localPlayerView.player = player
+                isPlaying = true
+                currentPlayingPosition = adapterPosition
+
+            } catch (e: Exception) {
+                Log.e("VideoPlayer", "Alternative decoder failed", e)
                 stopVideo()
             }
         }
@@ -222,6 +422,8 @@ class UserImagePagerAdapter(
 
             resetUI()
             isPlaying = false
+            isUsingSoftwareDecoder = false
+            retryCount = 0
 
             if (currentPlayingPosition == adapterPosition) {
                 currentPlayingPosition = -1
@@ -251,6 +453,8 @@ class UserImagePagerAdapter(
             player?.release()
             player = null
             isPlaying = false
+            isUsingSoftwareDecoder = false
+            retryCount = 0
         }
 
         fun isVideoPlaying(): Boolean = isPlaying
@@ -266,7 +470,6 @@ class UserImagePagerAdapter(
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.bind(displayVideos[position], position)
 
-        // Log for debugging
         val originalIndex = originalVideos.indexOf(displayVideos[position])
         Log.d("ViewPagerAdapter", "Position $position shows original video at index $originalIndex")
     }
@@ -277,9 +480,6 @@ class UserImagePagerAdapter(
         holder.releasePlayer()
     }
 
-    /**
-     * Play video at specific position - call this when swiping
-     */
     fun playVideoAt(position: Int, recyclerView: RecyclerView) {
         // Stop previous video if playing
         if (currentPlayingPosition != -1 && currentPlayingPosition != position) {
@@ -298,17 +498,11 @@ class UserImagePagerAdapter(
         Log.d("VideoPlayer", "Playing video at position $position")
     }
 
-    /**
-     * Pause all videos
-     */
     fun pauseAllVideos() {
         currentPlayingPosition = -1
         onPlaybackStateChanged?.invoke(false)
     }
 
-    /**
-     * Resume current video if any
-     */
     fun resumeCurrentVideo(recyclerView: RecyclerView) {
         if (currentPlayingPosition != -1) {
             val holder =
@@ -317,9 +511,6 @@ class UserImagePagerAdapter(
         }
     }
 
-    /**
-     * Release all players
-     */
     fun releaseAllPlayers(recyclerView: RecyclerView) {
         for (i in 0 until itemCount) {
             val holder = recyclerView.findViewHolderForAdapterPosition(i) as? ImageViewHolder
@@ -329,9 +520,6 @@ class UserImagePagerAdapter(
         currentPlayingPosition = -1
     }
 
-    /**
-     * Get original index of video at display position
-     */
     fun getOriginalIndex(displayPosition: Int): Int {
         return if (displayPosition in displayVideos.indices) {
             originalVideos.indexOf(displayVideos[displayPosition])

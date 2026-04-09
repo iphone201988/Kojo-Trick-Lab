@@ -239,7 +239,7 @@ data class PostData(
  */
 
 data class AddCommentApiResponse(
-    val comment: Comment?, val message: String?, val success: Boolean?
+    val comment: GetCommentData?, val message: String?, val success: Boolean?
 )
 
 @Parcelize
@@ -665,14 +665,21 @@ data class GetUserCommentsData(
 
 data class CommentsData(
     val __v: Int?,
-    val _id: String?,
+    var _id: String?,
     val comment: String?,
-    val createdAt: String?,
-    val updatedAt: String?,
-    val userId: UserIdProfile?,
+    var createdAt: String?,
+    var updatedAt: String?,
+    var userId: UserIdProfile?,
     val videoId: String?,
     var isExpanded: Boolean=false,
     var isMyComment: Boolean= false
+)
+
+
+data class AddedCommentModel(
+    val `data`: CommentsData?,
+    val message: String?,
+    val success: Boolean?
 )
 
 @Parcelize

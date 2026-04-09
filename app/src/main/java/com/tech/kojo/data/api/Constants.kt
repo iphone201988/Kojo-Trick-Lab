@@ -65,12 +65,13 @@ object Constants {
     const val VIDEO_LIBRARY ="video-data/dashboard-videos"
     const val GET_VIDEO_ID ="video-data/get-video"
     const val VIDEO_COMMENT ="video-comment"
+    const val VIDEO_COMMENT_DELETE ="video-comment/delete"
     const val VIDEO_RELATED ="video-data/topic-video"
-    const val VIDEO_COMMENTS ="video-comment"
     const val AUTH_GET_USER ="auth/get-user"
     const val VIDEO_DATA_GET_TOPIC ="video-data/get-topic"
     const val GET_ALL_CATEGORY ="video-data/all-category"
     const val DELETE_USER_PROGRESS ="user-progress/delete"
+    const val UPDATE_VIDEO_VIEW ="video-data/update-video-view"
 
 
     // notification
@@ -78,8 +79,5 @@ object Constants {
 
     // personal best
     const val UPDATE_PERSONAL_BEST ="auth/update-personalBest"
-    const val UPDATE_VIDEO_VIEW ="video-data/update-video-view"
-
-
 
 }

@@ -128,6 +128,11 @@ class VideoCommentsAdapter(
         notifyItemRangeRemoved(0, size)
     }
 
+    fun removeAtPosition(position: Int) {
+        listItem.removeAt(position)
+        notifyDataSetChanged()
+    }
+
     interface OnItemClickListener2 {
         fun onItemClick(item: CommentsData?, clickedViewId: Int, position: Int)
     }

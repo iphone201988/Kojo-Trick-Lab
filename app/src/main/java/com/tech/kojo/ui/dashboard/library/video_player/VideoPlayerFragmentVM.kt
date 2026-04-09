@@ -98,6 +98,26 @@ class VideoPlayerFragmentVM @Inject constructor(private val apiHelper: ApiHelper
         }
     }
 
+
+    // delete video comment api
+    fun deletePostVideoComments(url: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            observeCommon.postValue(Resource.loading(null))
+            runCatching {
+                val response = apiHelper.apiPostForToken(url)
+                if (response.isSuccessful) {
+                    observeCommon.postValue(Resource.success("deletePostVideoComments", response.body()))
+                } else {
+                    val errorMsg = handleErrorResponse(response.errorBody(), response.code())
+                    observeCommon.postValue(Resource.error(errorMsg, null))
+                }
+            }.onFailure { e ->
+                Log.e("apiErrorOccurred", "Error: ${e.message}", e)
+                observeCommon.postValue(Resource.error("${e.message}", null))
+            }
+        }
+    }
+
     fun insertVideo(video: DownloadVideoData) {
         viewModelScope.launch {
             repository.insertVideo(video)

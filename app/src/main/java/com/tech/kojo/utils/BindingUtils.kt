@@ -41,6 +41,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.databinding.BindingAdapter
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -250,18 +251,20 @@ object BindingUtils {
     }
 
     fun statusBarStyleWhite(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            activity.window.statusBarColor = Color.TRANSPARENT
-        }
+        statusBarStyleBlack(activity)
     }
 
     fun statusBarStyleBlack(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Ensures black text/icons
-            activity.window.statusBarColor = Color.TRANSPARENT // Transparent status bar
+            val window = activity.window
+            val decorView = window.decorView
+
+            // Fullscreen layout
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            window.statusBarColor = Color.TRANSPARENT
+
+            // Set light status bar (black icons) using WindowInsetsControllerCompat for all versions
+            WindowCompat.getInsetsController(window, decorView).isAppearanceLightStatusBars = true
         }
     }
 
